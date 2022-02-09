@@ -1,0 +1,8 @@
+# Generic gitignore:
+# (there is another .gitignore in the Source directory for more specific stuff)
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
