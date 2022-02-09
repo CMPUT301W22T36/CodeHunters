@@ -17,5 +17,5 @@ assignees: ''
 
 ## Analysis
 
-**Points:** 
-**Risk:**
+**Points:**  
+**Risk:** 
