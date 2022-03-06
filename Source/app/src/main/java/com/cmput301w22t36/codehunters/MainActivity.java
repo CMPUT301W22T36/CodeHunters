@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.mainActivityFragmentView, MapFragment.class, null)
+                    //.add(R.id.mainActivityFragmentView, MapFragment.class, null)
+                    .add(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
                     .commit();
         }
 
