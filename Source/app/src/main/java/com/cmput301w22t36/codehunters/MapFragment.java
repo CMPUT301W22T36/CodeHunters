@@ -19,10 +19,17 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,11 +44,14 @@ import java.util.Map;
 
 public class MapFragment extends Fragment {
 
-    MapView map;
+    protected MapView map;
+    protected IMapController mapController;
+    protected MyLocationNewOverlay locationOverlay;
 
 
     private Boolean locPermission, netPermission, netStatePermission;
     private ActivityResultLauncher<String[]> permissionLauncher;
+    private FloatingActionButton followButton;
 
     public MapFragment() {
         // Required empty public constructor
@@ -97,8 +107,25 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        followButton = getView().findViewById(R.id.followMeButton);
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                locationOverlay.enableFollowLocation();
+            }
+        });
+
         map = (MapView) getView().findViewById(R.id.map);
+        mapController = map.getController();
+
         map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setMultiTouchControls(true);
+
+        mapController.setZoom(18.0);
+        locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getActivity()), map);
+        locationOverlay.enableMyLocation();
+        map.getOverlays().add(locationOverlay);
+        locationOverlay.enableFollowLocation();
     }
 
     @Override
