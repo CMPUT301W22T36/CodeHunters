@@ -3,14 +3,20 @@ package com.cmput301w22t36.codehunters;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,11 +24,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ImageView imageView;
+
+    //TEST - MEHUL (populate list of qrcodes to test listview)
+    ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.mainActivityFragmentView, MapFragment.class, null)
+                    //.add(R.id.mainActivityFragmentView, MapFragment.class, null)
+                    .add(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
                     .commit();
         }
 
@@ -39,15 +52,25 @@ public class MainActivity extends AppCompatActivity {
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
 
+        QRCode code1 = new QRCode("BFG5DGW54");
+        QRCode code2 = new QRCode("W4GAF75A7");
+        QRCode code3 = new QRCode("Z56SJHGF76");
+        codeArrayList.add(code1);
+        codeArrayList.add(code2);
+        codeArrayList.add(code3);
 
         // Swap to the CodesFragment when the "Codes" textview is clicked
         codesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, CodesFragment.class, null)
-                        .commit();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
+                ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
+                ft.commit();
+//                getSupportFragmentManager().beginTransaction()
+//                        .setReorderingAllowed(true)
+//                        .replace(R.id.mainActivityFragmentView, CodesFragment.class, null)
+//                        .commit();
             }
         });
 
@@ -134,4 +157,11 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         }
     }
+
+
+
+
+
+
+
 }
