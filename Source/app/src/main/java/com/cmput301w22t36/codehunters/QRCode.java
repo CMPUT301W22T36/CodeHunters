@@ -2,13 +2,14 @@ package com.cmput301w22t36.codehunters;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.Math;
 import java.util.Hashtable;
 
-public class QRCode {
+public class QRCode implements Serializable {
     //Attributes accounted for
     private String hash;
     private int score;
