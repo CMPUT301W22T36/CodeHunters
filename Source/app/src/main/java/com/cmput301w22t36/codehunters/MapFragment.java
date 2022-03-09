@@ -1,7 +1,5 @@
 package com.cmput301w22t36.codehunters;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
