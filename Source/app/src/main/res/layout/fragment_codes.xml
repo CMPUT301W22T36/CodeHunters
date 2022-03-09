@@ -25,6 +25,8 @@
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 >
 
                 <TextView
