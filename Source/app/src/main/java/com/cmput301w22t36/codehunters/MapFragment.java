@@ -68,10 +68,13 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Check what permissions we have already
         ArrayList<String> requiredRequests = checkPermissions();
 
+        // Create the object that makes the permission requests for us
         permissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+                    // Update weather we have permission based on return of request
                     if (isGranted.containsKey(Manifest.permission.ACCESS_FINE_LOCATION)) {
                         locPermission = isGranted.get(Manifest.permission.ACCESS_FINE_LOCATION);
                     }
@@ -84,10 +87,12 @@ public class MapFragment extends Fragment {
                 }
         );
 
+        // request all of the permissions we don't have
         if (!requiredRequests.isEmpty()) {
             permissionLauncher.launch(requiredRequests.toArray(new String[0]));
         }
 
+        // This is some magic that osmdroid needs, I think it's for tile caching
         Context ctx = getActivity().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
     }
@@ -95,7 +100,6 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_map, container, false);
@@ -105,6 +109,7 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Get the follow button and have the map track your location when pressed
         followButton = getView().findViewById(R.id.followMeButton);
         followButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,12 +118,16 @@ public class MapFragment extends Fragment {
             }
         });
 
+        // Get map object and controller for map
         map = (MapView) getView().findViewById(R.id.map);
         mapController = map.getController();
 
+        // Some other magic map stuff we need to do and enabling pinch to zoom
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setMultiTouchControls(true);
 
+        // Set default zoom, add overlay for current location and enable following mode by default
+        // so that when the map loads in, it goes to the user's location.
         mapController.setZoom(18.0);
         locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getActivity()), map);
         locationOverlay.enableMyLocation();
@@ -142,7 +151,7 @@ public class MapFragment extends Fragment {
         ArrayList<String> requiredPermissions = new ArrayList<>();
 
 
-        // Check if we have the required permissions
+        // Check if we have the required permissions already
         locPermission = ContextCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         netPermission = ContextCompat.checkSelfPermission(this.getContext(),
@@ -150,6 +159,8 @@ public class MapFragment extends Fragment {
         netStatePermission = ContextCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
 
+
+        // for each permission we don't have, add to list of permissions required 
         if (!locPermission) {
             requiredPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
