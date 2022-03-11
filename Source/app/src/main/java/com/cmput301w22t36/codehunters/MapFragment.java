@@ -58,6 +58,7 @@ public class MapFragment extends Fragment {
 
     // Other objects
     private FloatingActionButton followButton;
+    private Double defaultZoom = 18.0d;
 
     public MapFragment() {
         // Required empty public constructor
@@ -130,6 +131,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 locationOverlay.enableFollowLocation();
+                mapController.setZoom(defaultZoom);
             }
         });
 
@@ -143,7 +145,7 @@ public class MapFragment extends Fragment {
 
         // Set default zoom, add overlay for current location and enable following mode by default
         // so that when the map loads in, it goes to the user's location.
-        mapController.setZoom(18.0);
+        mapController.setZoom(defaultZoom);
         locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getActivity()), map);
         locationOverlay.enableMyLocation();
         map.getOverlays().add(locationOverlay);
