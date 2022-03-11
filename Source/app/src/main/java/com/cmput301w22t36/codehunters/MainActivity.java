@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MapFragment mapFragment = MapFragment.newInstance();
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
+                        .replace(R.id.mainActivityFragmentView, mapFragment)
                         .commit();
             }
         });
