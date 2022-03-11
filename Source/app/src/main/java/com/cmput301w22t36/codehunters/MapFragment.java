@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -17,7 +16,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,11 +25,13 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,13 +43,20 @@ import java.util.Map;
 
 public class MapFragment extends Fragment {
 
+    // Objects used for map, map control, and map overlays
     protected MapView map;
     protected IMapController mapController;
     protected MyLocationNewOverlay locationOverlay;
+    protected ItemizedOverlayWithFocus<OverlayItem> qrPinsOverlay;
 
+    // List of "OverlayItem"s (i.e. list of qrCodes in map form)
+    protected ArrayList<OverlayItem> qrPinsList;
 
+    // Objects used for permission checking
     private Boolean locPermission, netPermission, netStatePermission;
     private ActivityResultLauncher<String[]> permissionLauncher;
+
+    // Other objects
     private FloatingActionButton followButton;
 
     public MapFragment() {
@@ -67,6 +75,13 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        // Create qrPins list and, for now, add some default pins
+        qrPinsList = new ArrayList<OverlayItem>();
+        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.534435d, -113.583743d))); // Lat/Lon decimal degrees
+        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.5276263078457d, -113.53011358392737d))); // Lat/Lon decimal degrees
+        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.52692899681502d, -113.5273401482765d))); // Lat/Lon decimal degrees
 
         // Check what permissions we have already
         ArrayList<String> requiredRequests = checkPermissions();
@@ -133,6 +148,44 @@ public class MapFragment extends Fragment {
         locationOverlay.enableMyLocation();
         map.getOverlays().add(locationOverlay);
         locationOverlay.enableFollowLocation();
+
+
+        // the overlay for the QR code pins with click listeners
+        qrPinsOverlay = new ItemizedOverlayWithFocus<OverlayItem>(qrPinsList,
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        // for now, on tap make a toast
+                        String toastString = new String();
+                        toastString = toastString.concat(qrPinsList.get(index).getTitle())
+                            .concat(" was tapped");
+
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                toastString, Toast.LENGTH_SHORT)
+                                .show();
+
+                        // This return value was given in the example, I'm just leaving it
+                        return true;
+                    }
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        // for now, on tap make a toast
+                        String toastString = new String();
+                        toastString = toastString.concat(qrPinsList.get(index).getTitle())
+                                .concat(" was long pressed");
+
+                        Toast.makeText(getActivity().getApplicationContext(),
+                                toastString, Toast.LENGTH_SHORT)
+                                .show();
+
+                        // This return value was given in the example, I'm just leaving it
+                        return false;
+                    }
+                }, getActivity());
+
+        // enable pin tapping and add overlay to map
+        qrPinsOverlay.setFocusItemsOnTap(true);
+        map.getOverlays().add(qrPinsOverlay);
     }
 
     @Override
@@ -160,7 +213,7 @@ public class MapFragment extends Fragment {
                 Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
 
 
-        // for each permission we don't have, add to list of permissions required 
+        // for each permission we don't have, add to list of permissions required
         if (!locPermission) {
             requiredPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
