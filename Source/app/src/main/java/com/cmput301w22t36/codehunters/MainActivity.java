@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         codeArrayList.add(code1);
         codeArrayList.add(code2);
         codeArrayList.add(code3);
+        codeArrayList.add(new QRCode("potato"));
 
         // Swap to the CodesFragment when the "Codes" textview is clicked
         codesNav.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MapFragment mapFragment = MapFragment.newInstance();
+                MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
                         .replace(R.id.mainActivityFragmentView, mapFragment)

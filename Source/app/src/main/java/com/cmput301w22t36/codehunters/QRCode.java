@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.Math;
 import java.util.Hashtable;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class QRCode implements Serializable {
     //Attributes accounted for
@@ -15,13 +17,18 @@ public class QRCode implements Serializable {
     private int score;
     private String code;
     //Attributes yet to be implemented
-    //private Geolocation geolocation;
+    private GeoPoint geolocation;
     //private Photo photo;
 
     public QRCode(String code){
         //Set code equal to passed in code and compute hash
         this.code = code;
         hash = DigestUtils.sha256Hex(code);
+
+        // TODO: this is a placeholder coordinate for the geolocation, just somewhere on campus
+        double lat = ThreadLocalRandom.current().nextDouble(53.523273103233294d, 53.5291036673118d);
+        double lon = ThreadLocalRandom.current().nextDouble(-113.52954192682526, -113.518766067236d);
+        this.geolocation = new GeoPoint(lat, lon);
 
         //Compute score of code
         String []letters = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v"};
@@ -58,4 +65,6 @@ public class QRCode implements Serializable {
     public String getCode() {
         return code;
     }
+
+    public GeoPoint getGeolocation() { return geolocation; }
 }

@@ -51,6 +51,7 @@ public class MapFragment extends Fragment {
 
     // List of "OverlayItem"s (i.e. list of qrCodes in map form)
     protected ArrayList<OverlayItem> qrPinsList;
+    private ArrayList<QRCode> codeArrayList;
 
     // Objects used for permission checking
     private Boolean locPermission, netPermission, netStatePermission;
@@ -59,6 +60,7 @@ public class MapFragment extends Fragment {
     // Other objects
     private FloatingActionButton followButton;
     private Double defaultZoom = 18.0d;
+    private static final String ARG_PARAM1 = "param1";
 
     public MapFragment() {
         // Required empty public constructor
@@ -66,9 +68,10 @@ public class MapFragment extends Fragment {
 
 
     // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance() {
+    public static MapFragment newInstance(ArrayList<QRCode> codes) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
+        args.putSerializable(ARG_PARAM1, codes);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,12 +80,19 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        // Create qrPins list and, for now, add some default pins
         qrPinsList = new ArrayList<OverlayItem>();
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.534435d, -113.583743d))); // Lat/Lon decimal degrees
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.5276263078457d, -113.53011358392737d))); // Lat/Lon decimal degrees
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.52692899681502d, -113.5273401482765d))); // Lat/Lon decimal degrees
+
+        if (getArguments() != null) {
+            codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
+            for (QRCode code : codeArrayList) {
+                qrPinsList.add(new OverlayItem(
+                        code.getCode(),
+                        String.valueOf(code.getScore()),
+                        code.getGeolocation()
+                ));
+            }
+        }
+
 
         // Check what permissions we have already
         ArrayList<String> requiredRequests = checkPermissions();
