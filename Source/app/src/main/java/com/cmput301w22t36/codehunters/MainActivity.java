@@ -179,9 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    if (intent.resolveActivity(getPackageManager()) != null) {
-                                        activityResultLauncher.launch(intent);
-                                    }
+                                    activityResultLauncher.launch(intent);
                                     if (ActivityCompat.checkSelfPermission(MainActivity.this,
                                             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                                         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
