@@ -44,7 +44,7 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.13'
 
     //Added dependency for QR Code Scanning (Bhavya)
-    implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 
     // dependencies for openstreetmaps
     implementation 'org.osmdroid:osmdroid-android:6.1.1'

@@ -1,13 +1,25 @@
 package com.cmput301w22t36.codehunters;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,11 +41,14 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     TextView codesNav, mapNav, socialNav;
+    String QRString;
     FloatingActionButton scanQRCode;
-    ImageView imageView;
+    ActivityResultLauncher<Intent> activityResultLauncher;
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
+
+
 
 
     @Override
@@ -108,53 +123,90 @@ public class MainActivity extends AppCompatActivity {
                 intentIntegrator.setPrompt("Scan QR Code");
                 intentIntegrator.setOrientationLocked(true);
                 intentIntegrator.setCaptureActivity(Capture.class);
+                intentIntegrator.setRequestCode(1);
                 intentIntegrator.initiateScan();
             }
         });
 
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Bundle bundle = result.getData().getExtras();
+                            Bitmap qrLocationImage = (Bitmap) bundle.get("data");
+
+                        }
+                    }
+                });
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        IntentResult intentResult = IntentIntegrator.parseActivityResult(
+//                requestCode,resultCode,data
+//        );
         IntentResult intentResult = IntentIntegrator.parseActivityResult(
-                requestCode,resultCode,data
+                resultCode,data
         );
-        if (intentResult.getContents() != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    MainActivity.this
-            );
-            builder.setTitle("Result");
-            builder.setMessage(intentResult.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(
+        if (intentResult!= null) {
+            if (requestCode == 1) {
+                QRString = intentResult.getContents();
+                if (intentResult.getContents() != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
                             MainActivity.this
                     );
-                    builder1.setTitle("Would You Like To Take A Photo of The QR Code Location");
-                    builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    builder.setTitle("Result");
+                    QRCode displayedCode = new QRCode(QRString);
+                    codeArrayList.add(displayedCode);
+                    builder.setMessage(intentResult.getContents());
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(
+                                    MainActivity.this
+                            );
+                            builder1.setTitle("Would You Like To Take A Photo of The QR Code Location");
+                            builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    if (intent.resolveActivity(getPackageManager()) != null) {
+                                        activityResultLauncher.launch(intent);
+                                    }
+                                    if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                        Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                        double longi = loc.getLongitude();
+                                        double lat = loc.getLatitude();
+                                        String longitude = String.valueOf(longi);
+                                        String latitude = String.valueOf(lat);
+
+                                    } else {
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]
+                                                {Manifest.permission.ACCESS_FINE_LOCATION},44);
+                                    }
+                                }
+                            });
+                            builder1.show();
+                            //dialogInterface.dismiss();
                         }
                     });
-                    builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivity(camera);
-                        }
-                    });
-                    builder1.show();
-                    //dialogInterface.dismiss();
+                    builder.show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "You did not scan anything", Toast.LENGTH_SHORT)
+                            .show();
                 }
-            });
-            builder.show();
-        } else {
-            Toast.makeText(getApplicationContext(), "You did not scan anything", Toast.LENGTH_SHORT)
-                    .show();
+            }
         }
     }
 
