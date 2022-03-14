@@ -19,8 +19,43 @@
             >
 
             <LinearLayout
-                android:id="@+id/total_rolls_layout"
-                android:layout_width="wrap_content"
+                android:id="@+id/sort_search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/divider1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                >
+
+                <TextView
+                    android:id="@+id/sort_by"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sort By ↓"
+                    android:textColor="#333333"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="11dp"
+                    android:background="#b491c8"></TextView>
+
+                <SearchView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></SearchView>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/purple_500"
+                app:layout_constraintBottom_toTopOf="@id/stats_layout" />
+
+            <LinearLayout
+                android:id="@+id/stats_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
@@ -75,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
                 android:background="@color/purple_500"
-                app:layout_constraintTop_toBottomOf="@id/total_rolls_layout" />
+                app:layout_constraintTop_toBottomOf="@id/stats_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

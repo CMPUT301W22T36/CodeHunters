@@ -41,15 +41,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     TextView codesNav, mapNav, socialNav;
-    String QRString;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
-
-
-
+    QRCode current_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
 
+        //DEMO Code for CODES TEST - MEHUL
         QRCode code1 = new QRCode("BFG5DGW54");
         QRCode code2 = new QRCode("W4GAF75A7");
         QRCode code3 = new QRCode("Z56SJHGF76");
@@ -78,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         codesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int x = 2;
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
                 ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
@@ -135,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             Bundle bundle = result.getData().getExtras();
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
+                            current_code.setPhoto(qrLocationImage);
 
                         }
                     }
@@ -153,14 +153,13 @@ public class MainActivity extends AppCompatActivity {
         );
         if (intentResult!= null) {
             if (requestCode == 1) {
-                QRString = intentResult.getContents();
+                String QRString = intentResult.getContents();
                 if (intentResult.getContents() != null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
                             MainActivity.this
                     );
                     builder.setTitle("Result");
-                    QRCode displayedCode = new QRCode(QRString);
-                    codeArrayList.add(displayedCode);
+                    current_code = new QRCode(QRString);
                     builder.setMessage(intentResult.getContents());
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -172,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
                             builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    //User has said no to photo-location so we create code with string code only
+                                    codeArrayList.add(current_code);
+
                                     dialogInterface.dismiss();
                                 }
                             });
@@ -188,10 +190,15 @@ public class MainActivity extends AppCompatActivity {
                                         double lat = loc.getLatitude();
                                         String longitude = String.valueOf(longi);
                                         String latitude = String.valueOf(lat);
-
+                                        ArrayList<Double> geolocation = new ArrayList<Double>();
+                                        geolocation.add(lat);
+                                        geolocation.add(longi);
+                                        current_code.setGeolocation(geolocation);
+                                        codeArrayList.add(current_code);
                                     } else {
                                         ActivityCompat.requestPermissions(MainActivity.this, new String[]
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
+                                        codeArrayList.add(current_code);
                                     }
                                 }
                             });

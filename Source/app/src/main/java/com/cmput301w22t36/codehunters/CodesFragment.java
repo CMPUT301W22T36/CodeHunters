@@ -6,14 +6,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +34,10 @@ public class CodesFragment extends Fragment {
     private ArrayList<QRCode> codeArrayList;
     private TextView num_codes;
     private TextView total_score;
+    private TextView sort_method;
+    //Set up listview
+    private ListView codeList;
+    private ArrayAdapter<QRCode> codeArrayAdapter;
 
     public CodesFragment() {
         // Required empty public constructor
@@ -64,9 +72,11 @@ public class CodesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Connect to textviews for number of codes scanned and total score of codes
+        //Connect to views from xml file
         num_codes = view.findViewById(R.id.total_codes);
         total_score = view.findViewById(R.id.total_score);
+        sort_method = view.findViewById(R.id.sort_by);
+        codeList = view.findViewById(R.id.code_list);
 
         //Populate number of codes and total score
         num_codes.setText(String.valueOf(codeArrayList.size()));
@@ -76,14 +86,35 @@ public class CodesFragment extends Fragment {
         }
         total_score.setText(String.valueOf(sum));
 
-        //Set up listview
-        ListView codeList;
-        ArrayAdapter<QRCode> codeArrayAdapter;
-
-        codeList = view.findViewById(R.id.code_list);
-
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new CustomQRCodeList(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
+
+        //SORT BY FEATURE //Context menu setup -- registering "sort-by" TextView
+        registerForContextMenu(sort_method);
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        //Add sort options -- Highest/Lowest Scoring
+        menu.add(0, v.getId(), 0, "Highest Score");
+        menu.add(0, v.getId(), 0, "Lowest Score");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getTitle() == "Highest Score") {
+            //Sort codes by score - Descending order
+            Collections.sort(codeArrayList, Collections.reverseOrder());
+            codeArrayAdapter.notifyDataSetChanged();
+        }
+        else if (item.getTitle()== "Lowest Score") {
+            //Sort codes by score - Ascending order
+            Collections.sort(codeArrayList);
+            codeArrayAdapter.notifyDataSetChanged();
+        }
+        //Toast pop-up to confirm with user their selection
+        Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
+        return true;
     }
 }
