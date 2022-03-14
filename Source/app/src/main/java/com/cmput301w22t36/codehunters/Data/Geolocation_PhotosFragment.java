@@ -18,6 +18,17 @@ import androidx.fragment.app.DialogFragment;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
 
+/**
+ * Introductory Comments:
+ *      This Java file is a fragment representing the geolocation and photo dialog of our application.
+ *      The fragment opens when a QR Code in the Codes fragment is clicked and shows the geolocation
+ *      and photo of the QR Code and QR Code Location respectively. If location or photo was not
+ *      provided, this fragment will not show anything
+ *
+ *      **Outstanding issue: The XML for this file is currently plain and needs to be
+ *      updated to look better**
+ */
+
 public class Geolocation_PhotosFragment extends DialogFragment {
 
     private QRCode qrCodeClicked;
@@ -27,13 +38,15 @@ public class Geolocation_PhotosFragment extends DialogFragment {
     public Geolocation_PhotosFragment(QRCode qrCodeClicked) {
         this.qrCodeClicked = qrCodeClicked;
     }
-
-    public interface OnFragmentInteractionListener {
-        void onOkUpdate();
-    }
+    
 
     @NonNull
     @Override
+    /**
+     * Opens dialog box and sets TextView and ImageView to geolocation and Bitmap image
+     * @return
+     * returns the dialog box showing geolocation and photo
+     */
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.geolocation_photos,null);
         geolocation = (TextView) view.findViewById(R.id.geolocation);
