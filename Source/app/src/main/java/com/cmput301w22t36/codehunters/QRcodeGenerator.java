@@ -17,6 +17,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * Generate a QRcode for user login and searching
+ */
 public class QRcodeGenerator extends AppCompatActivity {
     //Initialize variables
     EditText uidInput;
