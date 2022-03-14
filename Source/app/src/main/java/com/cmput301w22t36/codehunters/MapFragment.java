@@ -1,4 +1,12 @@
 package com.cmput301w22t36.codehunters;
+/*
+This Class allows the user to see the location of QRCodes that have a location on a map and view
+the info for the QRCode.
+
+Outstanding issues:
+ - We don't yet have a fragment to view QRCode data, currently the pins just create a toast when tapped
+ - For newly scanned pins to be seen, the fragment must be closed and reopened
+ */
 
 import android.Manifest;
 import android.content.Context;
@@ -51,6 +59,7 @@ public class MapFragment extends Fragment {
 
     // List of "OverlayItem"s (i.e. list of qrCodes in map form)
     protected ArrayList<OverlayItem> qrPinsList;
+    private ArrayList<QRCode> codeArrayList;
 
     // Objects used for permission checking
     private Boolean locPermission, netPermission, netStatePermission;
@@ -58,30 +67,54 @@ public class MapFragment extends Fragment {
 
     // Other objects
     private FloatingActionButton followButton;
+    private Double defaultZoom = 18.0d;
+    private static final String ARG_PARAM1 = "param1";
 
     public MapFragment() {
         // Required empty public constructor
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance() {
+    /**
+     * This method generates a new instance of the MapFragment with the required data to plot pins
+     * @param codes an ArrayList of all the QRCodes
+     * @return a new instance of the MapFragment ready to go
+     */
+    public static MapFragment newInstance(ArrayList<QRCode> codes) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
+        args.putSerializable(ARG_PARAM1, codes);
         fragment.setArguments(args);
         return fragment;
     }
 
+    /**
+     * onCreate method to prepare permissions and pins to be plotted
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        // Create qrPins list and, for now, add some default pins
         qrPinsList = new ArrayList<OverlayItem>();
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.534435d, -113.583743d))); // Lat/Lon decimal degrees
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.5276263078457d, -113.53011358392737d))); // Lat/Lon decimal degrees
-        qrPinsList.add(new OverlayItem("Placeholder Name", "placeholder description", new GeoPoint(53.52692899681502d, -113.5273401482765d))); // Lat/Lon decimal degrees
+
+        if (getArguments() != null) {
+            codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
+            for (QRCode code : codeArrayList) {
+                if (code.getGeolocation() != null) {
+                    GeoPoint codeGeoPoint = new GeoPoint(
+                            code.getGeolocation().get(0),
+                            code.getGeolocation().get(1)
+                    );
+                    qrPinsList.add(new OverlayItem(
+                            code.getCode(),
+                            String.valueOf(code.getScore()),
+                            codeGeoPoint
+                    ));
+                }
+            }
+        }
+
 
         // Check what permissions we have already
         ArrayList<String> requiredRequests = checkPermissions();
@@ -112,6 +145,13 @@ public class MapFragment extends Fragment {
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
     }
 
+    /**
+     * returns the inflated View
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -120,6 +160,11 @@ public class MapFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
+    /**
+     * Now that the view has been created, this method configures the map, its overlays, and buttons
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -130,6 +175,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 locationOverlay.enableFollowLocation();
+                mapController.setZoom(defaultZoom);
             }
         });
 
@@ -143,7 +189,7 @@ public class MapFragment extends Fragment {
 
         // Set default zoom, add overlay for current location and enable following mode by default
         // so that when the map loads in, it goes to the user's location.
-        mapController.setZoom(18.0);
+        mapController.setZoom(defaultZoom);
         locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getActivity()), map);
         locationOverlay.enableMyLocation();
         map.getOverlays().add(locationOverlay);
@@ -188,18 +234,29 @@ public class MapFragment extends Fragment {
         map.getOverlays().add(qrPinsOverlay);
     }
 
+    /**
+     * Runs all the tasks to resume the fragment
+     */
     @Override
     public void onResume() {
         super.onResume();
         map.onResume();
     }
 
+    /**
+     * runs all the tasks to pause the fragment
+     */
     @Override
     public void onPause() {
         super.onPause();
         map.onPause();
     }
 
+    /**
+     * checks for permissions that the app has from those it needs, then creates a list of the
+     * permissions that are still required
+     * @return an ArrayList of all the String names of the required permissions
+     */
     private ArrayList<String> checkPermissions() {
         ArrayList<String> requiredPermissions = new ArrayList<>();
 

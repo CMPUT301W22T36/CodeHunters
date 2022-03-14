@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,28 +39,31 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
+/**
+ * Class: MainActivity
+ *
+ * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
+ */
 public class MainActivity extends AppCompatActivity {
 
     TextView codesNav, mapNav, socialNav;
-    String QRString;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
-
-
-
+    QRCode current_code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    //.add(R.id.mainActivityFragmentView, MapFragment.class, null)
-                    .add(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                    .add(R.id.mainActivityFragmentView, FirstWelcomeFragment.class, null)
                     .commit();
         }
 
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
 
+        //DEMO Code for CODES TEST - MEHUL
         QRCode code1 = new QRCode("BFG5DGW54");
         QRCode code2 = new QRCode("W4GAF75A7");
         QRCode code3 = new QRCode("Z56SJHGF76");
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         codesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int x = 2;
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
                 ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
@@ -104,9 +110,10 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
+                        .replace(R.id.mainActivityFragmentView, mapFragment)
                         .commit();
             }
         });
@@ -135,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             Bundle bundle = result.getData().getExtras();
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
+                            current_code.setPhoto(qrLocationImage);
 
                         }
                     }
@@ -153,14 +161,13 @@ public class MainActivity extends AppCompatActivity {
         );
         if (intentResult!= null) {
             if (requestCode == 1) {
-                QRString = intentResult.getContents();
+                String QRString = intentResult.getContents();
                 if (intentResult.getContents() != null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
                             MainActivity.this
                     );
                     builder.setTitle("Result");
-                    QRCode displayedCode = new QRCode(QRString);
-                    codeArrayList.add(displayedCode);
+                    current_code = new QRCode(QRString);
                     builder.setMessage(intentResult.getContents());
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -172,6 +179,9 @@ public class MainActivity extends AppCompatActivity {
                             builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    //User has said no to photo-location so we create code with string code only
+                                    codeArrayList.add(current_code);
+
                                     dialogInterface.dismiss();
                                 }
                             });
@@ -188,10 +198,15 @@ public class MainActivity extends AppCompatActivity {
                                         double lat = loc.getLatitude();
                                         String longitude = String.valueOf(longi);
                                         String latitude = String.valueOf(lat);
-
+                                        ArrayList<Double> geolocation = new ArrayList<Double>();
+                                        geolocation.add(lat);
+                                        geolocation.add(longi);
+                                        current_code.setGeolocation(geolocation);
+                                        codeArrayList.add(current_code);
                                     } else {
                                         ActivityCompat.requestPermissions(MainActivity.this, new String[]
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
+                                        codeArrayList.add(current_code);
                                     }
                                 }
                             });
