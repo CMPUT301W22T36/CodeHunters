@@ -116,8 +116,7 @@ public class FirstWelcomeFragment extends Fragment {
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
                                 .commit();
-                    } else
-                    if (uniqueName) {
+                    } else if (uniqueName) {
                         // Store the attributes of the new account
                         // TODO: implementation with database from later user stories, currently a placeholder.
                         // TODO: make the change to the user profile, ensure stored to database

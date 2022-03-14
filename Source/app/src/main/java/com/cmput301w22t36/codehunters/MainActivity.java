@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    //.add(R.id.mainActivityFragmentView, MapFragment.class, null)
                     .add(R.id.mainActivityFragmentView, FirstWelcomeFragment.class, null)
                     .commit();
         }
