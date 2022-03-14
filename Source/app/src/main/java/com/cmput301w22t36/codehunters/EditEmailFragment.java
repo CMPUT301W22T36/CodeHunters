@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditEmailFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Class: EditEmailFragment, a {@link Fragment} subclass.
+ *
+ * Display the fragment to change the user's email and manage any edits to the email.
  */
 public class EditEmailFragment extends Fragment {
 
@@ -24,6 +24,9 @@ public class EditEmailFragment extends Fragment {
     private EditText editEmail;
     private Button confirmChangeE;
 
+    /**
+     * Required empty public constructor
+     */
     public EditEmailFragment() {
         // Required empty public constructor
     }
@@ -32,21 +35,28 @@ public class EditEmailFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserPersonalProfileFragment.
+     * @return A new instance of fragment EditEmailFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static EditEmailFragment newInstance(String param1, String param2) {
+    public static EditEmailFragment newInstance() {
         EditEmailFragment fragment = new EditEmailFragment();
         return fragment;
     }
 
+    /**
+     * This initializes the fragment
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This inflates the fragment's layout
+     * @param inflater: the LayoutInflator for the view
+     * @param container: the ViewGroup of the view
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +64,11 @@ public class EditEmailFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_edit_email, container, false);
     }
 
+    /**
+     * Display the static username and edit the email.
+     * @param view: the current view
+     * @param savedInstanceState: This is the bundle that will be called through the superclass
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -70,6 +85,10 @@ public class EditEmailFragment extends Fragment {
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         confirmChangeE.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Confirm the new email
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // Obtain the new email

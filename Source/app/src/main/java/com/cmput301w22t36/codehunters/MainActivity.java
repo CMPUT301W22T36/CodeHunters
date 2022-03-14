@@ -39,6 +39,11 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
+/**
+ * Class: MainActivity
+ *
+ * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
+ */
 public class MainActivity extends AppCompatActivity {
 
     TextView codesNav, mapNav, socialNav;
