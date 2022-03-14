@@ -15,9 +15,9 @@ public class User {
     // the unique device IDs of the user's devices associated with their account
     private ArrayList<String> accountUUIDs;
     // the user's unique username
-    private String username;
+    private static String username;
     // the user's email for contact information
-    private String email;
+    private static String email;
 
     // TODO: update once QR class exists, and add the corresponding getters and setters
     /*
@@ -32,11 +32,11 @@ public class User {
     /**
      * Create a new user. An accountLoginQR and shareProfileQR will be created,
      *      and UserQRList will be initialized as an empty list.
-     * @param accountUUIDs an array of UUIDs indicating the devices linked to this user profile
-     * @param username the unique username that identifies the user
-     * @param email the user's email as optional contact information
+     * @param //accountUUIDs an array of UUIDs indicating the devices linked to this user profile
+     * @param //username the unique username that identifies the user
+     * @param //email the user's email as optional contact information
      */
-    public User(ArrayList<String> accountUUIDs, String username, String email) {
+/*    public User(ArrayList<String> accountUUIDs, String username, String email) {
         setAccountUUIDs(accountUUIDs);
         setUsername(username);
         setEmail(email);
@@ -45,7 +45,7 @@ public class User {
         // Generate and save the accountLoginQR
         // Generate and save the shareProfileQR
         // UserQRList will be initialized as an empty list.
-    }
+    }*/
 
     // Getters and Setters
     public ArrayList<String> getAccountUUIDs() {
@@ -56,19 +56,19 @@ public class User {
         this.accountUUIDs = accountUUIDs;
     }
 
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public static void setUsername(String username) {
+        User.username = username;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public static void setEmail(String email) {
+        User.email = email;
     }
 }
