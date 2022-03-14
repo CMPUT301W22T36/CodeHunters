@@ -54,7 +54,7 @@
                 android:id="@+id/accountQRView"
                 android:layout_width="302dp"
                 android:layout_height="42dp"
-                android:layout_marginTop="180dp"
+                android:layout_marginTop="170dp"
                 android:text="  Want to continue playing on another device? Scan your unique account QR code to connect!"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,7 @@
                 android:id="@+id/shareQRView"
                 android:layout_width="208dp"
                 android:layout_height="47dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:text="Want to share your game status?Share this QR code with others!"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +82,8 @@
                 android:layout_marginEnd="40dp"
                 android:text="  Edit Name  "
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profile_photo" />
+                app:layout_constraintTop_toBottomOf="@+id/profile_photo"
+                android:clickable="true"/>
 
             <Button
                 android:id="@+id/edit_email_button"
@@ -92,13 +93,14 @@
                 android:layout_marginEnd="30dp"
                 android:text="Edit Contact"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_name_button" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_name_button"
+                android:clickable="true" />
 
             <Button
                 android:id="@+id/get_account_QR_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:text="Obtain Unique Account QR Code"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -108,7 +110,7 @@
                 android:id="@+id/share_profile_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:text="Share My Status"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.497"
