@@ -1,5 +1,7 @@
 package com.cmput301w22t36.codehunters;
 
+import android.graphics.Bitmap;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.osmdroid.util.GeoPoint;
 
@@ -11,24 +13,20 @@ import java.lang.Math;
 import java.util.Hashtable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class QRCode implements Serializable {
-    //Attributes accounted for
+public class QRCode implements Serializable, Comparable<QRCode> {
     private String hash;
     private int score;
     private String code;
-    //Attributes yet to be implemented
-    private GeoPoint geolocation;
-    //private Photo photo;
+    private boolean has_photo;
+    private boolean has_location;
+    private Bitmap photo;
+    //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
+    private ArrayList<Double> geolocation;
 
-    public QRCode(String code){
+    public QRCode(String code) {
         //Set code equal to passed in code and compute hash
         this.code = code;
         hash = DigestUtils.sha256Hex(code);
-
-        // TODO: this is a placeholder coordinate for the geolocation, just somewhere on campus
-        double lat = ThreadLocalRandom.current().nextDouble(53.523273103233294d, 53.5291036673118d);
-        double lon = ThreadLocalRandom.current().nextDouble(-113.52954192682526, -113.518766067236d);
-        this.geolocation = new GeoPoint(lat, lon);
 
         //Compute score of code
         String []letters = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v"};
@@ -52,6 +50,9 @@ public class QRCode implements Serializable {
                 length = 1;
             }
         }
+
+        has_photo = false;
+        has_location = false;
     }
 
     public String getHash() {
@@ -66,5 +67,32 @@ public class QRCode implements Serializable {
         return code;
     }
 
-    public GeoPoint getGeolocation() { return geolocation; }
+    public ArrayList<Double> getGeolocation() {
+        return geolocation;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Bitmap photo) {
+        has_photo = true;
+        this.photo = photo;
+    }
+
+    public void setGeolocation(ArrayList<Double> geolocation) {
+        has_location = true;
+        this.geolocation = geolocation;
+    }
+
+    @Override
+    public int compareTo(QRCode qrCode) {
+        if (this.score > qrCode.getScore()) {
+            return 1;
+        } else if (this.score < qrCode.getScore()) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 }
