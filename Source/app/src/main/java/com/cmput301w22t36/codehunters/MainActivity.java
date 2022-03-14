@@ -22,6 +22,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
