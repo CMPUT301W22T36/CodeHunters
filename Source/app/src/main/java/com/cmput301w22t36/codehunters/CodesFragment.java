@@ -128,6 +128,13 @@ public class CodesFragment extends Fragment {
         codeList.setAdapter(codeArrayAdapter);
 
         codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
