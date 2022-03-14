@@ -36,6 +36,10 @@ import java.util.Locale;
  * Use the {@link SocialFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+//Introduction: This fragment is used to contain and display all fragments related to users social communication in the App, also provide a search bottom for user to search other users.
+//              It can replace mainActivityFragmentView in MainActivity
+//              just for  now: No actual functions but all display and navigation are completed.
 public class SocialFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -103,7 +107,7 @@ public class SocialFragment extends Fragment {
         searchUser = view.findViewById(R.id.searchUser);
         buildDialogSearchUser();
 
-        // Swap to the CodesFragment when the "Bestcodes" textview is clicked
+        // Swap to the BestCodesFragment when the "Bestcodes" textview is clicked
         bestCodesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +128,7 @@ public class SocialFragment extends Fragment {
                         .commit();
             }
         });
-
+        // Swap to the SearchUserFragment when the search bottom is clicked and enter a valid user name
         searchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

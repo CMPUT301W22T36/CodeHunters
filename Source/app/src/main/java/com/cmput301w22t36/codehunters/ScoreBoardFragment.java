@@ -13,7 +13,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link ScoreBoardFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+//Introduction: This fragment is used to calculate and get bests in different ranking, including by highest score, by number,by total score.
+//              It will get all data from online database, do the ranks and display the ranks.
+//              It can replace socialFragmentView in SocialFragment
+//              just for  now: No actual functions but all display and navigation are completed.
 public class ScoreBoardFragment extends Fragment {
     TextView title;
     TextView byHighestScoreT;

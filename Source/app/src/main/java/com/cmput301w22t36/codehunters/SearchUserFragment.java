@@ -15,7 +15,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link SearchUserFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+//Introduction: This fragment is used to show all status of searched users get from search.
+//              It will get all data from online database, display the user stats, codes in common to user(player), and all his(searched user) codes
+//              It can replace socialFragmentView in SocialFragment
+//              just for  now: No actual functions but all display and navigation are completed.
 import java.util.ArrayList;
 
 public class SearchUserFragment extends Fragment {
