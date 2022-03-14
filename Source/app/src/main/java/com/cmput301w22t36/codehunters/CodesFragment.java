@@ -23,9 +23,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link CodesFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Introductory Comments:
+ *      This Java file is a fragment representing the "codes" tab of our application. The fragment
+ *      houses a custom ListView of a user's QRCode objects displaying the relevant information from
+ *      each code (Code (String) & Score (int)) as well as the user's total codes scanned and total score.
+ *      The fragment also allows for users to sort their codes by highest or lowest score (done by
+ *      long-pressing "sort by" TextView and selecting sorting method from pop-up menu).
+ *
+ *      **Outstanding issue: Searchbar is present in the layout but does not currently have any functionality**
+ */
+
+/**
+ * Fragment responsible for displaying user's scanned QRCodes and relevant information.
  */
 public class CodesFragment extends Fragment {
 
@@ -42,11 +51,18 @@ public class CodesFragment extends Fragment {
     private ListView codeList;
     private ArrayAdapter<QRCode> codeArrayAdapter;
 
+    /**
+     * Required constructor
+     */
     public CodesFragment() {
         // Required empty public constructor
     }
 
-
+    /**
+     * On creation of a newinstance of this fragment, a list of QRCodes are passed in
+     * @param codes
+     * @return
+     */
     // TODO: Rename and change types and number of parameters
     public static CodesFragment newInstance(ArrayList<QRCode> codes) {
         CodesFragment fragment = new CodesFragment();
@@ -56,6 +72,10 @@ public class CodesFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * On creation of the fragment, the bundle housing the list of QRCodes is received so they can be displayed later
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +84,13 @@ public class CodesFragment extends Fragment {
         }
     }
 
+    /**
+     * Connect to xml file associated to this fragment and initialize layout
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,6 +99,12 @@ public class CodesFragment extends Fragment {
 
     }
 
+    /**
+     * Once the fragment is created, we connect to the associated views in the layout file and populate them.
+     *      (ex. populate the ListView of QRCodes with the arraylist of QRCodes)
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -106,6 +139,13 @@ public class CodesFragment extends Fragment {
         //SORT BY FEATURE //Context menu setup -- registering "sort-by" TextView
         registerForContextMenu(sort_method);
     }
+
+    /**
+     * On creation of the context menu, we add options, in this case the two sorting options are by score (Highest to lowest & Lowest to highest)
+     * @param menu
+     * @param v
+     * @param menuInfo
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -114,6 +154,12 @@ public class CodesFragment extends Fragment {
         menu.add(0, v.getId(), 0, "Lowest Score");
     }
 
+    /**
+     * Add functionality to sorting methods in menu, sort by descending (based on score) for highest score sorting
+     * and ascending (based on score) for lowest score sorting
+     * @param item
+     * @return
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle() == "Highest Score") {

@@ -9,6 +9,19 @@ import java.util.ArrayList;
 import java.lang.Math;
 import java.util.Hashtable;
 
+/**
+ * Introductory Comments:
+ *      This Java file is a custom QRCode class. The purpose of this class is to abstract all of the
+ *      attributes and associated methods of a QRCode. Each QRCode has a Score, Hash, and Code. Each
+ *      QRCode can have an associated Photo (Bitmap) and Geolocation (Array of doubles -- (x,y)) but
+ *      these attributes are not needed to initialize a QRCode object.
+ *
+ *      **No outstanding issues**
+ */
+
+/**
+ * This is a class that represents a QRCode and holds its associated attributes (ex. Score, Hash)
+ */
 public class QRCode implements Serializable, Comparable<QRCode> {
     private String hash;
     private int score;
@@ -19,6 +32,11 @@ public class QRCode implements Serializable, Comparable<QRCode> {
     //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
     private ArrayList<Double> geolocation;
 
+    /**
+     * QRCode Constructor: takes in code and self computes associated hash and score
+     * @param code
+     *      String code passed in from which score and hash wil be computed
+     */
     public QRCode(String code) {
         //Set code equal to passed in code and compute hash
         this.code = code;
@@ -51,36 +69,95 @@ public class QRCode implements Serializable, Comparable<QRCode> {
         has_location = false;
     }
 
+    /**
+     * Gets hash of QRCode object
+     * @return
+     *      Hash of QRCode
+     */
     public String getHash() {
         return hash;
     }
 
+    /**
+     * Gets score of QRCode object
+     * @return
+     *      Score of QRCode
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Gets String code of QRCode object
+     * @return
+     *      Code of QRCode
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Gets Geolocation of QRCode object
+     * @return
+     *      Geolocation of QRCode in the form of (x,y) coordinates
+     */
     public ArrayList<Double> getGeolocation() {
         return geolocation;
     }
 
+    /**
+     * Used to check whether QRCode object has an associated photo
+     * @return
+     *      has_photo boolean
+     */
+    public boolean hasPhoto() {
+        return has_photo;
+    }
+
+    /**
+     * Used to check whether QRCode object has an associated geolocation
+     * @return
+     *      has_location boolean
+     */
+    public boolean hasLocation() {
+        return has_location;
+    }
+
+    /**
+     * Gets Photo associated with QRCode object
+     * @return
+     *      Photo of QRCode in the form of a Bitmap
+     */
     public Bitmap getPhoto() {
         return photo;
     }
 
+    /**
+     * Allows us to set the photo of a QRCode object
+     * @param photo
+     *      Photo in the form of a bitmap
+     */
     public void setPhoto(Bitmap photo) {
         has_photo = true;
         this.photo = photo;
     }
 
+    /**
+     * Allows us to set the geolocation of a QRCode object
+     * @param geolocation
+     *      Geolocation in the form of an (x,y) coordinate
+     */
     public void setGeolocation(ArrayList<Double> geolocation) {
         has_location = true;
         this.geolocation = geolocation;
     }
 
+    /**
+     * Overridden comparator of QRCode objects based on the scores of the QRCodes
+     * @param qrCode
+     * @return
+     *      1 if the current QRCode's score is higher, -1 for the opposite, and 0 if the score are equal
+     */
     @Override
     public int compareTo(QRCode qrCode) {
         if (this.score > qrCode.getScore()) {
