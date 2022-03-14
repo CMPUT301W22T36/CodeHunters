@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -107,9 +108,15 @@ public class FirstWelcomeFragment extends Fragment {
 
                     // TODO: implementation with database from later user stories, currently a placeholder.
                     // TODO: ensure the username is unique! Search the database.
-                    boolean uniqueName = true;
+                    boolean uniqueName = false;
 
-                    if (uniqueName) {
+                    // TODO: remove this example!
+                    if (true) {
+                        // goto the profile fragment for demonstration purposes only!
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                                .commit();
+                    } else if (uniqueName) {
                         // Store the attributes of the new account
                         // TODO: implementation with database from later user stories, currently a placeholder.
                         // TODO: make the change to the user profile, ensure stored to database
@@ -146,10 +153,8 @@ public class FirstWelcomeFragment extends Fragment {
                 public void onClick(View view) {
                     // Move to the fragment to scan the QR code
                     // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivityFragmentView, EditNameFragment.class, null)
-                            //.replace(R.id.mainActivityFragmentView, ScanToLogin.class, null)
-                            .commit();
+                    Intent myIntent = new Intent(getActivity().getApplicationContext(),ScanToLogin.class);
+                    getActivity().startActivity(myIntent);
                 }
             });
         }
