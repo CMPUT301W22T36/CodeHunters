@@ -15,9 +15,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditNameFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Class: EditNameFragment, a {@link Fragment} subclass.
+ *
+ * Display the fragment to change the user's name and manage any edits to the username.
  */
 public class EditNameFragment extends Fragment {
 
@@ -26,6 +26,9 @@ public class EditNameFragment extends Fragment {
     private TextView editEmail;
     private Button confirmChangeN;
 
+    /**
+     * Required empty public constructor
+     */
     public EditNameFragment() {
         // Required empty public constructor
     }
@@ -34,21 +37,28 @@ public class EditNameFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserPersonalProfileFragment.
+     * @return A new instance of fragment EditEmailFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static EditNameFragment newInstance(String param1, String param2) {
+    public static EditNameFragment newInstance() {
         EditNameFragment fragment = new EditNameFragment();
         return fragment;
     }
 
+    /**
+     * This initializes the fragment
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This inflates the fragment's layout
+     * @param inflater: the LayoutInflator for the view
+     * @param container: the ViewGroup of the view
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,6 +66,11 @@ public class EditNameFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_edit_name, container, false);
     }
 
+    /**
+     * Display the static email and edit the username.
+     * @param view: the current view
+     * @param savedInstanceState: This is the bundle that will be called through the superclass
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -72,6 +87,10 @@ public class EditNameFragment extends Fragment {
 
         // Set the confirm button to respond to user clicks and call their corresponding functions
         confirmChangeN.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Confirm the new username
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // Obtain the new name
@@ -98,6 +117,11 @@ public class EditNameFragment extends Fragment {
                     builder.setTitle("Unique Username Required");
                     builder.setMessage("This username is unavailable, please try another username.");
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        /**
+                         * Dismiss the notification
+                         * @param dialogInterface: the current dialog interface
+                         * @param i: button id of button clicked
+                         */
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();

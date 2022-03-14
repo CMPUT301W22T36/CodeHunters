@@ -18,9 +18,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FirstWelcomeFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
+ *
+ * Load the set up new account fragment. Test if the device has an associated account, connect
+ * the username to this device and game session, and proceed to the main game screen.
  */
 public class FirstWelcomeFragment extends Fragment {
 
@@ -30,6 +31,9 @@ public class FirstWelcomeFragment extends Fragment {
     private Button confirm;
     private Button scan;
 
+    /**
+     * Required empty public constructor
+     */
     public FirstWelcomeFragment() {
         // Required empty public constructor
     }
@@ -41,16 +45,26 @@ public class FirstWelcomeFragment extends Fragment {
      * @return A new instance of fragment FirstWelcomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FirstWelcomeFragment newInstance(String param1, String param2) {
+    public static FirstWelcomeFragment newInstance() {
         FirstWelcomeFragment fragment = new FirstWelcomeFragment();
         return fragment;
     }
 
+    /**
+     * This initializes the fragment
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This inflates the fragment's layout
+     * @param inflater: the LayoutInflator for the view
+     * @param container: the ViewGroup of the view
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,6 +72,12 @@ public class FirstWelcomeFragment extends Fragment {
         return inflater.inflate(R.layout.first_welcome, container, false);
     }
 
+    /**
+     * Test if this device already has an associated account, then either load that account or
+     * prompt to setup a new account.
+     * @param view: the current view
+     * @param savedInstanceState: This is the bundle that will be called through the superclass
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -98,6 +118,10 @@ public class FirstWelcomeFragment extends Fragment {
 
             // Set the buttons to respond to user clicks and call their corresponding functions
             confirm.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * Confirm the new account
+                 * @param view: the current view
+                 */
                 @Override
                 public void onClick(View view) {
                     // Store the new account, and move to the main game fragment
@@ -135,6 +159,11 @@ public class FirstWelcomeFragment extends Fragment {
                         builder.setTitle("Unique Username Required");
                         builder.setMessage("This username is unavailable, please try another username.");
                         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            /**
+                             * Confirm the new account
+                             * @param dialogInterface: the current dialog interface
+                             * @param i: button id of button clicked
+                             */
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
@@ -149,6 +178,10 @@ public class FirstWelcomeFragment extends Fragment {
 
             // Set the buttons to respond to user clicks and call their corresponding functions
             scan.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * Scan the account QR code
+                 * @param view: the current view
+                 */
                 @Override
                 public void onClick(View view) {
                     // Move to the fragment to scan the QR code

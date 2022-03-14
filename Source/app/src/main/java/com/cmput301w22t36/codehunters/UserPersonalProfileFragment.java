@@ -14,9 +14,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserPersonalProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Class: UserPersonalProfileFragment, a {@link Fragment} subclass.
+ *
+ * Load the set up user's personal profile fragment and display their information. Obtain any
+ * username or email edits.
+ *
+ * Outstanding issues: currently not properly accessed in the tangible prototype.
  */
 public class UserPersonalProfileFragment extends Fragment {
 
@@ -29,6 +32,9 @@ public class UserPersonalProfileFragment extends Fragment {
     private Button get_account_QR_button;
     private Button share_profile_button;
 
+    /**
+     * Required empty public constructor
+     */
     public UserPersonalProfileFragment() {
         // Required empty public constructor
     }
@@ -37,21 +43,28 @@ public class UserPersonalProfileFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserPersonalProfileFragment.
+     * @return A new instance of fragment EditEmailFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static UserPersonalProfileFragment newInstance(String param1, String param2) {
+    public static UserPersonalProfileFragment newInstance() {
         UserPersonalProfileFragment fragment = new UserPersonalProfileFragment();
         return fragment;
     }
 
+    /**
+     * This initializes the fragment
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This inflates the fragment's layout
+     * @param inflater: the LayoutInflator for the view
+     * @param container: the ViewGroup of the view
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +72,12 @@ public class UserPersonalProfileFragment extends Fragment {
         return inflater.inflate(R.layout.user_personal_profile, container, false);
     }
 
+    /**
+     * Display the user profile, and respond to user requests to edit information or to obtain
+     * the QR codes linked to their account.
+     * @param view: the current view
+     * @param savedInstanceState: This is the bundle that will be called through the superclass
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -78,6 +97,10 @@ public class UserPersonalProfileFragment extends Fragment {
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         edit_name_button.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Prompt to edit the username
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // Move to the fragment to edit the username
@@ -86,7 +109,12 @@ public class UserPersonalProfileFragment extends Fragment {
                         .commit();
             }
         });
+
         edit_email_button.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Prompt to edit the profile email
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // Move to the fragment to edit the email for the users contact information
@@ -95,13 +123,23 @@ public class UserPersonalProfileFragment extends Fragment {
                         .commit();
             }
         });
+
         get_account_QR_button.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Prompt to obtain the QR code allowing a user to login to their account from another device
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // TODO: Placeholder
             }
         });
+
         share_profile_button.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Prompt to obtain the QR code to share their game profile
+             * @param view: the current view
+             */
             @Override
             public void onClick(View view) {
                 // TODO: Placeholder

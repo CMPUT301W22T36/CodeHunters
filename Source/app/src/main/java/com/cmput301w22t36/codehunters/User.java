@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 /**
  * Class: User
- * Initialize and track the user's attributes.
+ *
+ * Initialize and track a user's attributes.
  */
-// TODO: extends FSDataPoint
 public class User {
     // the unique device IDs of the user's devices associated with their account
     private ArrayList<String> accountUUIDs;
@@ -18,57 +18,101 @@ public class User {
     private static String username;
     // the user's email for contact information
     private static String email;
-
-    // TODO: update once QR class exists, and add the corresponding getters and setters
-    /*
     // the QR code allowing a user to login to their account from another device
-    private QR accountLoginQR;
+    private QRCode accountLoginQR;
     // the QR code to share their game profile
-    private QR shareProfileQR;
+    private QRCode shareProfileQR;
     // the list of QR codes that this user has scanned
-    private ArrayList<QR> UserQRList;
-    */
-
-    /**
-     * Create a new user. An accountLoginQR and shareProfileQR will be created,
-     *      and UserQRList will be initialized as an empty list.
-     * @param //accountUUIDs an array of UUIDs indicating the devices linked to this user profile
-     * @param //username the unique username that identifies the user
-     * @param //email the user's email as optional contact information
-     */
-/*    public User(ArrayList<String> accountUUIDs, String username, String email) {
-        setAccountUUIDs(accountUUIDs);
-        setUsername(username);
-        setEmail(email);
-
-        // TODO: set the remaining variables and lists (accountLoginQR, shareProfileQR, UserQRList) as required
-        // Generate and save the accountLoginQR
-        // Generate and save the shareProfileQR
-        // UserQRList will be initialized as an empty list.
-    }*/
+    private ArrayList<QRCode> UserQRList;
 
     // Getters and Setters
+    /**
+     * Get the UUIDs associated with this unique username
+     */
     public ArrayList<String> getAccountUUIDs() {
         return accountUUIDs;
     }
 
+    /**
+     * Set the list of UUIDs associated with this unique username
+     * @param accountUUIDs: list of UUIDS
+     */
     public void setAccountUUIDs(ArrayList<String> accountUUIDs) {
         this.accountUUIDs = accountUUIDs;
     }
 
+    /**
+     * Get the username
+     */
     public static String getUsername() {
         return username;
     }
 
+    /**
+     * Set the unique username
+     * @param username: unique name to set
+     */
     public static void setUsername(String username) {
         User.username = username;
     }
 
+    /**
+     * Get the email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Set the email
+     * @param email: the contact information to set
+     */
     public static void setEmail(String email) {
         User.email = email;
+    }
+
+    /**
+     * Get the QR code allowing a user to login to their account from another device
+     */
+    public QRCode getAccountLoginQR() {
+        return accountLoginQR;
+    }
+
+    /**
+     * Set the QR code allowing a user to login to their account from another device
+     * @param accountLoginQR: the QRCode to set
+     */
+    public void setAccountLoginQR(QRCode accountLoginQR) {
+        this.accountLoginQR = accountLoginQR;
+    }
+
+    /**
+     * Get the QR code to share their game profile
+     */
+    public QRCode getShareProfileQR() {
+        return shareProfileQR;
+    }
+
+    /**
+     * Set the QR code to share their game profile
+     * @param shareProfileQR: the QRCode to set
+     */
+    public void setShareProfileQR(QRCode shareProfileQR) {
+        this.shareProfileQR = shareProfileQR;
+    }
+
+    /**
+     * Get the list of QR codes that this user has scanned
+     */
+    public ArrayList<QRCode> getUserQRList() {
+        return UserQRList;
+    }
+
+    /**
+     * Set the list of QR codes that this user has scanned
+     * @param userQRList: the list of QR codes to set
+     */
+    public void setUserQRList(ArrayList<QRCode> userQRList) {
+        UserQRList = userQRList;
     }
 }
