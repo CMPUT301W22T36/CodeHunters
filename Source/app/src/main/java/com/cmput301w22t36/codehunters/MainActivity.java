@@ -103,9 +103,10 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
+                        .replace(R.id.mainActivityFragmentView, mapFragment)
                         .commit();
             }
         });
