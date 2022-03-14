@@ -108,7 +108,7 @@ public class MapFragment extends Fragment {
                     );
                     qrPinsList.add(new OverlayItem(
                             code.getCode(),
-                            String.valueOf(code.getScore()),
+                            String.valueOf(code.getScore()).concat(" Points"),
                             codeGeoPoint
                     ));
                 }
