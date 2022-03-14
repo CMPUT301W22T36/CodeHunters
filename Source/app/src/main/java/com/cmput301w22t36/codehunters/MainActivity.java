@@ -52,11 +52,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     //.add(R.id.mainActivityFragmentView, MapFragment.class, null)
-                    .add(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                    .add(R.id.mainActivityFragmentView, FirstWelcomeFragment.class, null)
                     .commit();
         }
 
