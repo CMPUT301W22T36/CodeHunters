@@ -85,11 +85,17 @@ public class MapFragment extends Fragment {
         if (getArguments() != null) {
             codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
             for (QRCode code : codeArrayList) {
-                qrPinsList.add(new OverlayItem(
-                        code.getCode(),
-                        String.valueOf(code.getScore()),
-                        code.getGeolocation()
-                ));
+                if (code.getGeolocation() != null) {
+                    GeoPoint codeGeoPoint = new GeoPoint(
+                            code.getGeolocation().get(0),
+                            code.getGeolocation().get(1)
+                    );
+                    qrPinsList.add(new OverlayItem(
+                            code.getCode(),
+                            String.valueOf(code.getScore()),
+                            codeGeoPoint
+                    ));
+                }
             }
         }
 
