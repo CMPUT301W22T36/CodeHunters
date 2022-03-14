@@ -74,6 +74,13 @@ public class ScanToLogin extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     //Dismiss dialog
                     dialogInterface.dismiss();
+
+                    // TODO: return to the MapFragment.
+//                    getSupportFragmentManager().beginTransaction()
+//                                .setReorderingAllowed(true)
+//                                .add(R.id.mainActivityFragmentView, MapFragment.class, null)
+//                                .commit();
+
                 }
             });
             builder.show();
