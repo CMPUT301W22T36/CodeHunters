@@ -17,7 +17,15 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link BestCodesFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+//Introduction: This fragment is used to calculate and get codes with best scores.
+//              It will get all codes from online database, sort them and display them from high score to low.
+//              It can replace socialFragmentView in SocialFragment
+//              just for  now: No actual functions but all display and navigation are completed.
 public class BestCodesFragment extends Fragment {
     TextView title;
     ListView bestcodes;
