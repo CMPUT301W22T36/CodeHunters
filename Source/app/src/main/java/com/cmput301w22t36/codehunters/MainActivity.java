@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         codesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int x = 2;
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
                 ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
