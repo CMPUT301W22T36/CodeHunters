@@ -32,8 +32,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="420dp"
                 android:ems="12"
-                android:text="Name"
-                android:textColor="@color/black"
+                android:hint="Name"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -44,8 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:ems="12"
-                android:text="Email (Optional)"
-                android:textColor="@color/black"
+                android:hint="Email (Optional)"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/usernameView" />
@@ -57,7 +55,6 @@
                 android:layout_marginTop="200dp"
                 android:lines="3"
                 android:text="\t\t\t\t\t\t\t\t\t\t\t\t\tWelcome!\nPlease enter a username or scan your\n\t\t\t\t\t\t unique account QR code."
-                android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

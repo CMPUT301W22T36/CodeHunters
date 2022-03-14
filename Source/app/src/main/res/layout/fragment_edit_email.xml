@@ -34,7 +34,6 @@
                 android:layout_marginTop="132dp"
                 android:ems="15"
                 android:text="Static Name"
-                android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -46,12 +45,10 @@
                 android:layout_marginStart="28dp"
                 android:layout_marginTop="36dp"
                 android:ems="15"
+                android:hint="Edit Email"
                 android:textSize="16sp"
-                android:text="Edit Email"
-                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editName"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/editName" />
 
             <Button
                 android:id="@+id/confirmChangeE"
