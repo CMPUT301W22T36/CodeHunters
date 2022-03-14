@@ -11,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.cmput301w22t36.codehunters.Data.Geolocation_PhotosFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,9 +89,19 @@ public class CodesFragment extends Fragment {
         }
         total_score.setText(String.valueOf(sum));
 
+
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new CustomQRCodeList(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
+
+        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
+                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+
+            }
+        });
 
         //SORT BY FEATURE //Context menu setup -- registering "sort-by" TextView
         registerForContextMenu(sort_method);

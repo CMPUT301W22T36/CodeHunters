@@ -3,15 +3,11 @@ package com.cmput301w22t36.codehunters;
 import android.graphics.Bitmap;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.lang.Math;
 import java.util.Hashtable;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class QRCode implements Serializable, Comparable<QRCode> {
     private String hash;
@@ -19,7 +15,7 @@ public class QRCode implements Serializable, Comparable<QRCode> {
     private String code;
     private boolean has_photo;
     private boolean has_location;
-    private Bitmap photo;
+    private transient Bitmap photo;
     //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
     private ArrayList<Double> geolocation;
 
