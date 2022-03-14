@@ -1,4 +1,12 @@
 package com.cmput301w22t36.codehunters;
+/*
+This Class allows the user to see the location of QRCodes that have a location on a map and view
+the info for the QRCode.
+
+Outstanding issues:
+ - We don't yet have a fragment to view QRCode data, currently the pins just create a toast when tapped
+ - For newly scanned pins to be seen, the fragment must be closed and reopened
+ */
 
 import android.Manifest;
 import android.content.Context;
@@ -67,7 +75,11 @@ public class MapFragment extends Fragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
+    /**
+     * This method generates a new instance of the MapFragment with the required data to plot pins
+     * @param codes an ArrayList of all the QRCodes
+     * @return a new instance of the MapFragment ready to go
+     */
     public static MapFragment newInstance(ArrayList<QRCode> codes) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
@@ -76,6 +88,10 @@ public class MapFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * onCreate method to prepare permissions and pins to be plotted
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +145,13 @@ public class MapFragment extends Fragment {
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
     }
 
+    /**
+     * returns the inflated View
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -137,6 +160,11 @@ public class MapFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
+    /**
+     * Now that the view has been created, this method configures the map, its overlays, and buttons
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -206,18 +234,29 @@ public class MapFragment extends Fragment {
         map.getOverlays().add(qrPinsOverlay);
     }
 
+    /**
+     * Runs all the tasks to resume the fragment
+     */
     @Override
     public void onResume() {
         super.onResume();
         map.onResume();
     }
 
+    /**
+     * runs all the tasks to pause the fragment
+     */
     @Override
     public void onPause() {
         super.onPause();
         map.onPause();
     }
 
+    /**
+     * checks for permissions that the app has from those it needs, then creates a list of the
+     * permissions that are still required
+     * @return an ArrayList of all the String names of the required permissions
+     */
     private ArrayList<String> checkPermissions() {
         ArrayList<String> requiredPermissions = new ArrayList<>();
 
