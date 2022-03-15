@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.cmput301w22t36.codehunters.Data.Geolocation_PhotosFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.osmdroid.api.IMapController;
@@ -59,6 +60,7 @@ public class MapFragment extends Fragment {
 
     // List of "OverlayItem"s (i.e. list of qrCodes in map form)
     protected ArrayList<OverlayItem> qrPinsList;
+    private ArrayList<QRCode> mappedQrPinsList;
     private ArrayList<QRCode> codeArrayList;
 
     // Objects used for permission checking
@@ -97,6 +99,7 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         qrPinsList = new ArrayList<OverlayItem>();
+        mappedQrPinsList = new ArrayList<QRCode>();
 
         if (getArguments() != null) {
             codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
@@ -111,6 +114,7 @@ public class MapFragment extends Fragment {
                             String.valueOf(code.getScore()).concat(" Points"),
                             codeGeoPoint
                     ));
+                    mappedQrPinsList.add(code);
                 }
             }
         }
@@ -201,28 +205,14 @@ public class MapFragment extends Fragment {
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        // for now, on tap make a toast
-                        String toastString = new String();
-                        toastString = toastString.concat(qrPinsList.get(index).getTitle())
-                            .concat(" was tapped");
-
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                toastString, Toast.LENGTH_SHORT)
-                                .show();
-
                         // This return value was given in the example, I'm just leaving it
                         return true;
                     }
                     @Override
                     public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        // for now, on tap make a toast
-                        String toastString = new String();
-                        toastString = toastString.concat(qrPinsList.get(index).getTitle())
-                                .concat(" was long pressed");
-
-                        Toast.makeText(getActivity().getApplicationContext(),
-                                toastString, Toast.LENGTH_SHORT)
-                                .show();
+                        // when long pressed, show the image of the code
+                        QRCode qrCodeClicked = mappedQrPinsList.get(index);
+                        new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
 
                         // This return value was given in the example, I'm just leaving it
                         return false;
