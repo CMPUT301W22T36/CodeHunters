@@ -31,6 +31,8 @@ public class UserMapper extends DataMapper<User> {
 
     @Override
     public void get(String documentName, CompletionHandler ch) {
+        // get the document for this UUID. I think that we'll have the UUID be the first UDID for
+        // that account. That seems the most simple to me.
         usersRef.document(documentName)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -39,13 +41,15 @@ public class UserMapper extends DataMapper<User> {
                         if (task.isSuccessful()) {
                             DocumentSnapshot deviceDocument = task.getResult();
                             if (deviceDocument.exists()) {
+                                // task was successful and the document was found.
                                 User retrievedUser = new User();
                                 Map<String, Object> userData = deviceDocument.getData();
                                 retrievedUser.setUsername((String) userData.get("username"));
                                 retrievedUser.setEmail((String) userData.get("email"));
-                                // retrievedUser.setId(documentName); // we'll have to modify the user class to get this to work
-                                // retrievedUser.setUdid(udid); // we'll have to modify the user class to get this to work
+                                retrievedUser.setId(documentName); // we'll have to modify the user class to get this to work
                                 ch.handleSuccess(retrievedUser);
+                            } else {
+                                ch.handleError();
                             }
                         } else {
                             ch.handleError();
