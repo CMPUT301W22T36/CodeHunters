@@ -15,7 +15,7 @@ public abstract class DataMapper<D extends Data> {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public abstract void get(int i, CompletionHandler ch);
+    public abstract void get(String documentName, CompletionHandler ch);
     public abstract void set(D data);
     public abstract void update(D data);
     public abstract void delete(D data);
