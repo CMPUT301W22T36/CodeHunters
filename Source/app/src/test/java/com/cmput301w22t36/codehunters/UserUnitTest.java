@@ -3,6 +3,8 @@ package com.cmput301w22t36.codehunters;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

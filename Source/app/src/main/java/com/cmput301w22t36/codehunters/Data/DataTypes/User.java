@@ -1,8 +1,7 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Data.DataTypes;
 
-import android.graphics.Bitmap;
-
-import androidx.fragment.app.Fragment;
+import com.cmput301w22t36.codehunters.Data.Data;
+import com.cmput301w22t36.codehunters.QRCode;
 
 import java.util.ArrayList;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  *
  * Initialize and track a user's attributes.
  */
-public class User {
+public class User extends Data {
     // the unique device IDs of the user's devices associated with their account
     private ArrayList<String> accountUUIDs;
     // the user's unique username

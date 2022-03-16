@@ -17,8 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cmput301w22t36.codehunters.Data.Geolocation_PhotosFragment;
-
 import java.util.ArrayList;
 import java.util.Collections;
 

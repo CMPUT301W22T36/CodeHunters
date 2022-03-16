@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 
 /**
  * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
