@@ -14,15 +14,17 @@ public class User extends Data {
     // the unique device IDs of the user's devices associated with their account
     private ArrayList<String> accountUUIDs;
     // the user's unique username
-    private static String username;
+    private String username;
     // the user's email for contact information
-    private static String email;
+    private String email;
     // the QR code allowing a user to login to their account from another device
     private QRCode accountLoginQR;
     // the QR code to share their game profile
     private QRCode shareProfileQR;
     // the list of QR codes that this user has scanned
     private ArrayList<QRCode> UserQRList;
+    // Whether user is owner
+    private Boolean isOwner;
 
     // Getters and Setters
     /**
@@ -43,7 +45,7 @@ public class User extends Data {
     /**
      * Get the username
      */
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -51,8 +53,8 @@ public class User extends Data {
      * Set the unique username
      * @param username: unique name to set
      */
-    public static void setUsername(String username) {
-        User.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -66,8 +68,8 @@ public class User extends Data {
      * Set the email
      * @param email: the contact information to set
      */
-    public static void setEmail(String email) {
-        User.email = email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
