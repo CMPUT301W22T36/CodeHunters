@@ -5,13 +5,12 @@ import androidx.annotation.NonNull;
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class QRCodeMapper extends DataMapper<QRCodeData> {
 
@@ -25,6 +24,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         PHOTOURL("photourl");
 
         private final String field;
+
         Fields(final String field) {
             this.field = field;
         }
@@ -37,7 +37,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     }
 
 
-    private CollectionReference qrCodesRef;
+    private final CollectionReference qrCodesRef;
 
     public QRCodeMapper() {
         super();
@@ -49,34 +49,24 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public void get(String documentID, CompletionHandler ch) {
         qrCodesRef.document(documentID)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot qrCodeDocument = task.getResult();
-                            if (qrCodeDocument.exists()) {
-                                // task was successful and the document was found.
-                                QRCodeData retrievedQRCode = new QRCodeData();
-                                Map<String, Object> qrCodeData = qrCodeDocument.getData();
-                                // documentID is the same as uuid
-                                retrievedQRCode.setId(documentID);
-                                try {
-                                    retrievedQRCode.setUserRef((String) qrCodeData.get(Fields.USERREF.toString()));
-                                    retrievedQRCode.setScore((int) qrCodeData.get(Fields.SCORE.toString()));
-                                    retrievedQRCode.setCode((String) qrCodeData.get(Fields.CODE.toString()));
-                                    retrievedQRCode.setLat((int) qrCodeData.get(Fields.LAT.toString()));
-                                    retrievedQRCode.setLon((int) qrCodeData.get(Fields.LON.toString()));
-                                    retrievedQRCode.setPhotourl((String) qrCodeData.get(Fields.PHOTOURL.toString()));
-                                    ch.handleSuccess(retrievedQRCode);
-                                } catch (NullPointerException e){
-                                    ch.handleError(e);
-                                }
-                            } else {
-                                ch.handleError(new FSAccessException("Document doesn't exist."));
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot qrCodeDocument = task.getResult();
+                        if (qrCodeDocument.exists()) {
+                            // task was successful and the document was found.
+                            Map<String, Object> qrCodeData = qrCodeDocument.getData();
+                            // documentID is the same as uuid
+                            try {
+                                QRCodeData retrievedQRCode = mapToData(Objects.requireNonNull(qrCodeData));
+                                ch.handleSuccess(retrievedQRCode);
+                            } catch (NullPointerException e) {
+                                ch.handleError(e);
                             }
                         } else {
-                            ch.handleError(new FSAccessException("Data retrieval failed"));
+                            ch.handleError(new FSAccessException("Document doesn't exist."));
                         }
+                    } else {
+                        ch.handleError(new FSAccessException("Data retrieval failed"));
                     }
                 });
     }
@@ -85,12 +75,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public void set(QRCodeData data, CompletionHandler ch) {
         Map<String, Object> qrCodeData = this.dataToMap(data);
         qrCodesRef.document(data.getId()).set(qrCodeData)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ch.handleSuccess(data);
-                    }
-                });
+                .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     @Override
@@ -98,23 +83,13 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         Map<String, Object> qrCodeData = this.dataToMap(data);
         qrCodesRef.document(data.getId())
                 .update(qrCodeData)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ch.handleSuccess(data);
-                    }
-                });
+                .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     @Override
     public void delete(QRCodeData data, CompletionHandler ch) {
         qrCodesRef.document(data.getId()).delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                   @Override
-                   public void onComplete(@NonNull Task<Void> task) {
-                       ch.handleSuccess(data);
-                   }
-                });
+                .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     // Used as a generic way to load a map with fields from data.
@@ -126,5 +101,18 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         qrCodeMap.put(Fields.LAT.toString(), data.getLat());
         qrCodeMap.put(Fields.LON.toString(), data.getLon());
         return qrCodeMap;
+    }
+
+    private QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
+        // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
+        QRCodeData qrCodeData = new QRCodeData();
+        qrCodeData.setId(Objects.requireNonNull((String) dataMap.get("DocumentId")));
+        qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
+        qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
+        qrCodeData.setCode(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
+        qrCodeData.setLat(Objects.requireNonNull((Integer) dataMap.get(Fields.LAT.toString())));
+        qrCodeData.setLon(Objects.requireNonNull((Integer) dataMap.get(Fields.LON.toString())));
+        qrCodeData.setPhotourl(Objects.requireNonNull((String) dataMap.get(Fields.PHOTOURL.toString())));
+        return qrCodeData;
     }
 }
