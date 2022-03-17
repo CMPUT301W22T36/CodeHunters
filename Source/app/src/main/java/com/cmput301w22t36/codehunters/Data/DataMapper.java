@@ -4,9 +4,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public abstract class DataMapper<D extends Data> {
 
-    public abstract class CompletionHandler {
-        public abstract void handleSuccess(D data);
-        public abstract void handleError();
+    public class CompletionHandler {
+        public void handleSuccess(D data) {}
+        public void handleError(Exception e) {}
     }
 
     protected FirebaseFirestore db;
@@ -15,9 +15,8 @@ public abstract class DataMapper<D extends Data> {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public abstract void get(String documentName, CompletionHandler ch);
-    public abstract void set(D data);
-    public abstract void update(D data);
-    public abstract void delete(D data);
+    public abstract void get(String documentID, CompletionHandler ch);
+    public abstract void set(D data, CompletionHandler ch);
+    public abstract void update(D data, CompletionHandler ch);
+    public abstract void delete(D data, CompletionHandler ch);
 }
-

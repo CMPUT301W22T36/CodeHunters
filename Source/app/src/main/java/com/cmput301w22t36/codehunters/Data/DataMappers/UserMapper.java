@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,8 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class UserMapper extends DataMapper<User> {
-    private CollectionReference usersRef;
-    private CollectionReference devicesRef;
+    private final CollectionReference usersRef;
+    private final CollectionReference devicesRef;
 
     public UserMapper() {
         super();
@@ -30,10 +31,10 @@ public class UserMapper extends DataMapper<User> {
     }
 
     @Override
-    public void get(String documentName, CompletionHandler ch) {
+    public void get(String documentID, CompletionHandler ch) {
         // get the document for this UUID. I think that we'll have the UUID be the first UDID for
         // that account. That seems the most simple to me.
-        usersRef.document(documentName)
+        usersRef.document(documentID)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -46,20 +47,20 @@ public class UserMapper extends DataMapper<User> {
                                 Map<String, Object> userData = deviceDocument.getData();
                                 retrievedUser.setUsername((String) userData.get("username"));
                                 retrievedUser.setEmail((String) userData.get("email"));
-                                retrievedUser.setId(documentName);
+                                retrievedUser.setId(documentID);
                                 ch.handleSuccess(retrievedUser);
                             } else {
-                                ch.handleError();
+                                ch.handleError(new FSAccessException("Document doesn't exist"));
                             }
                         } else {
-                            ch.handleError();
+                            ch.handleError(new FSAccessException("Data retrieval failed"));
                         }
                     }
                 });
     }
 
     @Override
-    public void set(User data) {
+    public void set(User data, CompletionHandler ch) {
         String documentName = data.getId(); // once again, we need to change the user class
         Map<String, Object> userData = new HashMap<>();
         userData.put("username", data.getUsername());
@@ -68,12 +69,12 @@ public class UserMapper extends DataMapper<User> {
     }
 
     @Override
-    public void update(User data) {
+    public void update(User data, CompletionHandler ch) {
         // this might end up basically just being the same as set?
     }
 
     @Override
-    public void delete(User data) {
+    public void delete(User data, CompletionHandler ch) {
 
     }
 
@@ -93,16 +94,14 @@ public class UserMapper extends DataMapper<User> {
                         // now that we have the uuid for this udid, we can get the user
                         get(uuid, ch);
                     } else {
-                        ch.handleError();
+                        ch.handleError(new FSAccessException("Document doesn't exist"));
                     }
-
                 } else {
                     // ERROR
-                    ch.handleError();
+                    ch.handleError(new FSAccessException("Data retrieval failed"));
                 }
             }
         });
-        return;
     }
 
 }

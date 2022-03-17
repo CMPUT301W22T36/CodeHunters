@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Data.DataTypes;
 
 import com.cmput301w22t36.codehunters.Data.Data;
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.QRCode;
 
 import java.util.ArrayList;
