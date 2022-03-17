@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class QRCodeMapper extends DataMapper<QRCodeData> {
 
+    // Constants for document fields.
     enum Fields {
         USERREF("userRef"),
         SCORE("score"),
@@ -76,24 +77,29 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     @Override
     public void set(QRCodeData data) {
-        String documentName = data.getId(); // once again, we need to change the user class
-        Map<String, Object> qrCodeData = new HashMap<>();
-        qrCodeData.put(Fields.USERREF.toString(), data.getUserRef());
-        qrCodeData.put(Fields.SCORE.toString(), data.getScore());
-        qrCodeData.put(Fields.CODE.toString(), data.getCode());
-        qrCodeData.put(Fields.LAT.toString(), data.getLat());
-        qrCodeData.put(Fields.LON.toString(), data.getLon());
-        qrCodeData.put(Fields.PHOTOURL.toString(), data.getPhotourl());
-        qrCodesRef.document(documentName).set(qrCodeData);
+        Map<String, Object> qrCodeData = this.dataToMap(data);
+        qrCodesRef.document(data.getId()).set(qrCodeData);
     }
 
     @Override
     public void update(QRCodeData data) {
-
+        Map<String, Object> qrCodeData = this.dataToMap(data);
+        qrCodesRef.document(data.getId()).update(qrCodeData);
     }
 
     @Override
     public void delete(QRCodeData data) {
+        qrCodesRef.document(data.getId()).delete();
+    }
 
+    // Used as a generic way to load a map with fields from data.
+    private Map<String, Object> dataToMap(QRCodeData data) {
+        Map<String, Object> qrCodeMap = new HashMap<>();
+        qrCodeMap.put(Fields.USERREF.toString(), data.getUserRef());
+        qrCodeMap.put(Fields.SCORE.toString(), data.getScore());
+        qrCodeMap.put(Fields.CODE.toString(), data.getCode());
+        qrCodeMap.put(Fields.LAT.toString(), data.getLat());
+        qrCodeMap.put(Fields.LON.toString(), data.getLon());
+        return qrCodeMap;
     }
 }
