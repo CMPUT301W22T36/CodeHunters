@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -28,6 +29,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
             this.field = field;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return field;
@@ -38,13 +40,14 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     private CollectionReference qrCodesRef;
 
     public QRCodeMapper() {
+        super();
         qrCodesRef = db.collection("qrcodes");
 
     }
 
     @Override
-    public void get(String documentName, CompletionHandler ch) {
-        qrCodesRef.document(documentName)
+    public void get(String documentID, CompletionHandler ch) {
+        qrCodesRef.document(documentID)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -56,40 +59,62 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                                 QRCodeData retrievedQRCode = new QRCodeData();
                                 Map<String, Object> qrCodeData = qrCodeDocument.getData();
                                 // documentID is the same as uuid
-                                retrievedQRCode.setId(documentName);
-                                retrievedQRCode.setUserRef((String) qrCodeData.get(Fields.USERREF.toString()));
-                                retrievedQRCode.setScore((int) qrCodeData.get(Fields.SCORE.toString()));
-                                retrievedQRCode.setCode((String) qrCodeData.get(Fields.CODE.toString()));
-                                retrievedQRCode.setLat((int) qrCodeData.get(Fields.LAT.toString()));
-                                retrievedQRCode.setLon((int) qrCodeData.get(Fields.LON.toString()));
-                                retrievedQRCode.setPhotourl((String) qrCodeData.get(Fields.PHOTOURL.toString()));
-
-                                ch.handleSuccess(retrievedQRCode);
+                                retrievedQRCode.setId(documentID);
+                                try {
+                                    retrievedQRCode.setUserRef((String) qrCodeData.get(Fields.USERREF.toString()));
+                                    retrievedQRCode.setScore((int) qrCodeData.get(Fields.SCORE.toString()));
+                                    retrievedQRCode.setCode((String) qrCodeData.get(Fields.CODE.toString()));
+                                    retrievedQRCode.setLat((int) qrCodeData.get(Fields.LAT.toString()));
+                                    retrievedQRCode.setLon((int) qrCodeData.get(Fields.LON.toString()));
+                                    retrievedQRCode.setPhotourl((String) qrCodeData.get(Fields.PHOTOURL.toString()));
+                                    ch.handleSuccess(retrievedQRCode);
+                                } catch (NullPointerException e){
+                                    ch.handleError(e);
+                                }
                             } else {
-                                ch.handleError();
+                                ch.handleError(new FSAccessException("Document doesn't exist."));
                             }
                         } else {
-                            ch.handleError();
+                            ch.handleError(new FSAccessException("Data retrieval failed"));
                         }
                     }
                 });
     }
 
     @Override
-    public void set(QRCodeData data) {
+    public void set(QRCodeData data, CompletionHandler ch) {
         Map<String, Object> qrCodeData = this.dataToMap(data);
-        qrCodesRef.document(data.getId()).set(qrCodeData);
+        qrCodesRef.document(data.getId()).set(qrCodeData)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        ch.handleSuccess(data);
+                    }
+                });
     }
 
     @Override
-    public void update(QRCodeData data) {
+    public void update(QRCodeData data, CompletionHandler ch) {
         Map<String, Object> qrCodeData = this.dataToMap(data);
-        qrCodesRef.document(data.getId()).update(qrCodeData);
+        qrCodesRef.document(data.getId())
+                .update(qrCodeData)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        ch.handleSuccess(data);
+                    }
+                });
     }
 
     @Override
-    public void delete(QRCodeData data) {
-        qrCodesRef.document(data.getId()).delete();
+    public void delete(QRCodeData data, CompletionHandler ch) {
+        qrCodesRef.document(data.getId()).delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                   @Override
+                   public void onComplete(@NonNull Task<Void> task) {
+                       ch.handleSuccess(data);
+                   }
+                });
     }
 
     // Used as a generic way to load a map with fields from data.
