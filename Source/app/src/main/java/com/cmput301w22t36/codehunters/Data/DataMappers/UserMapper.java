@@ -46,7 +46,7 @@ public class UserMapper extends DataMapper<User> {
                                 Map<String, Object> userData = deviceDocument.getData();
                                 retrievedUser.setUsername((String) userData.get("username"));
                                 retrievedUser.setEmail((String) userData.get("email"));
-                                retrievedUser.setId(documentName); // we'll have to modify the user class to get this to work
+                                retrievedUser.setId(documentName);
                                 ch.handleSuccess(retrievedUser);
                             } else {
                                 ch.handleError();

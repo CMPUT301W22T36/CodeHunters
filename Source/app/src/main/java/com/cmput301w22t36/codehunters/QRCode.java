@@ -2,6 +2,8 @@ package com.cmput301w22t36.codehunters;
 
 import android.graphics.Bitmap;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.Serializable;
@@ -22,10 +24,8 @@ import java.util.Hashtable;
 /**
  * This is a class that represents a QRCode and holds its associated attributes (ex. Score, Hash)
  */
-public class QRCode implements Serializable, Comparable<QRCode> {
+public class QRCode extends QRCodeData implements Serializable, Comparable<QRCode> {
     private String hash;
-    private int score;
-    private String code;
     private boolean has_photo;
     private boolean has_location;
     private transient Bitmap photo;
@@ -39,7 +39,7 @@ public class QRCode implements Serializable, Comparable<QRCode> {
      */
     public QRCode(String code) {
         //Set code equal to passed in code and compute hash
-        this.code = code;
+        this.setCode(code);
         hash = DigestUtils.sha256Hex(code);
 
         //Compute score of code
@@ -57,9 +57,9 @@ public class QRCode implements Serializable, Comparable<QRCode> {
                 try{
                     int number = Integer.parseInt(value);
                     if (number==0) { number = 20; };
-                    score += (int) Math.pow(number, length-1);
+                    this.setScore(this.getScore() + (int) Math.pow(number, length-1));
                 } catch (NumberFormatException ex) {
-                    score += (int) Math.pow(letters_values.get(value), length-1);
+                    this.setScore(this.getScore() + (int) Math.pow(letters_values.get(value), length-1));
                 }
                 length = 1;
             }
@@ -76,24 +76,6 @@ public class QRCode implements Serializable, Comparable<QRCode> {
      */
     public String getHash() {
         return hash;
-    }
-
-    /**
-     * Gets score of QRCode object
-     * @return
-     *      Score of QRCode
-     */
-    public int getScore() {
-        return score;
-    }
-
-    /**
-     * Gets String code of QRCode object
-     * @return
-     *      Code of QRCode
-     */
-    public String getCode() {
-        return code;
     }
 
     /**
@@ -160,9 +142,9 @@ public class QRCode implements Serializable, Comparable<QRCode> {
      */
     @Override
     public int compareTo(QRCode qrCode) {
-        if (this.score > qrCode.getScore()) {
+        if (this.getScore() > qrCode.getScore()) {
             return 1;
-        } else if (this.score < qrCode.getScore()) {
+        } else if (this.getScore() < qrCode.getScore()) {
             return -1;
         } else {
             return 0;
