@@ -21,6 +21,8 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
  */
 public class EditEmailFragment extends Fragment {
 
+    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
+
     // Initialize views to manage them within a fragment
     private TextView editName;
     private EditText editEmail;
@@ -99,7 +101,7 @@ public class EditEmailFragment extends Fragment {
                 // Store the edited attributes
                 // TODO: implementation with database from later user stories, currently a placeholder.
                 // TODO: make the change to the user profile, ensure stored to database
-                User.setEmail(message);
+                tempUser.setEmail(message);
 
                 // Return to the user profile
                 getParentFragmentManager().beginTransaction()

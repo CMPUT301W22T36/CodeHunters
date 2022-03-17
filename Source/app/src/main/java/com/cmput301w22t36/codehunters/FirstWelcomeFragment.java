@@ -26,6 +26,8 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
  */
 public class FirstWelcomeFragment extends Fragment {
 
+    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
+
     // Initialize views to manage them within a fragment
     private EditText editName;
     private EditText editEmail;
@@ -82,8 +84,6 @@ public class FirstWelcomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        User tempUser = new User();
 
         // Obtain the device UUID
         /*
