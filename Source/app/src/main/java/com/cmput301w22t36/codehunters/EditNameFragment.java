@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+
 /**
  * Class: EditNameFragment, a {@link Fragment} subclass.
  *

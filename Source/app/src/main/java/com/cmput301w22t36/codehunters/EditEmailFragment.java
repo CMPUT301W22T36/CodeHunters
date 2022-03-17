@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+
 /**
  * Class: EditEmailFragment, a {@link Fragment} subclass.
  *
