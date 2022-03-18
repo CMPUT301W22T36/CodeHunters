@@ -143,6 +143,7 @@ public class CodesFragment extends Fragment {
 
         //SORT BY FEATURE //Context menu setup -- registering "sort-by" TextView
         registerForContextMenu(sort_method);
+        registerForContextMenu(codeList);
     }
 
     /**
@@ -155,8 +156,12 @@ public class CodesFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         //Add sort options -- Highest/Lowest Scoring
-        menu.add(0, v.getId(), 0, "Highest Score");
-        menu.add(0, v.getId(), 0, "Lowest Score");
+        if (v == codeList) {
+            menu.add(0, v.getId(), 0, "Delete");
+        } else {
+            menu.add(0, v.getId(), 0, "Highest Score");
+            menu.add(0, v.getId(), 0, "Lowest Score");
+        }
     }
 
     /**
@@ -171,14 +176,27 @@ public class CodesFragment extends Fragment {
             //Sort codes by score - Descending order
             Collections.sort(codeArrayList, Collections.reverseOrder());
             codeArrayAdapter.notifyDataSetChanged();
+            //Toast pop-up to confirm with user their selection
+            Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
-        else if (item.getTitle()== "Lowest Score") {
+        else if (item.getTitle() == "Lowest Score") {
             //Sort codes by score - Ascending order
             Collections.sort(codeArrayList);
             codeArrayAdapter.notifyDataSetChanged();
+            //Toast pop-up to confirm with user their selection
+            Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
-        //Toast pop-up to confirm with user their selection
-        Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
+        else if (item.getTitle() == "Delete") {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            //Gets session that was long-pressed
+            QRCode selected_code = (QRCode) codeList.getItemAtPosition(info.position);
+            codeArrayList.remove(selected_code);
+            num_codes.setText(String.valueOf(codeArrayList.size()));
+            Integer totalscore = Integer.valueOf((String) total_score.getText());
+            totalscore = totalscore - selected_code.getScore();
+            total_score.setText(String.valueOf(totalscore));
+            codeArrayAdapter.notifyDataSetChanged();
+        }
         return true;
     }
 }
