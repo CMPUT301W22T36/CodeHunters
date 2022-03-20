@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,9 +21,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link CodesFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Introductory Comments:
+ *      This Java file is a fragment representing the "codes" tab of our application. The fragment
+ *      houses a custom ListView of a user's QRCode objects displaying the relevant information from
+ *      each code (Code (String) & Score (int)) as well as the user's total codes scanned and total score.
+ *      The fragment also allows for users to sort their codes by highest or lowest score (done by
+ *      long-pressing "sort by" TextView and selecting sorting method from pop-up menu).
+ *
+ *      **Outstanding issue: Searchbar is present in the layout but does not currently have any functionality**
+ */
+
+/**
+ * Fragment responsible for displaying user's scanned QRCodes and relevant information.
  */
 public class CodesFragment extends Fragment {
 
@@ -39,11 +49,18 @@ public class CodesFragment extends Fragment {
     private ListView codeList;
     private ArrayAdapter<QRCode> codeArrayAdapter;
 
+    /**
+     * Required constructor
+     */
     public CodesFragment() {
         // Required empty public constructor
     }
 
-
+    /**
+     * On creation of a newinstance of this fragment, a list of QRCodes are passed in
+     * @param codes
+     * @return
+     */
     // TODO: Rename and change types and number of parameters
     public static CodesFragment newInstance(ArrayList<QRCode> codes) {
         CodesFragment fragment = new CodesFragment();
@@ -53,6 +70,10 @@ public class CodesFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * On creation of the fragment, the bundle housing the list of QRCodes is received so they can be displayed later
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +82,13 @@ public class CodesFragment extends Fragment {
         }
     }
 
+    /**
+     * Connect to xml file associated to this fragment and initialize layout
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,6 +97,12 @@ public class CodesFragment extends Fragment {
 
     }
 
+    /**
+     * Once the fragment is created, we connect to the associated views in the layout file and populate them.
+     *      (ex. populate the ListView of QRCodes with the arraylist of QRCodes)
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -86,35 +120,83 @@ public class CodesFragment extends Fragment {
         }
         total_score.setText(String.valueOf(sum));
 
+
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new CustomQRCodeList(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
 
+        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
+                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+
+            }
+        });
+
         //SORT BY FEATURE //Context menu setup -- registering "sort-by" TextView
         registerForContextMenu(sort_method);
+        registerForContextMenu(codeList);
     }
+
+    /**
+     * On creation of the context menu, we add options, in this case the two sorting options are by score (Highest to lowest & Lowest to highest)
+     * @param menu
+     * @param v
+     * @param menuInfo
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         //Add sort options -- Highest/Lowest Scoring
-        menu.add(0, v.getId(), 0, "Highest Score");
-        menu.add(0, v.getId(), 0, "Lowest Score");
+        if (v == codeList) {
+            menu.add(0, v.getId(), 0, "Delete");
+        } else {
+            menu.add(0, v.getId(), 0, "Highest Score");
+            menu.add(0, v.getId(), 0, "Lowest Score");
+        }
     }
 
+    /**
+     * Add functionality to sorting methods in menu, sort by descending (based on score) for highest score sorting
+     * and ascending (based on score) for lowest score sorting
+     * @param item
+     * @return
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle() == "Highest Score") {
             //Sort codes by score - Descending order
             Collections.sort(codeArrayList, Collections.reverseOrder());
             codeArrayAdapter.notifyDataSetChanged();
+            //Toast pop-up to confirm with user their selection
+            Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
-        else if (item.getTitle()== "Lowest Score") {
+        else if (item.getTitle() == "Lowest Score") {
             //Sort codes by score - Ascending order
             Collections.sort(codeArrayList);
             codeArrayAdapter.notifyDataSetChanged();
+            //Toast pop-up to confirm with user their selection
+            Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
-        //Toast pop-up to confirm with user their selection
-        Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
+        else if (item.getTitle() == "Delete") {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            //Gets session that was long-pressed
+            QRCode selected_code = (QRCode) codeList.getItemAtPosition(info.position);
+            codeArrayList.remove(selected_code);
+            num_codes.setText(String.valueOf(codeArrayList.size()));
+            Integer totalscore = Integer.valueOf((String) total_score.getText());
+            totalscore = totalscore - selected_code.getScore();
+            total_score.setText(String.valueOf(totalscore));
+            codeArrayAdapter.notifyDataSetChanged();
+        }
         return true;
     }
 }

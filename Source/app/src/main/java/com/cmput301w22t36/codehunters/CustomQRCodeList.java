@@ -12,16 +12,31 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * Custom Array Adapter for QRCode listview functionality
+ */
 public class CustomQRCodeList extends ArrayAdapter<QRCode> {
     private ArrayList<QRCode> codes;
     private Context context;
 
-    public CustomQRCodeList(Context context, ArrayList<QRCode> rolls){
-        super(context, 0, rolls);
-        this.codes = rolls;
+    /**
+     * Constructor that builds custom array adapter
+     * @param context
+     * @param code_list array list of QRCode objects
+     */
+    public CustomQRCodeList(Context context, ArrayList<QRCode> code_list){
+        super(context, 0, code_list);
+        this.codes = code_list;
         this.context = context;
     }
 
+    /**
+     * Responsible for communicating with Java how a QRCode object within a list should be displayed in a ListView
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

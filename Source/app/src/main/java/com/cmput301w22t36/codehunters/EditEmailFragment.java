@@ -12,12 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+
 /**
  * Class: EditEmailFragment, a {@link Fragment} subclass.
  *
  * Display the fragment to change the user's email and manage any edits to the email.
  */
 public class EditEmailFragment extends Fragment {
+
+    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
 
     // Initialize views to manage them within a fragment
     private TextView editName;
@@ -97,7 +101,7 @@ public class EditEmailFragment extends Fragment {
                 // Store the edited attributes
                 // TODO: implementation with database from later user stories, currently a placeholder.
                 // TODO: make the change to the user profile, ensure stored to database
-                User.setEmail(message);
+                tempUser.setEmail(message);
 
                 // Return to the user profile
                 getParentFragmentManager().beginTransaction()

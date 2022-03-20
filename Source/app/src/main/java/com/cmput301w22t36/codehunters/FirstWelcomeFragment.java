@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 
 /**
  * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
@@ -24,6 +25,8 @@ import android.widget.TextView;
  * the username to this device and game session, and proceed to the main game screen.
  */
 public class FirstWelcomeFragment extends Fragment {
+
+    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
 
     // Initialize views to manage them within a fragment
     private EditText editName;
@@ -101,7 +104,7 @@ public class FirstWelcomeFragment extends Fragment {
             // TODO: implementation with database from later user stories, currently a placeholder.
             // TODO: obtain the username to match this UUID
             String username = "Test: John Doe";
-            User.setUsername(username);
+            tempUser.setUsername(username);
 
             // Move to the main game fragment
             getParentFragmentManager().beginTransaction()
@@ -144,8 +147,8 @@ public class FirstWelcomeFragment extends Fragment {
                         // Store the attributes of the new account
                         // TODO: implementation with database from later user stories, currently a placeholder.
                         // TODO: make the change to the user profile, ensure stored to database
-                        User.setUsername(username);
-                        User.setEmail(email);
+                        tempUser.setUsername(username);
+                        tempUser.setEmail(email);
                         UUIDPairing.setUsername(username);
                         UUIDPairing.setUUID(UUID_androidId);
 

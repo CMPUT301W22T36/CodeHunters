@@ -14,12 +14,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+
 /**
  * Class: EditNameFragment, a {@link Fragment} subclass.
  *
  * Display the fragment to change the user's name and manage any edits to the username.
  */
 public class EditNameFragment extends Fragment {
+
+    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
 
     // Initialize views to manage them within a fragment
     private EditText editName;
@@ -104,7 +108,7 @@ public class EditNameFragment extends Fragment {
                     // Store the edited attributes
                     // TODO: implementation with database from later user stories, currently a placeholder.
                     // TODO: make the change to the user profile, ensure stored to database
-                    User.setUsername(message);
+                    tempUser.setUsername(message);
                     UUIDPairing.setUsername(message);
 
                     // Return to the user profile
