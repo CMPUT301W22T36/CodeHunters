@@ -103,6 +103,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         return qrCodeMap;
     }
 
+    @NonNull
     private QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();

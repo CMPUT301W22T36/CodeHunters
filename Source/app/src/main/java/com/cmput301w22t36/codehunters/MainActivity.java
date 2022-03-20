@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -46,6 +48,9 @@ import java.util.ArrayList;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+
+
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
@@ -53,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            //reload();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,8 +239,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void createUser(String username, String password) {
 
+    }
 
+    private void signInUser(String username, String password) {
+
+    }
 
 
 }
