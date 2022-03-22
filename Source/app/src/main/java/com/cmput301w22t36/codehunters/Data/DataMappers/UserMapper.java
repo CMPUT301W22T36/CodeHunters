@@ -11,24 +11,25 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 
 public class UserMapper extends DataMapper<User> {
-    private final CollectionReference usersRef;
 
     public UserMapper() {
         super();
-        usersRef = db.collection("users");
+        collectionRef = db.collection("users");
     }
 
     @Override
     public void get(String documentID, CompletionHandler ch) {
         // get the document for this UUID. I think that we'll have the UUID be the first UDID for
         // that account. That seems the most simple to me.
-        usersRef.document(documentID)
+        collectionRef.document(documentID)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -38,6 +39,7 @@ public class UserMapper extends DataMapper<User> {
                             if (userDoc.exists()) {
                                 // task was successful and the document was found.
                                 User retrievedUser = mapToData(userDoc.getData());
+                                retrievedUser.setId(documentID);
                                 ch.handleSuccess(retrievedUser);
                             } else {
                                 ch.handleError(new FSAccessException("Document doesn't exist"));
@@ -50,18 +52,10 @@ public class UserMapper extends DataMapper<User> {
     }
 
     @Override
-    public void create(User data, CompletionHandler ch) {
-        // TODO!
-    }
-
-    @Override
     public void set(User data, CompletionHandler ch) {
         String documentName = data.getId(); // once again, we need to change the user class
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("username", data.getUsername());
-        userData.put("email", data.getEmail());
-        // TODO: userData.put("udid", data.getUdid());
-        usersRef.document(documentName).set(userData);
+        Map<String, Object> userData = dataToMap(data);
+        collectionRef.document(documentName).set(userData);
     }
 
     @Override
@@ -76,21 +70,22 @@ public class UserMapper extends DataMapper<User> {
 
     // Gets user associated with device id.
     public void queryUDID(String udid, CompletionHandler ch) {
-        // TODO: FIX THIS (wrong docRef).
-        // find the document for this UDID
-        usersRef.whereArrayContains("udid", udid)
+        collectionRef.whereArrayContains("udid", udid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    DocumentSnapshot userDoc = task.getResult().getDocuments().get(0);
-                    if (userDoc.exists()) {
-                        //String uuid = userDoc.getString("uuid");
-                        // now that we have the uuid for this udid, we can get the user
-                        //get(uuid, ch);
-                        User user = mapToData(userDoc.getData());
-                        ch.handleSuccess(user);
+                    List<DocumentSnapshot> userDocs = task.getResult().getDocuments();
+                    if (userDocs.size() > 0 && userDocs.get(0).exists()) {
+                        DocumentSnapshot doc = userDocs.get(0);
+                        Map<String, Object> userMap = doc.getData();
+                        if (userMap == null) { ch.handleError(new FSAccessException("Data null")); }
+                        else {
+                            User user = mapToData(userMap);
+                            user.setId(doc.getReference().toString());
+                            ch.handleSuccess(user);
+                        }
                     } else {
                         ch.handleError(new FSAccessException("Document doesn't exist"));
                     }
@@ -104,10 +99,10 @@ public class UserMapper extends DataMapper<User> {
 
     public void usernameUnique(String username, CompletionHandler ch) {
         // If unique, ch.handleSuccess will run; otherwise ch.handleError .
-        usersRef.whereEqualTo("username", username)
+        collectionRef.whereEqualTo("username", username)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() == null) {
+                    if (task.isSuccessful() && task.getResult().getDocuments().size() == 0) {
                         ch.handleSuccess(null);
                     } else {
                         ch.handleError(new FSAccessException("Username not unique or other error"));
@@ -115,12 +110,22 @@ public class UserMapper extends DataMapper<User> {
                 });
     }
 
-    @NonNull
-    private User mapToData(@NonNull Map<String, Object> dataMap) {
+    @Override
+    protected Map<String, Object> dataToMap(User data) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", data.getUsername());
+        map.put("email", data.getEmail());
+        map.put("udid", data.getUdid());
+        return map;
+    }
+
+    @Override
+    protected User mapToData(@NonNull Map<String, Object> dataMap) {
+        // NOTE: Does not set the documentId!
         User user = new User();
-        user.setId(Objects.requireNonNull((String) dataMap.get("DocumentId")));
         user.setUsername((String) dataMap.get("username"));
         user.setEmail((String) dataMap.get("email"));
+        user.setUdid((ArrayList<String>)dataMap.get("udid"));
         return user;
     }
 }

@@ -11,8 +11,6 @@ import java.util.ArrayList;
  * Initialize and track a user's attributes.
  */
 public class User extends Data {
-    // the unique device IDs of the user's devices associated with their account
-    private ArrayList<String> udid;
     // the user's unique username
     private String username;
     // the user's email for contact information
@@ -23,6 +21,8 @@ public class User extends Data {
     private QRCode shareProfileQR;
     // the list of QR codes that this user has scanned
     private ArrayList<QRCode> UserQRList;
+    // the unique device IDs of the user's devices associated with their account
+    private ArrayList<String> udid = new ArrayList<String>();
     // Whether user is owner
     private Boolean isOwner;
 

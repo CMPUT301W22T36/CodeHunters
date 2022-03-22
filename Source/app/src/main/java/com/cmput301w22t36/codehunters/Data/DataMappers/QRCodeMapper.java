@@ -37,17 +37,15 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     }
 
 
-    private final CollectionReference qrCodesRef;
-
     public QRCodeMapper() {
         super();
-        qrCodesRef = db.collection("qrcodes");
+        collectionRef = db.collection("qrcodes");
 
     }
 
     @Override
     public void get(String documentID, CompletionHandler ch) {
-        qrCodesRef.document(documentID)
+        collectionRef.document(documentID)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -74,37 +72,39 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     @Override
     public void set(QRCodeData data, CompletionHandler ch) {
         Map<String, Object> qrCodeData = this.dataToMap(data);
-        qrCodesRef.document(data.getId()).set(qrCodeData)
+        collectionRef.document(data.getId()).set(qrCodeData)
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     @Override
     public void update(QRCodeData data, CompletionHandler ch) {
         Map<String, Object> qrCodeData = this.dataToMap(data);
-        qrCodesRef.document(data.getId())
+        collectionRef.document(data.getId())
                 .update(qrCodeData)
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     @Override
     public void delete(QRCodeData data, CompletionHandler ch) {
-        qrCodesRef.document(data.getId()).delete()
+        collectionRef.document(data.getId()).delete()
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
     // Used as a generic way to load a map with fields from data.
-    private Map<String, Object> dataToMap(QRCodeData data) {
+    @Override
+    protected Map<String, Object> dataToMap(QRCodeData data) {
         Map<String, Object> qrCodeMap = new HashMap<>();
         qrCodeMap.put(Fields.USERREF.toString(), data.getUserRef());
         qrCodeMap.put(Fields.SCORE.toString(), data.getScore());
         qrCodeMap.put(Fields.CODE.toString(), data.getCode());
         qrCodeMap.put(Fields.LAT.toString(), data.getLat());
         qrCodeMap.put(Fields.LON.toString(), data.getLon());
+        qrCodeMap.put(Fields.PHOTOURL.toString(), data.getPhotourl());
         return qrCodeMap;
     }
 
-    @NonNull
-    private QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
+    @Override
+    protected QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();
         qrCodeData.setId(Objects.requireNonNull((String) dataMap.get("DocumentId")));

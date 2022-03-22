@@ -167,25 +167,19 @@ public class FirstWelcomeFragment extends Fragment {
 
     void storeAccount(String username, String email) {
         // Store the new account, and move to the main game fragment
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: ensure the username is unique! Search the database.
-
         UserMapper um = new UserMapper();
         um.usernameUnique(username, um.new CompletionHandler() {
             @Override
             public void handleSuccess(User data) {
                 // Name is unique. Attempt to store user.
-                // TODO: implementation with database from later user stories, currently a placeholder.
-                // TODO: make the change to the user profile, ensure stored to database
                 User user = new User();
                 user.setUsername(username);
                 user.setEmail(email);
-                // TODO: Store UUID with user.
-                //UUIDPairing.setUsername(username);
-                //UUIDPairing.setUUID(UDID);
+                String UDID = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                user.appendUdid(UDID);
 
                 UserMapper um = new UserMapper();
-                um.set(user, um.new CompletionHandler() {
+                um.create(user, um.new CompletionHandler() {
                     @Override
                     public void handleSuccess(User data) {
                         // Successfully stored user data.
@@ -221,14 +215,5 @@ public class FirstWelcomeFragment extends Fragment {
             }
         });
 
-        // TODO: remove this example!
-        //if (true) {
-        //    // goto the profile fragment for demonstration purposes only!
-        //    getParentFragmentManager().beginTransaction()
-        //            .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
-        //            .commit();
-        //} else if (uniqueName) {
-        //} else {
-        //}
     }
 }
