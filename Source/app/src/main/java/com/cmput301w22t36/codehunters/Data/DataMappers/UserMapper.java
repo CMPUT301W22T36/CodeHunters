@@ -79,6 +79,7 @@ public class UserMapper extends DataMapper<User> {
     }
 
     // Gets user associated with device id.
+    @Nullable
     public void queryUDID(String udid, CompletionHandler ch) {
 
         // find the document for this UDID

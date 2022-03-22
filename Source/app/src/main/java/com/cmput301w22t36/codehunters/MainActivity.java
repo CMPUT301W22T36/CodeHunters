@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
+
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
