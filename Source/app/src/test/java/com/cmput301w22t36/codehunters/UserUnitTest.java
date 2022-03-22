@@ -27,13 +27,13 @@ public class UserUnitTest {
         String UUID1 = "142adbe77b149562";
         ArrayList<String> accountUUIDs = new ArrayList<String>();
         accountUUIDs.add(UUID1);
-        user.setAccountUUIDs(accountUUIDs);
+        user.setUdid(accountUUIDs);
         String username = "John Doe";
         user.setUsername(username);
         String email = "example@gmail.com";
         user.setEmail(email);
 
-        assertEquals(accountUUIDs, user.getAccountUUIDs());
+        assertEquals(accountUUIDs, user.getUdid());
         assertEquals(username, user.getUsername());
         assertEquals(email, user.getEmail());
     }

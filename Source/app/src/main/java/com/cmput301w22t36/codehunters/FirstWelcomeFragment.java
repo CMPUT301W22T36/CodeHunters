@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.cmput301w22t36.codehunters.Data.DataMapper;
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 
 /**
@@ -25,14 +27,11 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
  * the username to this device and game session, and proceed to the main game screen.
  */
 public class FirstWelcomeFragment extends Fragment {
-
-    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
-
     // Initialize views to manage them within a fragment
-    private EditText editName;
-    private EditText editEmail;
-    private Button confirm;
-    private Button scan;
+    private EditText editNameField;
+    private EditText editEmailField;
+    private Button confirmButton;
+    private Button scanButton;
 
     /**
      * Required empty public constructor
@@ -92,107 +91,129 @@ public class FirstWelcomeFragment extends Fragment {
         URL: https://stackoverflow.com/questions/31852653/making-getcontentresolver-to-work-in-class-extending-fragment-class
         StackOverflow: https://stackoverflow.com
         */
-        String UUID_androidId = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        String UDID = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // TODO: implementation with database from later user stories, currently a placeholder. Note, currently assumes this is a new device.
-        // TODO: test if this device is already in the DB (via UUID)
-        boolean knownDevice = false;
+        // Query whether a UDID is associated with a user.
+        UserMapper um = new UserMapper();
+        um.queryUDID(UDID, um.new CompletionHandler() {
+            @Override
+            public void handleSuccess(User data) {
+                // User with UUID found.
+                userFound(data, view);
+            }
 
+            @Override
+            public void handleError(Exception e) {
+                // UUID not found in system.
+                userNotFound(UDID, view);
+            }
+        });
+    }
+
+    private void userFound(User user, View view) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
-        if (knownDevice) {
-            // Set the user matching the UUID as the game player
-            // TODO: implementation with database from later user stories, currently a placeholder.
-            // TODO: obtain the username to match this UUID
-            String username = "Test: John Doe";
-            tempUser.setUsername(username);
+        // Set the user matching the UUID as the game player
+        // TODO: implementation with database from later user stories, currently a placeholder.
+        // TODO: obtain the username to match this UUID
+        //String username = "Test: John Doe";
+        //user.setUsername(username);
+        // TODO: user is now retrieved from database at this point. Fix this.
 
-            // Move to the main game fragment
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
-                    .commit();
-        } else {
-            // If the user does not yet have an account on this device, prompt them to set up their account
+        // Move to the main game fragment
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
+                .commit();
+    }
 
-            // Obtain the views within the fragment
-            editName = (EditText) view.findViewById(R.id.usernameView);
-            editEmail = (EditText) view.findViewById(R.id.userEmailView);
-            confirm = (Button)view.findViewById(R.id.confirm_button);
-            scan = (Button)view.findViewById(R.id.scan_button);
+    private void userNotFound(String UDID, View view) {
+        // If the user does not yet have an account on this device, prompt them to set up their account
 
-            // Set the buttons to respond to user clicks and call their corresponding functions
-            confirm.setOnClickListener(new View.OnClickListener() {
-                /**
-                 * Confirm the new account
-                 * @param view: the current view
-                 */
-                @Override
-                public void onClick(View view) {
-                    // Store the new account, and move to the main game fragment
+        // Obtain the views within the fragment
+        editNameField = (EditText) view.findViewById(R.id.usernameView);
+        editEmailField = (EditText) view.findViewById(R.id.userEmailView);
+        confirmButton = (Button)view.findViewById(R.id.confirm_button);
+        scanButton = (Button)view.findViewById(R.id.scan_button);
 
-                    // Obtain the new email
-                    String username = editName.getText().toString();
-                    String email = editEmail.getText().toString();
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Confirm the new account
+             * @param view: the current view
+             */
+            @Override
+            public void onClick(View view) {
+                // Obtain the new email
+                String username = editNameField.getText().toString();
+                String email = editEmailField.getText().toString();
+                storeAccount(username, email);
+            }
+        });
 
-                    // TODO: implementation with database from later user stories, currently a placeholder.
-                    // TODO: ensure the username is unique! Search the database.
-                    boolean uniqueName = false;
+        // Set the buttons to respond to user clicks and call their corresponding functions
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Scan the account QR code
+             * @param view: the current view
+             */
+            @Override
+            public void onClick(View view) {
+                // Move to the fragment to scan the QR code
+                // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
+                Intent myIntent = new Intent(getActivity().getApplicationContext(),ScanToLogin.class);
+                getActivity().startActivity(myIntent);
+            }
+        });
+    }
 
-                    // TODO: remove this example!
-                    if (true) {
-                        // goto the profile fragment for demonstration purposes only!
-                        getParentFragmentManager().beginTransaction()
-                                .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
-                                .commit();
-                    } else if (uniqueName) {
-                        // Store the attributes of the new account
-                        // TODO: implementation with database from later user stories, currently a placeholder.
-                        // TODO: make the change to the user profile, ensure stored to database
-                        tempUser.setUsername(username);
-                        tempUser.setEmail(email);
-                        UUIDPairing.setUsername(username);
-                        UUIDPairing.setUUID(UUID_androidId);
 
+    void storeAccount(String username, String email) {
+        // Store the new account, and move to the main game fragment
+        UserMapper um = new UserMapper();
+        um.usernameUnique(username, um.new CompletionHandler() {
+            @Override
+            public void handleSuccess(User data) {
+                // Name is unique. Attempt to store user.
+                User user = new User();
+                user.setUsername(username);
+                user.setEmail(email);
+                String UDID = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                user.appendUdid(UDID);
+
+                UserMapper um = new UserMapper();
+                um.create(user, um.new CompletionHandler() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // Successfully stored user data.
                         // goto the main game screen
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
                                 .commit();
-                    } else {
-                        // prompt the user to enter a unique name
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Unique Username Required");
-                        builder.setMessage("This username is unavailable, please try another username.");
-                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            /**
-                             * Confirm the new account
-                             * @param dialogInterface: the current dialog interface
-                             * @param i: button id of button clicked
-                             */
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        builder.show();
-
-                        // remain within this fragment as the user must choose another username
                     }
-                }
-            });
+                    @Override
+                    public void handleError(Exception e) {
+                        // Could not store user data.
 
-            // Set the buttons to respond to user clicks and call their corresponding functions
-            scan.setOnClickListener(new View.OnClickListener() {
-                /**
-                 * Scan the account QR code
-                 * @param view: the current view
-                 */
-                @Override
-                public void onClick(View view) {
-                    // Move to the fragment to scan the QR code
-                    // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                    Intent myIntent = new Intent(getActivity().getApplicationContext(),ScanToLogin.class);
-                    getActivity().startActivity(myIntent);
-                }
-            });
-        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Name not unique.
+                // prompt the user to enter a unique name
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Unique Username Required");
+                builder.setMessage("This username is unavailable, please try another username.");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
+                // remain within this fragment as the user must choose another username
+            }
+        });
+
     }
 }

@@ -72,6 +72,8 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-auth'
+
 
     // Added dependency for SHA-256 hash calculation (Mehul) -- Used in QRCode Class
     implementation 'commons-codec:commons-codec:1.13'
