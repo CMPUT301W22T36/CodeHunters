@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

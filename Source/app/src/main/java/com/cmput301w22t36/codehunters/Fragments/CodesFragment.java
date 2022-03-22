@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
 
@@ -16,6 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.QRCodeAdapter;
+import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +126,7 @@ public class CodesFragment extends Fragment {
 
 
         //Populate qrcode listview and connect to customlist
-        codeArrayAdapter = new CustomQRCodeList(this.getContext(), codeArrayList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
 
         codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

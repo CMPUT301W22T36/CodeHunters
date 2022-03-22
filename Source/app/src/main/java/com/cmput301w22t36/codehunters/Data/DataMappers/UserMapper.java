@@ -25,50 +25,7 @@ public class UserMapper extends DataMapper<User> {
         collectionRef = db.collection("users");
     }
 
-    @Override
-    public void get(String documentID, CompletionHandler ch) {
-        // get the document for this UUID. I think that we'll have the UUID be the first UDID for
-        // that account. That seems the most simple to me.
-        collectionRef.document(documentID)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot userDoc = task.getResult();
-                            if (userDoc.exists()) {
-                                // task was successful and the document was found.
-                                User retrievedUser = mapToData(userDoc.getData());
-                                retrievedUser.setId(documentID);
-                                ch.handleSuccess(retrievedUser);
-                            } else {
-                                ch.handleError(new FSAccessException("Document doesn't exist"));
-                            }
-                        } else {
-                            ch.handleError(new FSAccessException("Data retrieval failed"));
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void set(User data, CompletionHandler ch) {
-        String documentName = data.getId(); // once again, we need to change the user class
-        Map<String, Object> userData = dataToMap(data);
-        collectionRef.document(documentName).set(userData);
-    }
-
-    @Override
-    public void update(User data, CompletionHandler ch) {
-        // this might end up basically just being the same as set?
-    }
-
-    @Override
-    public void delete(User data, CompletionHandler ch) {
-
-    }
-
-    // Gets user associated with device id.
+    // Gets user associated with UDID.
     public void queryUDID(String udid, CompletionHandler ch) {
         collectionRef.whereArrayContains("udid", udid)
                 .get()

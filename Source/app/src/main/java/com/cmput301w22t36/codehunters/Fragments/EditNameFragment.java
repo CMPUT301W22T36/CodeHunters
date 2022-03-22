@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.R;
+import com.cmput301w22t36.codehunters.UUIDPairing;
 
 /**
  * Class: EditNameFragment, a {@link Fragment} subclass.

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Custom Array Adapter for QRCode listview functionality
  */
-public class CustomQRCodeList extends ArrayAdapter<QRCode> {
+public class QRCodeAdapter extends ArrayAdapter<QRCode> {
     private ArrayList<QRCode> codes;
     private Context context;
 
@@ -24,7 +24,7 @@ public class CustomQRCodeList extends ArrayAdapter<QRCode> {
      * @param context
      * @param code_list array list of QRCode objects
      */
-    public CustomQRCodeList(Context context, ArrayList<QRCode> code_list){
+    public QRCodeAdapter(Context context, ArrayList<QRCode> code_list){
         super(context, 0, code_list);
         this.codes = code_list;
         this.context = context;

@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,9 +16,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.R;
+import com.cmput301w22t36.codehunters.ScanToLogin;
 
 /**
  * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
@@ -112,14 +113,6 @@ public class FirstWelcomeFragment extends Fragment {
 
     private void userFound(User user, View view) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
-        // Set the user matching the UUID as the game player
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: obtain the username to match this UUID
-        //String username = "Test: John Doe";
-        //user.setUsername(username);
-        // TODO: user is now retrieved from database at this point. Fix this.
-
-        // Move to the main game fragment
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
                 .commit();
@@ -158,7 +151,7 @@ public class FirstWelcomeFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to scan the QR code
                 // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                Intent myIntent = new Intent(getActivity().getApplicationContext(),ScanToLogin.class);
+                Intent myIntent = new Intent(getActivity().getApplicationContext(), ScanToLogin.class);
                 getActivity().startActivity(myIntent);
             }
         });
@@ -201,6 +194,7 @@ public class FirstWelcomeFragment extends Fragment {
             public void handleError(Exception e) {
                 // Name not unique.
                 // prompt the user to enter a unique name
+                // TODO: Needs to be tested.
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Unique Username Required");
                 builder.setMessage("This username is unavailable, please try another username.");
