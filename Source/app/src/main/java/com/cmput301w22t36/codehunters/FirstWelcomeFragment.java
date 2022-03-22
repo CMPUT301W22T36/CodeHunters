@@ -112,14 +112,6 @@ public class FirstWelcomeFragment extends Fragment {
 
     private void userFound(User user, View view) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
-        // Set the user matching the UUID as the game player
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: obtain the username to match this UUID
-        //String username = "Test: John Doe";
-        //user.setUsername(username);
-        // TODO: user is now retrieved from database at this point. Fix this.
-
-        // Move to the main game fragment
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
                 .commit();
