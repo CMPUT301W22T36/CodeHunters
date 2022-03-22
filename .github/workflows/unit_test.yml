@@ -1,4 +1,4 @@
-name: Android CI
+name: Unit Tests
 
 on:
   push:
@@ -19,10 +19,12 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-
-    # Execute unit tests
+    
+    - name: Grant execute permission for gradlew
+      run: cd Source; chmod +x gradlew
+    
     - name: Unit Test
-      run: ./gradlew testDebugUnitTest
+      run: cd Source; ./gradlew testDebugUnitTest
 
     - name: Android Test Report
       uses: asadmansr/android-test-report-action@v1.2.0
