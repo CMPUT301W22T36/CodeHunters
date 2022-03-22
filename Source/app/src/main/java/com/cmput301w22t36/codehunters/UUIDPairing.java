@@ -4,6 +4,7 @@ package com.cmput301w22t36.codehunters;
  * Class: UUIDPairing
  * Initialize and track the pairs of unique usernames with the UUID of a device.
  */
+// TODO: DELETE CLASS
 public class UUIDPairing {
     // the unique device ID
     private static String UUID;

@@ -8,27 +8,18 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import android.app.Activity;
-import android.widget.EditText;
-import android.widget.ListView;
-
 import androidx.fragment.app.FragmentTransaction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import androidx.test.rule.ActivityTestRule;
 //import com.robotium.solo.Solo;
-import junit.framework.Assert;
 //import android.test.ActivityInstrumentationTestCase2;
 
-import com.cmput301w22t36.codehunters.FirstWelcomeFragment;
-import com.cmput301w22t36.codehunters.MainActivity;
+import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 
 /**
  * Class: FirstWelcomeTest

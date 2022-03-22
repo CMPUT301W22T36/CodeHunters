@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 /*
 This Class allows the user to see the location of QRCodes that have a location on a map and view
 the info for the QRCode.
@@ -25,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.osmdroid.api.IMapController;

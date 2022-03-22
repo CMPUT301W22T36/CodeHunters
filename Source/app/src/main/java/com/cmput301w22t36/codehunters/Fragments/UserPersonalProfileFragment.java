@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
 
@@ -10,8 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import com.cmput301w22t36.codehunters.R;
 
 /**
  * Class: UserPersonalProfileFragment, a {@link Fragment} subclass.
