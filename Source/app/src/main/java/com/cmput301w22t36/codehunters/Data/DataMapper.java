@@ -42,9 +42,7 @@ public abstract class DataMapper<D extends Data> {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference docRef = task.getResult();
-                        String documentID = docRef.getPath();
-                        documentID = documentID.replace(collectionRef.getPath()+"/", "");
-                        data.setId(documentID);
+                        data.setId(docRef.getId());
                         ch.handleSuccess(data);
                     } else {
                         ch.handleError(new FSAccessException("Data creation failed"));

@@ -41,10 +41,7 @@ public class UserMapper extends DataMapper<User> {
                         if (userMap == null) { ch.handleError(new FSAccessException("Data null")); }
                         else {
                             User user = mapToData(userMap);
-                            DocumentReference docRef = doc.getReference();
-                            String documentID = docRef.getPath();
-                            documentID = documentID.replace(collectionRef.getPath()+"/", "");
-                            user.setId(documentID);
+                            user.setId(doc.getId());
                             ch.handleSuccess(user);
                         }
                     } else {
