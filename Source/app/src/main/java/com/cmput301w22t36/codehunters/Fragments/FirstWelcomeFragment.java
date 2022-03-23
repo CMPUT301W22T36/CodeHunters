@@ -179,6 +179,7 @@ public class FirstWelcomeFragment extends Fragment {
                     public void handleSuccess(User data) {
                         // Successfully stored user data.
                         // goto the main game screen
+                        ((MainActivity) getActivity()).loggedinUser = user;
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
                                 .commit();
