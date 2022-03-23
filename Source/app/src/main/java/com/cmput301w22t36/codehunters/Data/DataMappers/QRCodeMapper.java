@@ -9,7 +9,9 @@ import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,6 +50,31 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     }
 
+    //Query to get codes for user
+    public void query_usercodes (String udid, ListCompletionHandler lch) {
+        UserMapper um = new UserMapper();
+        um.queryUDID(udid, um.new CompletionHandler() {
+            @Override
+            public void handleSuccess(User data) {
+                String userref = "/users/" + data.getId();
+                collectionRef.whereEqualTo("userRef", userref)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult().getDocuments().size() == 0) {
+                                List<DocumentSnapshot> documents= task.getResult().getDocuments();
+                                ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                                for (DocumentSnapshot docSnap : documents) {
+                                    qrData.add(mapToData(docSnap.getData()));
+                                }
+                                lch.handleSuccess(qrData);
+                            } else {
+                                lch.handleError(new FSAccessException("Username not unique or other error"));
+                            }
+                        });
+            }
+        });
+    }
+
     @Override
     protected Map<String, Object> dataToMap(QRCodeData data) {
         Map<String, Object> qrCodeMap = new HashMap<>();
@@ -67,8 +94,8 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
         qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
         qrCodeData.setCode(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
-        qrCodeData.setLat(Objects.requireNonNull((Integer) dataMap.get(Fields.LAT.toString())));
-        qrCodeData.setLon(Objects.requireNonNull((Integer) dataMap.get(Fields.LON.toString())));
+        qrCodeData.setLat(Objects.requireNonNull((Double) dataMap.get(Fields.LAT.toString())));
+        qrCodeData.setLon(Objects.requireNonNull((Double) dataMap.get(Fields.LON.toString())));
         qrCodeData.setPhotourl(Objects.requireNonNull((String) dataMap.get(Fields.PHOTOURL.toString())));
         return qrCodeData;
     }

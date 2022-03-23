@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,6 +15,14 @@ public abstract class DataMapper<D extends Data> {
 
     public class CompletionHandler {
         public void handleSuccess(D data) {
+        }
+
+        public void handleError(Exception e) {
+        }
+    }
+
+    public class ListCompletionHandler {
+        public void handleSuccess(ArrayList<D> data) {
         }
 
         public void handleError(Exception e) {
@@ -33,7 +42,9 @@ public abstract class DataMapper<D extends Data> {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentReference docRef = task.getResult();
-                        data.setId(docRef.getId());
+                        String documentID = docRef.getPath();
+                        documentID = documentID.replace(collectionRef.getPath()+"/", "");
+                        data.setId(documentID);
                         ch.handleSuccess(data);
                     } else {
                         ch.handleError(new FSAccessException("Data creation failed"));

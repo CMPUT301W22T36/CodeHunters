@@ -8,6 +8,7 @@ import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -40,7 +41,10 @@ public class UserMapper extends DataMapper<User> {
                         if (userMap == null) { ch.handleError(new FSAccessException("Data null")); }
                         else {
                             User user = mapToData(userMap);
-                            user.setId(doc.getReference().toString());
+                            DocumentReference docRef = doc.getReference();
+                            String documentID = docRef.getPath();
+                            documentID = documentID.replace(collectionRef.getPath()+"/", "");
+                            user.setId(documentID);
                             ch.handleSuccess(user);
                         }
                     } else {

@@ -2,14 +2,12 @@ package com.cmput301w22t36.codehunters.Data.DataTypes;
 
 import com.cmput301w22t36.codehunters.Data.Data;
 
-import java.util.List;
-
 public class QRCodeData extends Data {
     private String userRef;
     private int score;
     private String code;
-    private int lat;
-    private int lon;
+    private double lat;
+    private double lon;
     private String photourl;
     // Access methods need to be defined. Might need a way to record who made what comment as well.
     //private List<String> comments;
@@ -38,19 +36,19 @@ public class QRCodeData extends Data {
         this.code = code;
     }
 
-    public int getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(int lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public int getLon() {
+    public double getLon() {
         return lon;
     }
 
-    public void setLon(int lon) {
+    public void setLon(Double lon) {
         this.lon = lon;
     }
 

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 
+import com.cmput301w22t36.codehunters.Data.Comment;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.Serializable;
@@ -31,6 +33,8 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     private transient Bitmap photo;
     //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
     private ArrayList<Double> geolocation;
+    //Comments
+    private ArrayList<Comment> comments;
 
     /**
      * QRCode Constructor: takes in code and self computes associated hash and score
@@ -115,6 +119,15 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     }
 
     /**
+     * Gets Comments associated with QRCode object
+     * @return
+     *      Comments of QRCode in the form of a list
+     */
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    /**
      * Allows us to set the photo of a QRCode object
      * @param photo
      *      Photo in the form of a bitmap
@@ -132,6 +145,15 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     public void setGeolocation(ArrayList<Double> geolocation) {
         has_location = true;
         this.geolocation = geolocation;
+    }
+
+    /**
+     * Allows us to add a comment to a QRCode object
+     * @param comment
+     *      Comment we want to add of type comment (user & message)
+     */
+    public void addComment(Comment comment) {
+        comments.add(comment);
     }
 
     /**

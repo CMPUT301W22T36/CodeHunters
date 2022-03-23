@@ -18,6 +18,7 @@ import android.widget.EditText;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.cmput301w22t36.codehunters.ScanToLogin;
 
@@ -113,6 +114,7 @@ public class FirstWelcomeFragment extends Fragment {
 
     private void userFound(User user, View view) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
+        ((MainActivity) getActivity()).loggedinUser = user;
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
                 .commit();

@@ -24,6 +24,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w22t36.codehunters.Data.DataMapper;
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
@@ -42,9 +46,7 @@ import java.util.ArrayList;
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
 public class MainActivity extends AppCompatActivity {
-
     private FirebaseAuth mAuth;
-
 
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
+
+    public User loggedinUser;
 
     @Override
     public void onStart() {
@@ -155,7 +159,18 @@ public class MainActivity extends AppCompatActivity {
                             Bundle bundle = result.getData().getExtras();
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
                             current_code.setPhoto(qrLocationImage);
+                            QRCodeData cur_code = new QRCodeData();
+                            cur_code.setCode(current_code.getCode());
+                            cur_code.setLat(current_code.getGeolocation().get(0));
+                            cur_code.setLon(current_code.getGeolocation().get(1));
+                            cur_code.setScore(current_code.getScore());
 
+                            QRCodeMapper qrmapper = new QRCodeMapper();
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler() {
+                                @Override
+                                public void handleSuccess(QRCodeData data) {
+                                }
+                            });
                         }
                     }
                 });
@@ -193,7 +208,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     //User has said no to photo-location so we create code with string code only
                                     codeArrayList.add(current_code);
+                                    QRCodeData cur_code = new QRCodeData();
+                                    cur_code.setCode(current_code.getCode());
+                                    cur_code.setLat(current_code.getGeolocation().get(0));
+                                    cur_code.setLon(current_code.getGeolocation().get(1));
+                                    cur_code.setScore(current_code.getScore());
+                                    cur_code.setUserRef("/users/"+loggedinUser.getId());
 
+                                    QRCodeMapper qrmapper = new QRCodeMapper();
+                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                        @Override
+                                        public void handleSuccess(QRCodeData data) {
+                                        }
+                                    });
                                     dialogInterface.dismiss();
                                 }
                             });
@@ -215,10 +242,37 @@ public class MainActivity extends AppCompatActivity {
                                         geolocation.add(longi);
                                         current_code.setGeolocation(geolocation);
                                         codeArrayList.add(current_code);
+                                        //test
+                                        QRCodeData cur_code = new QRCodeData();
+                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setLat(current_code.getGeolocation().get(0));
+                                        cur_code.setLon(current_code.getGeolocation().get(1));
+                                        cur_code.setScore(current_code.getScore());
+                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+
+                                        QRCodeMapper qrmapper = new QRCodeMapper();
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                            @Override
+                                            public void handleSuccess(QRCodeData data) {
+                                            }
+                                        });
                                     } else {
                                         ActivityCompat.requestPermissions(MainActivity.this, new String[]
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
                                         codeArrayList.add(current_code);
+                                        QRCodeData cur_code = new QRCodeData();
+                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setLat(current_code.getGeolocation().get(0));
+                                        cur_code.setLon(current_code.getGeolocation().get(1));
+                                        cur_code.setScore(current_code.getScore());
+                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+
+                                        QRCodeMapper qrmapper = new QRCodeMapper();
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                            @Override
+                                            public void handleSuccess(QRCodeData data) {
+                                            }
+                                        });
                                     }
                                 }
                             });
