@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,7 +21,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         SCORE("score"),
         CODE("code"),
         LAT("lat"),
-        LON("lon"),
+        LON("lon"),  // TODO: CONVERT TO GEOPOINT!
         PHOTOURL("photourl");
 
         private final String field;
@@ -40,6 +41,10 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public QRCodeMapper() {
         super();
         collectionRef = db.collection("qrcodes");
+
+    }
+
+    public void queryQRCodes(User user, CompletionHandler ch) {
 
     }
 

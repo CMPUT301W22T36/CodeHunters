@@ -234,16 +234,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-    private void createUser(String username, String password) {
-
-    }
-
-    private void signInUser(String username, String password) {
-
-    }
-
-
 }
