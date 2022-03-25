@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Data.DataMappers;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
@@ -11,7 +12,10 @@ import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,12 +96,48 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         });
     }
 
+    /**
+     * Used to download image from Firestore Storage.
+     * @param path Path to image on Firebase Storage.
+     * @param ch Returns image bitmap.
+     */
     public void getImage(String path, CompletionHandler<Bitmap> ch) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
 
+        StorageReference pathRef = storageRef.child(path);
+
+        // Change this var to alter the max image size.
+        final long MAX_DOWN = 1024 * 1024;
+        pathRef.getBytes(MAX_DOWN).addOnSuccessListener(bytes -> {
+            Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            ch.handleSuccess(bmap);
+        }).addOnFailureListener(e -> {
+            ch.handleError(e);
+        });
     }
 
-    public void putImage(Bitmap img, CompletionHandler<String> ch) {
+    /**
+     * Used to upload image to Firebase Storage.
+     * @param bmap Image bitmap.
+     * @param ch Returns path to image on Firestore.
+     */
+    public void putImage(Bitmap bmap, CompletionHandler<String> ch) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        storageRef.putBytes(data)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ch.handleSuccess(storageRef.getPath());
+                    } else {
+                        ch.handleError(new FSAccessException("Could not store image"));
+                    }
+                });
     }
 
     @Override
