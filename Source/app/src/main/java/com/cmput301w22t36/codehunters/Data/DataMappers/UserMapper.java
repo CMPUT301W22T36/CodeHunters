@@ -27,7 +27,7 @@ public class UserMapper extends DataMapper<User> {
     }
 
     // Gets user associated with UDID.
-    public void queryUDID(String udid, CompletionHandler ch) {
+    public void queryUDID(String udid, CompletionHandler<User> ch) {
         collectionRef.whereArrayContains("udid", udid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -55,7 +55,7 @@ public class UserMapper extends DataMapper<User> {
         });
     }
 
-    public void usernameUnique(String username, CompletionHandler ch) {
+    public void usernameUnique(String username, CompletionHandler<User> ch) {
         // If unique, ch.handleSuccess will run; otherwise ch.handleError .
         collectionRef.whereEqualTo("username", username)
                 .get()

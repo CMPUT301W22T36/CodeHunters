@@ -1,5 +1,7 @@
 package com.cmput301w22t36.codehunters.Data.DataMappers;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
@@ -8,6 +10,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,14 +49,28 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     }
 
-    public void queryQRCodes(User user, CompletionHandler ch) {
-
+    public void queryQRCodes(User user, CompletionHandler<ArrayList<QRCodeData>> lch) {
+        String userRef = "/users/" + user.getId();
+        collectionRef.whereEqualTo("userRef", userRef)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> documents= task.getResult().getDocuments();
+                        ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                        for (DocumentSnapshot docSnap : documents) {
+                            qrData.add(mapToData(docSnap.getData()));
+                        }
+                        lch.handleSuccess(qrData);
+                    } else {
+                        lch.handleError(new FSAccessException("Username not unique or other error"));
+                    }
+                });
     }
 
     //Query to get codes for user
-    public void query_usercodes (String udid, ListCompletionHandler lch) {
+    public void queryUsersCodes(String udid, CompletionHandler<ArrayList<QRCodeData>> lch) {
         UserMapper um = new UserMapper();
-        um.queryUDID(udid, um.new CompletionHandler() {
+        um.queryUDID(udid, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 String userref = "/users/" + data.getId();
@@ -73,6 +90,14 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         });
             }
         });
+    }
+
+    public void getImage(String path, CompletionHandler<Bitmap> ch) {
+
+    }
+
+    public void putImage(Bitmap img, CompletionHandler<String> ch) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
     }
 
     @Override

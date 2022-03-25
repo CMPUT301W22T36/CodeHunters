@@ -33,8 +33,6 @@ import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
 import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -46,7 +44,6 @@ import java.util.ArrayList;
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
 
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
@@ -59,22 +56,10 @@ public class MainActivity extends AppCompatActivity {
     public User loggedinUser;
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // TODO: Might not be needed.
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            //reload();
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
 
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
@@ -166,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                             cur_code.setScore(current_code.getScore());
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler() {
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                 }
@@ -216,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                     QRCodeMapper qrmapper = new QRCodeMapper();
-                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                         @Override
                                         public void handleSuccess(QRCodeData data) {
                                         }
@@ -251,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                                         cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                         QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                             }
@@ -268,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                         cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                         QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                             }
