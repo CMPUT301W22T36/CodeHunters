@@ -13,21 +13,14 @@ import java.util.Objects;
 
 public abstract class DataMapper<D extends Data> {
 
-    public class CompletionHandler {
-        public void handleSuccess(D data) {
+    public class CompletionHandler<T> {
+        public void handleSuccess(T data) {
         }
 
         public void handleError(Exception e) {
         }
     }
 
-    public class ListCompletionHandler {
-        public void handleSuccess(ArrayList<D> data) {
-        }
-
-        public void handleError(Exception e) {
-        }
-    }
 
     protected FirebaseFirestore db;
     protected CollectionReference collectionRef;
@@ -36,7 +29,7 @@ public abstract class DataMapper<D extends Data> {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void create(D data, CompletionHandler ch) {
+    public void create(D data, CompletionHandler<D> ch) {
         Map<String, Object> dataMap = this.dataToMap(data);
         collectionRef.add(dataMap)
                 .addOnCompleteListener(task -> {
@@ -50,7 +43,7 @@ public abstract class DataMapper<D extends Data> {
                 });
     }
 
-    public void get(String documentID, CompletionHandler ch) {
+    public void get(String documentID, CompletionHandler<D> ch) {
         collectionRef.document(documentID)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -76,21 +69,21 @@ public abstract class DataMapper<D extends Data> {
                 });
     }
 
-    public void set(D data, CompletionHandler ch) {
+    public void set(D data, CompletionHandler<D> ch) {
         Map<String, Object> dataMap = this.dataToMap(data);
         collectionRef.document(data.getId())
                 .set(dataMap)
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
-    public void update(D data, CompletionHandler ch) {
+    public void update(D data, CompletionHandler<D> ch) {
         Map<String, Object> dataMap = this.dataToMap(data);
         collectionRef.document(data.getId())
                 .update(dataMap)
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
 
-    public void delete(D data, CompletionHandler ch) {
+    public void delete(D data, CompletionHandler<D> ch) {
         collectionRef.document(data.getId())
                 .delete()
                 .addOnCompleteListener(task -> ch.handleSuccess(data));

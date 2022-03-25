@@ -25,12 +25,12 @@ public class UserMapperUnitTest {
         user.setEmail("testEmail@test.com");
         user.appendUdid("TESTUDID001");
 
-        um.create(user, um.new CompletionHandler() {
+        um.create(user, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 //assert(userEqualsUser(data, user));
 
-                um.get(user.getId(), um.new CompletionHandler() {
+                um.get(user.getId(), um.new CompletionHandler<User>() {
                    @Override
                    public void handleSuccess(User data) {
                        user2 = data;

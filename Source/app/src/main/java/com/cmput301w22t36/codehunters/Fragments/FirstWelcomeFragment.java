@@ -97,7 +97,7 @@ public class FirstWelcomeFragment extends Fragment {
 
         // Query whether a UDID is associated with a user.
         UserMapper um = new UserMapper();
-        um.queryUDID(UDID, um.new CompletionHandler() {
+        um.queryUDID(UDID, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 // User with UUID found.
@@ -163,7 +163,7 @@ public class FirstWelcomeFragment extends Fragment {
     void storeAccount(String username, String email) {
         // Store the new account, and move to the main game fragment
         UserMapper um = new UserMapper();
-        um.usernameUnique(username, um.new CompletionHandler() {
+        um.usernameUnique(username, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 // Name is unique. Attempt to store user.
@@ -174,7 +174,7 @@ public class FirstWelcomeFragment extends Fragment {
                 user.appendUdid(UDID);
 
                 UserMapper um = new UserMapper();
-                um.create(user, um.new CompletionHandler() {
+                um.create(user, um.new CompletionHandler<User>() {
                     @Override
                     public void handleSuccess(User data) {
                         // Successfully stored user data.
