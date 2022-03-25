@@ -89,6 +89,7 @@ public abstract class DataMapper<D extends Data> {
                 .update(dataMap)
                 .addOnCompleteListener(task -> ch.handleSuccess(data));
     }
+
     public void delete(D data, CompletionHandler ch) {
         collectionRef.document(data.getId())
                 .delete()

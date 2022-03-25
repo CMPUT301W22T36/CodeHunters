@@ -46,12 +46,26 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     }
 
-    public void queryQRCodes(User user, CompletionHandler ch) {
-
+    public void queryQRCodes(User user, ListCompletionHandler lch) {
+        String userRef = "/users/" + user.getId();
+        collectionRef.whereEqualTo("userRef", userRef)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> documents= task.getResult().getDocuments();
+                        ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                        for (DocumentSnapshot docSnap : documents) {
+                            qrData.add(mapToData(docSnap.getData()));
+                        }
+                        lch.handleSuccess(qrData);
+                    } else {
+                        lch.handleError(new FSAccessException("Username not unique or other error"));
+                    }
+                });
     }
 
     //Query to get codes for user
-    public void query_usercodes (String udid, ListCompletionHandler lch) {
+    public void queryUsersCodes(String udid, ListCompletionHandler lch) {
         UserMapper um = new UserMapper();
         um.queryUDID(udid, um.new CompletionHandler() {
             @Override
