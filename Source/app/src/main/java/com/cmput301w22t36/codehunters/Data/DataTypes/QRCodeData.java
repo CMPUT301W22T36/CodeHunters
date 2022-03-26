@@ -1,5 +1,7 @@
 package com.cmput301w22t36.codehunters.Data.DataTypes;
 
+import android.graphics.Bitmap;
+
 import com.cmput301w22t36.codehunters.Data.Data;
 
 public class QRCodeData extends Data {
@@ -9,6 +11,8 @@ public class QRCodeData extends Data {
     private double lat;
     private double lon;
     private String photourl;
+    private transient Bitmap photo;
+
     // Access methods need to be defined. Might need a way to record who made what comment as well.
     //private List<String> comments;
 
@@ -58,5 +62,18 @@ public class QRCodeData extends Data {
 
     public void setPhotourl(String photourl) {
         this.photourl = photourl;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    /**
+     * Allows us to set the photo of a QRCode object
+     * @param photo
+     *      Photo in the form of a bitmap
+     */
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
     }
 }

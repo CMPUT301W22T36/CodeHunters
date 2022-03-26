@@ -159,9 +159,9 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
         qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
         qrCodeData.setCode(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
-        qrCodeData.setLat(Objects.requireNonNull((Double) dataMap.get(Fields.LAT.toString())));
-        qrCodeData.setLon(Objects.requireNonNull((Double) dataMap.get(Fields.LON.toString())));
-        qrCodeData.setPhotourl(Objects.requireNonNull((String) dataMap.get(Fields.PHOTOURL.toString())));
+        qrCodeData.setLat((Double) dataMap.get(Fields.LAT.toString()));
+        qrCodeData.setLon((Double) dataMap.get(Fields.LON.toString()));
+        qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
         return qrCodeData;
     }
 }
