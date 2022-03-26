@@ -3,13 +3,11 @@ package com.cmput301w22t36.codehunters;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -20,19 +18,20 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w22t36.codehunters.Data.DataMapper;
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
+import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
+import com.cmput301w22t36.codehunters.Fragments.MapFragment;
+import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -54,10 +53,13 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
+    public User loggedinUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
@@ -142,7 +144,18 @@ public class MainActivity extends AppCompatActivity {
                             Bundle bundle = result.getData().getExtras();
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
                             current_code.setPhoto(qrLocationImage);
+                            QRCodeData cur_code = new QRCodeData();
+                            cur_code.setCode(current_code.getCode());
+                            cur_code.setLat(current_code.getGeolocation().get(0));
+                            cur_code.setLon(current_code.getGeolocation().get(1));
+                            cur_code.setScore(current_code.getScore());
 
+                            QRCodeMapper qrmapper = new QRCodeMapper();
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                @Override
+                                public void handleSuccess(QRCodeData data) {
+                                }
+                            });
                         }
                     }
                 });
@@ -180,7 +193,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     //User has said no to photo-location so we create code with string code only
                                     codeArrayList.add(current_code);
+                                    QRCodeData cur_code = new QRCodeData();
+                                    cur_code.setCode(current_code.getCode());
+                                    cur_code.setLat(current_code.getGeolocation().get(0));
+                                    cur_code.setLon(current_code.getGeolocation().get(1));
+                                    cur_code.setScore(current_code.getScore());
+                                    cur_code.setUserRef("/users/"+loggedinUser.getId());
 
+                                    QRCodeMapper qrmapper = new QRCodeMapper();
+                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                        @Override
+                                        public void handleSuccess(QRCodeData data) {
+                                        }
+                                    });
                                     dialogInterface.dismiss();
                                 }
                             });
@@ -202,10 +227,37 @@ public class MainActivity extends AppCompatActivity {
                                         geolocation.add(longi);
                                         current_code.setGeolocation(geolocation);
                                         codeArrayList.add(current_code);
+                                        //test
+                                        QRCodeData cur_code = new QRCodeData();
+                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setLat(current_code.getGeolocation().get(0));
+                                        cur_code.setLon(current_code.getGeolocation().get(1));
+                                        cur_code.setScore(current_code.getScore());
+                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+
+                                        QRCodeMapper qrmapper = new QRCodeMapper();
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                            @Override
+                                            public void handleSuccess(QRCodeData data) {
+                                            }
+                                        });
                                     } else {
                                         ActivityCompat.requestPermissions(MainActivity.this, new String[]
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
                                         codeArrayList.add(current_code);
+                                        QRCodeData cur_code = new QRCodeData();
+                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setLat(current_code.getGeolocation().get(0));
+                                        cur_code.setLon(current_code.getGeolocation().get(1));
+                                        cur_code.setScore(current_code.getScore());
+                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+
+                                        QRCodeMapper qrmapper = new QRCodeMapper();
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                            @Override
+                                            public void handleSuccess(QRCodeData data) {
+                                            }
+                                        });
                                     }
                                 }
                             });
@@ -221,11 +273,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-
-
-
 }

@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.R;
 
 /**
  * Class: EditEmailFragment, a {@link Fragment} subclass.
@@ -96,12 +98,14 @@ public class EditEmailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // Obtain the new email
-                String message = editEmail.getText().toString();
+                String newEmail = editEmail.getText().toString();
 
                 // Store the edited attributes
                 // TODO: implementation with database from later user stories, currently a placeholder.
                 // TODO: make the change to the user profile, ensure stored to database
-                tempUser.setEmail(message);
+                tempUser.setEmail(newEmail);
+                //UserMapper um = new UserMapper();
+                //um.update();
 
                 // Return to the user profile
                 getParentFragmentManager().beginTransaction()

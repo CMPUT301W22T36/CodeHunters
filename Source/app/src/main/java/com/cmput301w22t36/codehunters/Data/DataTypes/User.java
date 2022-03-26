@@ -1,7 +1,6 @@
 package com.cmput301w22t36.codehunters.Data.DataTypes;
 
 import com.cmput301w22t36.codehunters.Data.Data;
-import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.QRCode;
 
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import java.util.ArrayList;
  * Initialize and track a user's attributes.
  */
 public class User extends Data {
-    // the unique device IDs of the user's devices associated with their account
-    private ArrayList<String> accountUUIDs;
     // the user's unique username
     private String username;
     // the user's email for contact information
@@ -24,6 +21,8 @@ public class User extends Data {
     private QRCode shareProfileQR;
     // the list of QR codes that this user has scanned
     private ArrayList<QRCode> UserQRList;
+    // the unique device IDs of the user's devices associated with their account
+    private ArrayList<String> udid = new ArrayList<String>();
     // Whether user is owner
     private Boolean isOwner;
 
@@ -31,16 +30,28 @@ public class User extends Data {
     /**
      * Get the UUIDs associated with this unique username
      */
-    public ArrayList<String> getAccountUUIDs() {
-        return accountUUIDs;
+    public ArrayList<String> getUdid() {
+        return udid;
+    }
+
+    public String getUdid(int i) {
+        return this.udid.get(i);
     }
 
     /**
      * Set the list of UUIDs associated with this unique username
-     * @param accountUUIDs: list of UUIDS
+     * @param udid: list of UUIDS
      */
-    public void setAccountUUIDs(ArrayList<String> accountUUIDs) {
-        this.accountUUIDs = accountUUIDs;
+    public void setUdid(ArrayList<String> udid) {
+        this.udid = udid;
+    }
+
+    public void setUdid(int i, String udid) {
+        this.udid.set(i, udid);
+    }
+
+    public void appendUdid(String udid) {
+        this.udid.add(udid);
     }
 
     /**

@@ -1,4 +1,4 @@
-name: Build
+name: Unit Tests
 
 on:
   push:
@@ -19,8 +19,13 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-
+    
     - name: Grant execute permission for gradlew
       run: cd Source; chmod +x gradlew
-    - name: Build with Gradle
-      run: cd Source; ./gradlew build
+    
+    - name: Unit Test
+      run: cd Source; ./gradlew testDebugUnitTest
+
+    - name: Android Test Report
+      uses: asadmansr/android-test-report-action@v1.2.0
+      if: ${{ always() }} # run Android Test Report
