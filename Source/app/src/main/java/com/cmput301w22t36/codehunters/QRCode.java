@@ -30,7 +30,6 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     private String hash;
     private boolean has_photo;
     private boolean has_location;
-    private transient Bitmap photo;
     //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
     private ArrayList<Double> geolocation;
     //Comments
@@ -110,15 +109,6 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     }
 
     /**
-     * Gets Photo associated with QRCode object
-     * @return
-     *      Photo of QRCode in the form of a Bitmap
-     */
-    public Bitmap getPhoto() {
-        return photo;
-    }
-
-    /**
      * Gets Comments associated with QRCode object
      * @return
      *      Comments of QRCode in the form of a list
@@ -127,15 +117,6 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
         return comments;
     }
 
-    /**
-     * Allows us to set the photo of a QRCode object
-     * @param photo
-     *      Photo in the form of a bitmap
-     */
-    public void setPhoto(Bitmap photo) {
-        has_photo = true;
-        this.photo = photo;
-    }
 
     /**
      * Allows us to set the geolocation of a QRCode object
