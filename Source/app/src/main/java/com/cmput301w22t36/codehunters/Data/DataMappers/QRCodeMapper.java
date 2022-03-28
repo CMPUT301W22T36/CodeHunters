@@ -9,8 +9,12 @@ import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
+import com.cmput301w22t36.codehunters.QRCode;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -71,6 +75,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 });
     }
 
+
     //Query to get codes for user
     public void queryUsersCodes(String udid, CompletionHandler<ArrayList<QRCodeData>> lch) {
         UserMapper um = new UserMapper();
@@ -96,11 +101,84 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         });
     }
 
+    /**\
+     * Calls the given completion handler with a list of all unique QRCodes on the firebase. All of
+     * the codes returned have had any entry-specific fields nullified (e.g. ID, userRef)
+     * @param ch the completion handler
+     */
+    public void getAllCodes(CompletionHandler<ArrayList<QRCodeData>> ch) {
+        // get literally every QRcode :(
+        collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    // build up a hashmap of all the unique codes, first come first serve
+                    HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
+                    for (DocumentSnapshot code : task.getResult()) {
+                        QRCodeData thisCode = mapToData(code.getData());
+                        // nullify specific fields
+                        thisCode.setUserRef(null);
+                        thisCode.setId(null);
+                        if (!uniqueCodes.containsKey(thisCode.getCode())) {
+                            uniqueCodes.put(thisCode.getCode(), thisCode);
+                        }
+                    }
+                    ch.handleSuccess((ArrayList<QRCodeData>) uniqueCodes.values());
+                } else {
+                    ch.handleError(new FSAccessException("I guess firestore didn't feel like it"));
+                }
+            }
+        });
+    }
+
+
+     /** This method takes a user and a list of QR codes and finds all QR codes shared between the
+     * given list and the codes that the given user have scanned. Upon success, the onSuccess method
+     * is called with the resulting list as an argument.
+     * @param userToSearch the user to search through
+     * @param matchList the list of QRCodes to match with
+     * @param ch the completion handler that will be called upon success
+     */
+    public void getMatchingCodes(User userToSearch, ArrayList<? extends QRCodeData> matchList,
+                                 CompletionHandler<ArrayList<QRCodeData>> ch) {
+
+        // Create list of the strings of the codes
+        ArrayList<String> justTheCodes = new ArrayList<>();
+        for (QRCodeData code : matchList) {
+            justTheCodes.add(code.getCode());
+        }
+
+        // make a query where we filter to codes from the given user and then
+        // to the codes in the justTheCodes list.
+        collectionRef.whereEqualTo(Fields.USERREF.toString(), "/users/"+userToSearch.getId())
+                .whereIn(Fields.CODE.toString(), justTheCodes)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                // check if the query was successful
+                if (task.isSuccessful()) {
+                    // get the results and then turn them into a list
+                    QuerySnapshot results = task.getResult();
+                    ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
+
+                    for (DocumentSnapshot document : results) {
+                        matchedCodes.add(mapToData(document.getData()));
+                    }
+                    ch.handleSuccess(matchedCodes);
+
+                } else {
+                    ch.handleError(new FSAccessException("Firestore fetch unsuccessful"));
+                }
+            }
+        });
+    }
+
     /**
      * Used to download image from Firestore Storage.
      * @param path Path to image on Firebase Storage.
      * @param ch Returns image bitmap.
      */
+
     public void getImage(String path, CompletionHandler<Bitmap> ch) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
