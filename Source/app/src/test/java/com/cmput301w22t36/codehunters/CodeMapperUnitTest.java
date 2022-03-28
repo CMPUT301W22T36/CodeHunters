@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class CodeMapperUnitTest {
-    @Test
+    //@Test
     public void testMatchingCodes() throws InterruptedException {
 
         QRCodeMapper codeMapper = new QRCodeMapper();
