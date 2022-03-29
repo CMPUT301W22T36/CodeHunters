@@ -67,7 +67,7 @@ public class SocialFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            username = getArguments().getString(ARG_PARAM1);
+            username = (String) getArguments().getString(ARG_PARAM1);
 
         }
     }
@@ -85,7 +85,8 @@ public class SocialFragment extends Fragment {
         if (savedInstanceState == null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.socialFragmentView, BestCodesFragment.class, null)
+                    .add(R.id.socialFragmentView, ScoreBoardFragment.class, null)
+                    //.add(R.id.socialFragmentView, BestCodesFragment.class, null)
                     .commit();
         }
         bestCodesNav = view.findViewById(R.id.navToBestCodes);
@@ -109,7 +110,7 @@ public class SocialFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft2 = getActivity().getSupportFragmentManager().beginTransaction();
-                SocialFragment fragmentDemo2 = SocialFragment.newInstance(username);
+                ScoreBoardFragment fragmentDemo2 = ScoreBoardFragment.newInstance(username);
                 ft2.replace(R.id.socialFragmentView,fragmentDemo2);
                 ft2.commit();
                 /**

@@ -38,7 +38,7 @@ public class ScoreBoardFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
     private String username;
@@ -71,7 +71,7 @@ public class ScoreBoardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            username = getArguments().getString(ARG_PARAM1);
+            username = (String) getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -100,11 +100,14 @@ public class ScoreBoardFragment extends Fragment {
         ums.usersOrderedBy("score", ums.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAS) {
-                for (int i = 0; i<UAS.size();i++){
+                //test
+                byTotalScore.setText(UAS.get(0).getUsername());
+                /**for (int i = 0; i<UAS.size();i++){
+
                     if(UAS.get(i).getUsername() == username){
                         byTotalScore.setText(UAS.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAS.get(i-1).getUsername() +"-----Rank:"+(i-1));
                     }
-                }
+                }*/
             }
         });
 
@@ -115,8 +118,9 @@ public class ScoreBoardFragment extends Fragment {
             public void handleSuccess(ArrayList<User> UAC) {
                 for (int i = 0; i<UAC.size();i++){
                     if(UAC.get(i).getUsername() == username){
-                        byTotalScore.setText(UAC.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAC.get(i-1).getUsername() +"-----Rank:"+(i-1));
+                        byNumber.setText(UAC.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAC.get(i-1).getUsername() +"-----Rank:"+(i-1));
                     }
+                    else{byNumber.setText(username);}
                 }
             }
         });
@@ -126,11 +130,13 @@ public class ScoreBoardFragment extends Fragment {
         umb.usersOrderedBy("bestScore", umb.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAB) {
+                byHighestScore.setText(UAB.get(0).getUsername());
+                /**
                 for (int i = 0; i<UAB.size();i++){
                     if(UAB.get(i).getUsername() == username){
-                        byTotalScore.setText(UAB.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAB.get(i-1).getUsername() +"-----Rank:"+(i-1));
+                        byHighestScore.setText(UAB.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAB.get(i-1).getUsername() +"-----Rank:"+(i-1));
                     }
-                }
+                }*/
             }
         });
 

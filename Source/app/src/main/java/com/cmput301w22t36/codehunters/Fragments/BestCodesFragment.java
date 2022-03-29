@@ -32,7 +32,7 @@ public class BestCodesFragment extends Fragment {
     TextView title;
     ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
-    private ArrayList<QRCode> codeArrayList;
+    private ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
 
 
 
@@ -95,7 +95,11 @@ public class BestCodesFragment extends Fragment {
         qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
-              codeArrayList = QRA;
+                for (int i = 0; i<QRA.size();i++){
+                    QRCode qrcode = new QRCode(QRA.get(i));
+                    codeArrayList.add(qrcode);
+                }
+
             }
 
             @Override
@@ -103,14 +107,12 @@ public class BestCodesFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
-
+        //test
+        QRCode code1 = new QRCode("BFG5DGW54");
+        if (codeArrayList.size() == 0){codeArrayList.add(code1);}
 
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
-
-
-
-
 
     }
 }
