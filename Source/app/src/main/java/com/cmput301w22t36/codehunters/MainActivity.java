@@ -33,8 +33,6 @@ import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
 import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -46,7 +44,6 @@ import java.util.ArrayList;
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
 
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
@@ -59,22 +56,10 @@ public class MainActivity extends AppCompatActivity {
     public User loggedinUser;
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // TODO: Might not be needed.
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            //reload();
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAuth = FirebaseAuth.getInstance();
 
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
@@ -160,13 +145,17 @@ public class MainActivity extends AppCompatActivity {
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
                             current_code.setPhoto(qrLocationImage);
                             QRCodeData cur_code = new QRCodeData();
-                            cur_code.setCode(current_code.getCode());
+                            cur_code.setHash(current_code.getHash());
                             cur_code.setLat(current_code.getGeolocation().get(0));
                             cur_code.setLon(current_code.getGeolocation().get(1));
                             cur_code.setScore(current_code.getScore());
+                            cur_code.setPhoto(current_code.getPhoto());
+
+                            //TEST QRCODE CONSTRUCTOR
+                            QRCode code1 = new QRCode(cur_code);
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler() {
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                 }
@@ -209,14 +198,14 @@ public class MainActivity extends AppCompatActivity {
                                     //User has said no to photo-location so we create code with string code only
                                     codeArrayList.add(current_code);
                                     QRCodeData cur_code = new QRCodeData();
-                                    cur_code.setCode(current_code.getCode());
+                                    cur_code.setHash(current_code.getHash());
                                     cur_code.setLat(current_code.getGeolocation().get(0));
                                     cur_code.setLon(current_code.getGeolocation().get(1));
                                     cur_code.setScore(current_code.getScore());
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                     QRCodeMapper qrmapper = new QRCodeMapper();
-                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                         @Override
                                         public void handleSuccess(QRCodeData data) {
                                         }
@@ -244,14 +233,14 @@ public class MainActivity extends AppCompatActivity {
                                         codeArrayList.add(current_code);
                                         //test
                                         QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setHash(current_code.getHash());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
                                         cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                         QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                             }
@@ -261,14 +250,14 @@ public class MainActivity extends AppCompatActivity {
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
                                         codeArrayList.add(current_code);
                                         QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setHash(current_code.getHash());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
                                         cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                         QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler() {
+                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                             }
