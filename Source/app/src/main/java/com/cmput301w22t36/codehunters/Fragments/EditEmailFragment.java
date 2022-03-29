@@ -24,8 +24,6 @@ import com.cmput301w22t36.codehunters.R;
  */
 public class EditEmailFragment extends Fragment {
 
-    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
-
     // Initialize views to manage them within a fragment
     private TextView editName;
     private EditText editEmail;
@@ -85,28 +83,18 @@ public class EditEmailFragment extends Fragment {
         editEmail = (EditText)view.findViewById(R.id.editEmail);
         confirmChangeE = (Button)view.findViewById(R.id.confirmChangeE);
 
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: get username from the user.
-        // The username is static and not currently being edited.
-        //editName.setText("John Doe");
-
-        // TODO: ********
-        //String uuid = "AajshAJfasj";
         String uuid = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        //User user = new User();
-
+        // The username is static and not currently being edited. Display this username.
         UserMapper um = new UserMapper();
-        um.queryUDID(uuid, um.new CompletionHandler() {
+        um.queryUDID(uuid, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 // Do something with returned user data.
                 // This will (probably) execute after the FixedCase1 function returns.
 
                 // Display the username
-                String username = "John Doe";
-                username = data.getUsername();
-                //username = "John Doe2";
+                String username = data.getUsername();
                 editName.setText(username);
             }
 
@@ -115,10 +103,6 @@ public class EditEmailFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
-
-
-        //editName.setText("John Doe");
-
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         confirmChangeE.setOnClickListener(new View.OnClickListener() {
@@ -132,27 +116,20 @@ public class EditEmailFragment extends Fragment {
                 String newEmail = editEmail.getText().toString();
 
                 // Store the edited attributes
-                // TODO: implementation with database from later user stories, currently a placeholder.
-                // TODO: make the change to the user profile, ensure stored to database
-                //tempUser.setEmail(newEmail);
-
-                //tempUser.setEmail(message);
-
                 UserMapper um = new UserMapper();
-                um.queryUDID(uuid, um.new CompletionHandler() {
+                um.queryUDID(uuid, um.new CompletionHandler<User>() {
                     @Override
                     public void handleSuccess(User data) {
                         // Do something with returned user data.
                         // This will (probably) execute after the FixedCase1 function returns.
 
-                        // store the new email
+                        // Store the new email
                         data.setEmail(newEmail);
-                        um.update(data, um.new CompletionHandler(){
+                        um.update(data, um.new CompletionHandler<User>(){
                             @Override
                             public void handleSuccess(User data) {
                                 // Do something with returned user data.
                                 // This will (probably) execute after the FixedCase1 function returns.
-                                //someFunctionThatTakesUser(data);
 
                                 // Return to the user profile
                                 getParentFragmentManager().beginTransaction()
@@ -172,15 +149,6 @@ public class EditEmailFragment extends Fragment {
                         // Handle the case where user not found.
                     }
                 });
-
-
-                //UserMapper um = new UserMapper();
-                //um.update();
-
-                // Return to the user profile
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
-                        .commit();
             }
         });
     }
