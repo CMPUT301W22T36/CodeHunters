@@ -27,13 +27,17 @@ import java.util.Hashtable;
  * This is a class that represents a QRCode and holds its associated attributes (ex. Score, Hash)
  */
 public class QRCode extends QRCodeData implements Serializable, Comparable<QRCode> {
-    private String hash;
     private boolean has_photo;
     private boolean has_location;
     //(x,y) style coordinate of geolocation -- x = latitude, y = longitude
     private ArrayList<Double> geolocation;
     //Comments
     private ArrayList<Comment> comments;
+
+    public QRCode() {
+        has_photo = false;
+        has_location = false;
+    }
 
     /**
      * QRCode Constructor: takes in code and self computes associated hash and score
@@ -42,8 +46,8 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
      */
     public QRCode(String code) {
         //Set code equal to passed in code and compute hash
-        this.setCode(code);
-        hash = DigestUtils.sha256Hex(code);
+        String hash = DigestUtils.sha256Hex(code);
+        this.setHash(hash);
 
         //Compute score of code
         String []letters = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v"};
@@ -73,12 +77,26 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
     }
 
     /**
-     * Gets hash of QRCode object
-     * @return
-     *      Hash of QRCode
+     * QRCode (alternate )Constructor: takes in data and converts to normal QRCode class instance
+     * @param data
+     *      QRCode data type object retrieved from the firestore database
      */
-    public String getHash() {
-        return hash;
+    public QRCode(QRCodeData data) {
+        this.setHash(data.getHash());
+        this.setScore(data.getScore());
+        this.setUserRef(data.getUserRef());
+        //Check to see if data has a location, if so, add that to our QrCode
+        if (String.valueOf(data.getLat()) != null) {
+            ArrayList<Double> location = new ArrayList<Double>();
+            location.add(data.getLat());
+            location.add(data.getLon());
+            this.setGeolocation(location);
+        }
+        //Check to see if data has a photo, if so, add that to our QRCode
+        if (data.getPhoto() != null) {
+            this.setPhoto(data.getPhoto());
+            has_photo = true;
+        }
     }
 
     /**

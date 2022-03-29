@@ -110,7 +110,7 @@ public class MapFragment extends Fragment {
                             code.getGeolocation().get(1)
                     );
                     qrPinsList.add(new OverlayItem(
-                            code.getCode(),
+                            code.getHash(),
                             String.valueOf(code.getScore()).concat(" Points"),
                             codeGeoPoint
                     ));

@@ -150,10 +150,14 @@ public class MainActivity extends AppCompatActivity {
                             Bitmap qrLocationImage = (Bitmap) bundle.get("data");
                             current_code.setPhoto(qrLocationImage);
                             QRCodeData cur_code = new QRCodeData();
-                            cur_code.setCode(current_code.getCode());
+                            cur_code.setHash(current_code.getHash());
                             cur_code.setLat(current_code.getGeolocation().get(0));
                             cur_code.setLon(current_code.getGeolocation().get(1));
                             cur_code.setScore(current_code.getScore());
+                            cur_code.setPhoto(current_code.getPhoto());
+
+                            //TEST QRCODE CONSTRUCTOR
+                            QRCode code1 = new QRCode(cur_code);
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
                             qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
@@ -199,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                                     //User has said no to photo-location so we create code with string code only
                                     codeArrayList.add(current_code);
                                     QRCodeData cur_code = new QRCodeData();
-                                    cur_code.setCode(current_code.getCode());
+                                    cur_code.setHash(current_code.getHash());
                                     cur_code.setLat(current_code.getGeolocation().get(0));
                                     cur_code.setLon(current_code.getGeolocation().get(1));
                                     cur_code.setScore(current_code.getScore());
@@ -234,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                         codeArrayList.add(current_code);
                                         //test
                                         QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setHash(current_code.getHash());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
@@ -251,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
                                         codeArrayList.add(current_code);
                                         QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setCode(current_code.getCode());
+                                        cur_code.setHash(current_code.getHash());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());

@@ -119,8 +119,8 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         // nullify specific fields
                         thisCode.setUserRef(null);
                         thisCode.setId(null);
-                        if (!uniqueCodes.containsKey(thisCode.getCode())) {
-                            uniqueCodes.put(thisCode.getCode(), thisCode);
+                        if (!uniqueCodes.containsKey(thisCode.getHash())) {
+                            uniqueCodes.put(thisCode.getHash(), thisCode);
                         }
                     }
                     ch.handleSuccess((ArrayList<QRCodeData>) uniqueCodes.values());
@@ -145,7 +145,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         // Create list of the strings of the codes
         ArrayList<String> justTheCodes = new ArrayList<>();
         for (QRCodeData code : matchList) {
-            justTheCodes.add(code.getCode());
+            justTheCodes.add(code.getHash());
         }
 
         // make a query where we filter to codes from the given user and then
@@ -223,7 +223,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         Map<String, Object> qrCodeMap = new HashMap<>();
         qrCodeMap.put(Fields.USERREF.toString(), data.getUserRef());
         qrCodeMap.put(Fields.SCORE.toString(), data.getScore());
-        qrCodeMap.put(Fields.CODE.toString(), data.getCode());
+        qrCodeMap.put(Fields.CODE.toString(), data.getHash());
         qrCodeMap.put(Fields.LAT.toString(), data.getLat());
         qrCodeMap.put(Fields.LON.toString(), data.getLon());
         qrCodeMap.put(Fields.PHOTOURL.toString(), data.getPhotourl());
@@ -236,7 +236,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         QRCodeData qrCodeData = new QRCodeData();
         qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
         qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
-        qrCodeData.setCode(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
+        qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
         qrCodeData.setLat((Double) dataMap.get(Fields.LAT.toString()));
         qrCodeData.setLon((Double) dataMap.get(Fields.LON.toString()));
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
