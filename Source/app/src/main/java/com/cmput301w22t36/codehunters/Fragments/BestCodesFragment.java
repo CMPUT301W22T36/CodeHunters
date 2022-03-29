@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,8 @@ public class BestCodesFragment extends Fragment {
     TextView title;
     ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
-    private ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
+    private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
+
 
 
 
@@ -96,7 +98,6 @@ public class BestCodesFragment extends Fragment {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
                 rank(QRA);
-
             }
 
             @Override
@@ -104,18 +105,27 @@ public class BestCodesFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
+
+
+    }
+    public void rank(ArrayList<QRCodeData> A){
+        /**
+        if(A.size()>0){
+            Toast.makeText(getActivity().getApplicationContext(), "wrong code "+A.size(), Toast.LENGTH_SHORT)
+                    .show();
+        }else if(A.size()==0){Toast.makeText(getActivity().getApplicationContext(), "wrong query", Toast.LENGTH_SHORT)
+                .show();}*/
+        for (int i = 0; i<A.size();i++){
+            QRCode qrcode = new QRCode(A.get(i));
+            codeArrayList.add(qrcode);
+        }
+        Toast.makeText(getActivity().getApplicationContext(), "list size "+codeArrayList.size(), Toast.LENGTH_SHORT)
+                .show();
         //test
         QRCode code1 = new QRCode("BFG5DGW54");
         if (codeArrayList.size() == 0){codeArrayList.add(code1);}
 
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
-
-    }
-    public void rank(ArrayList<QRCodeData> A){
-        for (int i = 0; i<A.size();i++){
-            QRCode qrcode = new QRCode(A.get(i));
-            codeArrayList.add(qrcode);
-        }
     }
 }
