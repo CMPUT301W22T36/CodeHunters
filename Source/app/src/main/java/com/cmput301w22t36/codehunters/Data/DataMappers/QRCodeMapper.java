@@ -61,27 +61,32 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     @Override
     public void create(QRCodeData data, CompletionHandler<QRCodeData> ch) {
-        this.putImage(data.getPhoto(), this.new CompletionHandler<String>() {
-            @Override
-            public void handleSuccess(String photoUrl) {
-                data.setPhotourl(photoUrl);
-                Map<String, Object> dataMap = dataToMap(data);
-                collectionRef.add(dataMap)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                DocumentReference docRef = task.getResult();
-                                data.setId(docRef.getId());
-                                ch.handleSuccess(data);
-                            } else {
-                                ch.handleError(new FSAccessException("Data creation failed"));
-                            }
-                        });
-            }
-            @Override
-            public void handleError(Exception e) {
-                ch.handleError(e);
-            }
-        });
+        if (data.getPhoto() != null) {
+            this.putImage(data.getPhoto(), this.new CompletionHandler<String>() {
+                @Override
+                public void handleSuccess(String photoUrl) {
+                    data.setPhotourl(photoUrl);
+                    Map<String, Object> dataMap = dataToMap(data);
+                    collectionRef.add(dataMap)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    DocumentReference docRef = task.getResult();
+                                    data.setId(docRef.getId());
+                                    ch.handleSuccess(data);
+                                } else {
+                                    ch.handleError(new FSAccessException("Data creation failed"));
+                                }
+                            });
+                }
+                @Override
+                public void handleError(Exception e) {
+                    ch.handleError(e);
+                }
+            });
+        } else {
+            super.create(data, ch);
+        }
+
     }
 
     public void queryQRCodes(User user, CompletionHandler<ArrayList<QRCodeData>> lch) {
@@ -113,7 +118,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 collectionRef.whereEqualTo("userRef", userref)
                         .get()
                         .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult().getDocuments().size() == 0) {
+                            if (task.isSuccessful() && task.getResult().getDocuments().size() != 0) {
                                 List<DocumentSnapshot> documents= task.getResult().getDocuments();
                                 ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                                 CountDownLatch latch = new CountDownLatch(documents.size());
@@ -176,7 +181,8 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             uniqueCodes.put(thisCode.getHash(), thisCode);
                         }
                     }
-                    ch.handleSuccess((ArrayList<QRCodeData>) uniqueCodes.values());
+                    ArrayList<QRCodeData> codes = new ArrayList<QRCodeData>(uniqueCodes.values());
+                    ch.handleSuccess(codes);
                 } else {
                     ch.handleError(new FSAccessException("I guess firestore didn't feel like it"));
                 }
@@ -287,11 +293,11 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     protected QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();
-        qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
-        qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
+        qrCodeData.setUserRef(Objects.requireNonNull(String.valueOf(dataMap.get(Fields.USERREF.toString()))));
+        qrCodeData.setScore(Objects.requireNonNull((int)(long) dataMap.get(Fields.SCORE.toString())));
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
-        qrCodeData.setLat((Double) dataMap.get(Fields.LAT.toString()));
-        qrCodeData.setLon((Double) dataMap.get(Fields.LON.toString()));
+        qrCodeData.setLat(((Number) dataMap.get(Fields.LAT.toString())).doubleValue());
+        qrCodeData.setLon(((Number) dataMap.get(Fields.LON.toString())).doubleValue());
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
         return qrCodeData;
     }

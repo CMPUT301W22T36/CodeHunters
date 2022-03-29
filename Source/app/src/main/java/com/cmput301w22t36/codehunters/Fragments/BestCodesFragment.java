@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.MainActivity;
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link BestCodesFragment#newInstance} factory method to
@@ -25,9 +33,11 @@ import java.util.ArrayList;
 //              It can replace socialFragmentView in SocialFragment
 //              just for  now: No actual functions but all display and navigation are completed.
 public class BestCodesFragment extends Fragment {
-    TextView title;
-    ListView bestcodes;
-    ArrayList<String> BestCodes = new ArrayList<>();
+    private TextView title;
+    private ListView bestcodes;
+    //ArrayList<String> BestCodes = new ArrayList<>();
+    private ArrayList<QRCode> BestCodes = new ArrayList<QRCode>();
+    private ArrayAdapter<QRCode> codeArrayAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,7 +77,6 @@ public class BestCodesFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-
         }
     }
 
@@ -82,19 +91,35 @@ public class BestCodesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //just for test, you may find if you get back from search user, the add will double.But in really implements,
         // i wont add anything
-        BestCodes.add("code1");
-        BestCodes.add("code2");
-        BestCodes.add("code3");
-
         title = view.findViewById(R.id.bestCodesT);
         bestcodes = view.findViewById(R.id.bestCodes);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_expandable_list_item_1,BestCodes);
-        bestcodes.setAdapter(arrayAdapter);
+
+        BestCodes = getBestCodes();
+        //ArrayAdapter arrayAdapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_expandable_list_item_1,BestCodes);
+        //Populate qrcode listview and connect to customlist
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), BestCodes);
+        bestcodes.setAdapter(codeArrayAdapter);
 
         //todo
         //get bestcodes, need get all data from database and do some sorts.
 
 
 
+    }
+
+    public ArrayList<QRCode> getBestCodes() {
+        ArrayList<QRCode> codes = new ArrayList<QRCode>();
+        QRCodeMapper qrmapper = new QRCodeMapper();
+        qrmapper.getAllCodes(qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> data) {
+                for (int i=0; i<data.size(); i++) {
+                    QRCode cur_code = new QRCode(data.get(i));
+                    codes.add(cur_code);
+                }
+                Collections.sort(codes, Collections.reverseOrder());
+            }
+        });
+        return codes;
     }
 }
