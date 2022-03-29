@@ -13,6 +13,7 @@ import com.cmput301w22t36.codehunters.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -55,6 +56,31 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         super();
         collectionRef = db.collection("qrcodes");
 
+    }
+
+    @Override
+    public void create(QRCodeData data, CompletionHandler<QRCodeData> ch) {
+        this.putImage(data.getPhoto(), this.new CompletionHandler<String>() {
+            @Override
+            public void handleSuccess(String photoUrl) {
+                data.setPhotourl(photoUrl);
+                Map<String, Object> dataMap = dataToMap(data);
+                collectionRef.add(dataMap)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DocumentReference docRef = task.getResult();
+                                data.setId(docRef.getId());
+                                ch.handleSuccess(data);
+                            } else {
+                                ch.handleError(new FSAccessException("Data creation failed"));
+                            }
+                        });
+            }
+            @Override
+            public void handleError(Exception e) {
+                ch.handleError(e);
+            }
+        });
     }
 
     public void queryQRCodes(User user, CompletionHandler<ArrayList<QRCodeData>> lch) {
