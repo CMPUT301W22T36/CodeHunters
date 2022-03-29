@@ -100,14 +100,7 @@ public class ScoreBoardFragment extends Fragment {
         ums.usersOrderedBy("score", ums.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAS) {
-                //test
-                byTotalScore.setText(UAS.get(0).getUsername());
-                /**for (int i = 0; i<UAS.size();i++){
-
-                    if(UAS.get(i).getUsername() == username){
-                        byTotalScore.setText(UAS.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAS.get(i-1).getUsername() +"-----Rank:"+(i-1));
-                    }
-                }*/
+                handleData(UAS,byTotalScore);
             }
         });
 
@@ -116,12 +109,7 @@ public class ScoreBoardFragment extends Fragment {
         umc.usersOrderedBy("scanCount", umc.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAC) {
-                for (int i = 0; i<UAC.size();i++){
-                    if(UAC.get(i).getUsername() == username){
-                        byNumber.setText(UAC.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAC.get(i-1).getUsername() +"-----Rank:"+(i-1));
-                    }
-                    else{byNumber.setText(username);}
-                }
+                handleData(UAC,byNumber);
             }
         });
 
@@ -130,17 +118,46 @@ public class ScoreBoardFragment extends Fragment {
         umb.usersOrderedBy("bestScore", umb.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAB) {
-                byHighestScore.setText(UAB.get(0).getUsername());
-                /**
-                for (int i = 0; i<UAB.size();i++){
-                    if(UAB.get(i).getUsername() == username){
-                        byHighestScore.setText(UAB.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAB.get(i-1).getUsername() +"-----Rank:"+(i-1));
-                    }
-                }*/
+                handleData(UAB,byHighestScore);
             }
         });
 
 
 
+    }
+    public void handleData(ArrayList<User> A,TextView T) {
+        Boolean found = false;
+        for (int i = 0; i < A.size(); i++) {
+            if (A.get(i).getUsername() == username) {
+                if (A.size() == 1) {
+                    T.setText("You: " + username + "-----Rank:" + 1);
+                } else if (A.size() == 2 && i == 0) {
+                    T.setText("You: " + username + "-----Rank:" + 1 + "\n" + A.get(1).getUsername() + "-----Rank:" + 2);
+                } else if (A.size() == 2 && i == 1) {
+                    T.setText(A.get(0).getUsername() + "-----Rank:" + 1 + "\nYou: " + username + "-----Rank:" + 2);
+                } else {
+                    if (i == 0) {
+                        T.setText("You: " + username + "-----Rank:" + 1 + "\n" + A.get(1).getUsername() + "-----Rank:" + 2 + "\n" + A.get(2).getUsername() + "-----Rank:" + 3);
+                    } else if (i == A.size() - 1) {
+                        T.setText(A.get(i - 2).getUsername() + "-----Rank:" + (i - 2) + "\n" + A.get(i - 1).getUsername() + "-----Rank:" + (i - 1) + "\nYou: " + username + "-----Rank:" + i);
+                    } else {
+                        T.setText(A.get(i - 1).getUsername() + "-----Rank:" + (i - 1) + "\nYou: " + username + "-----Rank:" + i + "\n" + A.get(i + 1).getUsername() + "-----Rank:" + (i + 1));
+                    }
+                }
+                found = true;
+            }
+        }
+        // if no logged in user, display top 3 user.
+        if (found == false) {
+            if (A.size() == 0){
+                T.setText("No Users in database");
+            } else if (A.size() == 1) {
+                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+"test");
+            } else if (A.size() == 2) {
+                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+ "\n" + A.get(1).getUsername() + "-----Rank:" + 2);
+            } else  {
+                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+ "\n" + A.get(1).getUsername() + "-----Rank:" + 2 + "\n" + A.get(2).getUsername() + "-----Rank:" + 3);
+            }
+        }
     }
 }

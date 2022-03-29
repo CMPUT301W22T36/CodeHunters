@@ -95,10 +95,7 @@ public class BestCodesFragment extends Fragment {
         qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
-                for (int i = 0; i<QRA.size();i++){
-                    QRCode qrcode = new QRCode(QRA.get(i));
-                    codeArrayList.add(qrcode);
-                }
+                rank(QRA);
 
             }
 
@@ -114,5 +111,11 @@ public class BestCodesFragment extends Fragment {
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
 
+    }
+    public void rank(ArrayList<QRCodeData> A){
+        for (int i = 0; i<A.size();i++){
+            QRCode qrcode = new QRCode(A.get(i));
+            codeArrayList.add(qrcode);
+        }
     }
 }
