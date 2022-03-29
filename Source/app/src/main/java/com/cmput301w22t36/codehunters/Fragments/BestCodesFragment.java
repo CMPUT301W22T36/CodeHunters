@@ -12,6 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
@@ -27,7 +31,10 @@ import java.util.ArrayList;
 public class BestCodesFragment extends Fragment {
     TextView title;
     ListView bestcodes;
-    ArrayList<String> BestCodes = new ArrayList<>();
+    private ArrayAdapter<QRCode> codeArrayAdapter;
+    private ArrayList<QRCode> codeArrayList;
+
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,19 +87,28 @@ public class BestCodesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //just for test, you may find if you get back from search user, the add will double.But in really implements,
-        // i wont add anything
-        BestCodes.add("code1");
-        BestCodes.add("code2");
-        BestCodes.add("code3");
-
         title = view.findViewById(R.id.bestCodesT);
         bestcodes = view.findViewById(R.id.bestCodes);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_expandable_list_item_1,BestCodes);
-        bestcodes.setAdapter(arrayAdapter);
-
         //todo
         //get bestcodes, need get all data from database and do some sorts.
+        QRCodeMapper qrm = new QRCodeMapper();
+        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> QRA) {
+              codeArrayList = QRA;
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
+
+
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
+        bestcodes.setAdapter(codeArrayAdapter);
+
+
 
 
 

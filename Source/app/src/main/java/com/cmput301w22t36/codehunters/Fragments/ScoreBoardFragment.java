@@ -10,8 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,8 +41,8 @@ public class ScoreBoardFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String username;
+
 
 
 
@@ -50,16 +55,14 @@ public class ScoreBoardFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param name
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ScoreBoardFragment newInstance(String param1, String param2) {
+    public static ScoreBoardFragment newInstance(String name) {
         ScoreBoardFragment fragment = new ScoreBoardFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, name);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,8 +71,7 @@ public class ScoreBoardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            username = getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -92,8 +94,45 @@ public class ScoreBoardFragment extends Fragment {
         byNumber = view.findViewById(R.id.byNumber);
         byTotalScore = view.findViewById(R.id.byTotalScore);
 
-        //todo
-        //get byHighestScore,byNumber,byTotalScore text and set text, need get all data from database and do some sorts.
+
+        // ordered by score
+        UserMapper ums = new UserMapper();
+        ums.usersOrderedBy("score", ums.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAS) {
+                for (int i = 0; i<UAS.size();i++){
+                    if(UAS.get(i).getUsername() == username){
+                        byTotalScore.setText(UAS.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAS.get(i-1).getUsername() +"-----Rank:"+(i-1));
+                    }
+                }
+            }
+        });
+
+        // ordered by scanCount
+        UserMapper umc = new UserMapper();
+        umc.usersOrderedBy("scanCount", umc.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAC) {
+                for (int i = 0; i<UAC.size();i++){
+                    if(UAC.get(i).getUsername() == username){
+                        byTotalScore.setText(UAC.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAC.get(i-1).getUsername() +"-----Rank:"+(i-1));
+                    }
+                }
+            }
+        });
+
+        // ordered by bestScore
+        UserMapper umb = new UserMapper();
+        umb.usersOrderedBy("bestScore", umb.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAB) {
+                for (int i = 0; i<UAB.size();i++){
+                    if(UAB.get(i).getUsername() == username){
+                        byTotalScore.setText(UAB.get(i+1).getUsername() +"-----Rank:"+(i+1)+"\nYou: "+username+"-----Rank:"+i+"\n" + UAB.get(i-1).getUsername() +"-----Rank:"+(i-1));
+                    }
+                }
+            }
+        });
 
 
 
