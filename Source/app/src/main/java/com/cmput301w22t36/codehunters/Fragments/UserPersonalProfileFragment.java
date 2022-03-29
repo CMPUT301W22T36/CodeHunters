@@ -6,12 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.R;
 
 /**
@@ -92,9 +95,29 @@ public class UserPersonalProfileFragment extends Fragment {
         get_account_QR_button = (Button)view.findViewById(R.id.get_account_QR_button);
         share_profile_button = (Button)view.findViewById(R.id.share_profile_button);
 
-        // TODO: get the user information from the user.
-        usernameView.setText("John Doe");
-        userEmailView.setText("example@example.com");
+        // Display the user information for this device's account
+        String uuid = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // Display the username and email.
+        UserMapper um = new UserMapper();
+        um.queryUDID(uuid, um.new CompletionHandler<User>() {
+            @Override
+            public void handleSuccess(User data) {
+                // Do something with returned user data.
+                // This will (probably) execute after the FixedCase1 function returns.
+
+                // Display the username
+                String username = data.getUsername();
+                String email = data.getEmail();
+                usernameView.setText(username);
+                userEmailView.setText(email);
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         edit_name_button.setOnClickListener(new View.OnClickListener() {
