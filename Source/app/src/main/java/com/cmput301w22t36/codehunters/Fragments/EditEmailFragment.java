@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,37 @@ public class EditEmailFragment extends Fragment {
         // TODO: implementation with database from later user stories, currently a placeholder.
         // TODO: get username from the user.
         // The username is static and not currently being edited.
-        editName.setText("John Doe");
+        //editName.setText("John Doe");
+
+        // TODO: ********
+        //String uuid = "AajshAJfasj";
+        String uuid = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        //User user = new User();
+
+        UserMapper um = new UserMapper();
+        um.queryUDID(uuid, um.new CompletionHandler() {
+            @Override
+            public void handleSuccess(User data) {
+                // Do something with returned user data.
+                // This will (probably) execute after the FixedCase1 function returns.
+
+                // Display the username
+                String username = "John Doe";
+                username = data.getUsername();
+                //username = "John Doe2";
+                editName.setText(username);
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
+
+
+        //editName.setText("John Doe");
+
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         confirmChangeE.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +134,46 @@ public class EditEmailFragment extends Fragment {
                 // Store the edited attributes
                 // TODO: implementation with database from later user stories, currently a placeholder.
                 // TODO: make the change to the user profile, ensure stored to database
-                tempUser.setEmail(newEmail);
+                //tempUser.setEmail(newEmail);
+
+                //tempUser.setEmail(message);
+
+                UserMapper um = new UserMapper();
+                um.queryUDID(uuid, um.new CompletionHandler() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // Do something with returned user data.
+                        // This will (probably) execute after the FixedCase1 function returns.
+
+                        // store the new email
+                        data.setEmail(newEmail);
+                        um.update(data, um.new CompletionHandler(){
+                            @Override
+                            public void handleSuccess(User data) {
+                                // Do something with returned user data.
+                                // This will (probably) execute after the FixedCase1 function returns.
+                                //someFunctionThatTakesUser(data);
+
+                                // Return to the user profile
+                                getParentFragmentManager().beginTransaction()
+                                        .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                                        .commit();
+                            }
+
+                            @Override
+                            public void handleError(Exception e) {
+                                // Handle the case where user not found.
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleError(Exception e) {
+                        // Handle the case where user not found.
+                    }
+                });
+
+
                 //UserMapper um = new UserMapper();
                 //um.update();
 

@@ -181,7 +181,7 @@ public class FirstWelcomeFragment extends Fragment {
                         // goto the main game screen
                         ((MainActivity) getActivity()).loggedinUser = user;
                         getParentFragmentManager().beginTransaction()
-                                .replace(R.id.mainActivityFragmentView, MapFragment.class, null)
+                                .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
                                 .commit();
                     }
                     @Override
