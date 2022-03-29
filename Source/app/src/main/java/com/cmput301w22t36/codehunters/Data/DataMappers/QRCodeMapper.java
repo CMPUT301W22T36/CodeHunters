@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class QRCodeMapper extends DataMapper<QRCodeData> {
 
@@ -115,10 +116,36 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             if (task.isSuccessful() && task.getResult().getDocuments().size() == 0) {
                                 List<DocumentSnapshot> documents= task.getResult().getDocuments();
                                 ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                                CountDownLatch latch = new CountDownLatch(documents.size());
                                 for (DocumentSnapshot docSnap : documents) {
-                                    qrData.add(mapToData(docSnap.getData()));
+                                    QRCodeData qrCode = mapToData(docSnap.getData());
+                                    if (qrCode.getPhotourl() != null) {
+                                        // Async get photo from database.
+                                        getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                            @Override
+                                            public void handleSuccess(Bitmap bMap) {
+                                                qrCode.setPhoto(bMap);
+                                                qrData.add(qrCode);
+                                                latch.countDown();
+                                            }
+                                            @Override
+                                            public void handleError(Exception e) {
+                                                latch.countDown();
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        qrData.add(qrCode);
+                                        latch.countDown();
+                                    }
                                 }
-                                lch.handleSuccess(qrData);
+                                try {
+                                    latch.await();
+                                    lch.handleSuccess(qrData);
+                                }
+                                catch (Exception e) {
+                                    lch.handleError(e);
+                                }
                             } else {
                                 lch.handleError(new FSAccessException("Username not unique or other error"));
                             }
