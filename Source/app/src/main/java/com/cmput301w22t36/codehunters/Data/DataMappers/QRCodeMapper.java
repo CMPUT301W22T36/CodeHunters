@@ -115,6 +115,11 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                     // build up a hashmap of all the unique codes, first come first serve
                     HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
                     for (DocumentSnapshot code : task.getResult()) {
+                        // TODO: Fix database so that this code doesn't make the app crash:
+                        if (code.getData().get(Fields.CODE.toString()).equals("AZ09")) { continue; }
+
+
+
                         QRCodeData thisCode = mapToData(code.getData());
                         // nullify specific fields
                         thisCode.setUserRef(null);
@@ -123,7 +128,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             uniqueCodes.put(thisCode.getHash(), thisCode);
                         }
                     }
-                    ch.handleSuccess((ArrayList<QRCodeData>) uniqueCodes.values());
+                    ch.handleSuccess(new ArrayList<QRCodeData>(uniqueCodes.values()));
                 } else {
                     ch.handleError(new FSAccessException("I guess firestore didn't feel like it"));
                 }
@@ -235,7 +240,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();
         qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
-        qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
+        qrCodeData.setScore((Objects.requireNonNull((Long) dataMap.get(Fields.SCORE.toString()))).intValue());
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
         qrCodeData.setLat((Double) dataMap.get(Fields.LAT.toString()));
         qrCodeData.setLon((Double) dataMap.get(Fields.LON.toString()));
