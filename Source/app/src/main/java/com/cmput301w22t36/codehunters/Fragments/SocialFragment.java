@@ -85,8 +85,8 @@ public class SocialFragment extends Fragment {
         if (savedInstanceState == null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.socialFragmentView, ScoreBoardFragment.class, null)
-                    //.add(R.id.socialFragmentView, BestCodesFragment.class, null)
+                    //.add(R.id.socialFragmentView, ScoreBoardFragment.class, null)
+                    .add(R.id.socialFragmentView, BestCodesFragment.class, null)
                     .commit();
         }
         bestCodesNav = view.findViewById(R.id.navToBestCodes);
@@ -113,11 +113,7 @@ public class SocialFragment extends Fragment {
                 ScoreBoardFragment fragmentDemo2 = ScoreBoardFragment.newInstance(username);
                 ft2.replace(R.id.socialFragmentView,fragmentDemo2);
                 ft2.commit();
-                /**
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.socialFragmentView, ScoreBoardFragment.class, null)
-                        .commit();*/
+
             }
         });
         // Swap to the SearchUserFragment when the search bottom is clicked and enter a valid user name

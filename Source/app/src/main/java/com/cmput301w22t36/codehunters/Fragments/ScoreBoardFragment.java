@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,6 +102,7 @@ public class ScoreBoardFragment extends Fragment {
         ums.usersOrderedBy("score", ums.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAS) {
+                Collections.reverse(UAS);
                 handleData(UAS,byTotalScore);
             }
         });
@@ -109,6 +112,7 @@ public class ScoreBoardFragment extends Fragment {
         umc.usersOrderedBy("scanCount", umc.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAC) {
+                Collections.reverse(UAC);
                 handleData(UAC,byNumber);
             }
         });
@@ -118,6 +122,7 @@ public class ScoreBoardFragment extends Fragment {
         umb.usersOrderedBy("bestScore", umb.new CompletionHandler<ArrayList<User>>() {
             @Override
             public void handleSuccess(ArrayList<User> UAB) {
+                Collections.reverse(UAB);
                 handleData(UAB,byHighestScore);
             }
         });
@@ -126,37 +131,43 @@ public class ScoreBoardFragment extends Fragment {
 
     }
     public void handleData(ArrayList<User> A,TextView T) {
-        Boolean found = false;
+        Integer found = 0;
+
         for (int i = 0; i < A.size(); i++) {
-            if (A.get(i).getUsername() == username) {
+            if (A.get(i).getUsername().equals(username)) {
+                found = 1;
                 if (A.size() == 1) {
-                    T.setText("You: " + username + "-----Rank:" + 1);
+                    T.setText("--Rank"+1+"-- You" );
                 } else if (A.size() == 2 && i == 0) {
-                    T.setText("You: " + username + "-----Rank:" + 1 + "\n" + A.get(1).getUsername() + "-----Rank:" + 2);
+                    T.setText("--Rank"+1+"-- You" +  "\n--Rank"+2+"-- "+ A.get(1).getUsername() );
                 } else if (A.size() == 2 && i == 1) {
-                    T.setText(A.get(0).getUsername() + "-----Rank:" + 1 + "\nYou: " + username + "-----Rank:" + 2);
+                    T.setText("--Rank"+1+"-- "+ A.get(0).getUsername() + "\n--Rank"+2+"-- You");
                 } else {
                     if (i == 0) {
-                        T.setText("You: " + username + "-----Rank:" + 1 + "\n" + A.get(1).getUsername() + "-----Rank:" + 2 + "\n" + A.get(2).getUsername() + "-----Rank:" + 3);
+                        T.setText("--Rank"+1+"-- You" + "\n--Rank"+2+"-- " + A.get(1).getUsername() + "\n--Rank"+3+"-- " + A.get(2).getUsername());
                     } else if (i == A.size() - 1) {
-                        T.setText(A.get(i - 2).getUsername() + "-----Rank:" + (i - 2) + "\n" + A.get(i - 1).getUsername() + "-----Rank:" + (i - 1) + "\nYou: " + username + "-----Rank:" + i);
+                        T.setText("--Rank"+(i-1)+"-- " +A.get(i - 2).getUsername() + "\n--Rank"+i+"-- " + A.get(i - 1).getUsername()  + "\n--Rank"+(i+1)+"-- You");
                     } else {
-                        T.setText(A.get(i - 1).getUsername() + "-----Rank:" + (i - 1) + "\nYou: " + username + "-----Rank:" + i + "\n" + A.get(i + 1).getUsername() + "-----Rank:" + (i + 1));
+                        T.setText("--Rank"+i+"-- " +A.get(i - 1).getUsername() + "\n--Rank"+(i+1)+"-- You"  + "\n--Rank"+(i+2)+"-- "+A.get(i + 1).getUsername());
                     }
                 }
-                found = true;
+
             }
         }
+
         // if no logged in user, display top 3 user.
-        if (found == false) {
+
+        if (found == 0) {
+            Toast.makeText(getActivity().getApplicationContext(), "No logged user " + username, Toast.LENGTH_SHORT)
+                    .show();
             if (A.size() == 0){
                 T.setText("No Users in database");
             } else if (A.size() == 1) {
-                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+"test");
+                T.setText("--Rank"+1+"-- "+ A.get(0).getUsername());
             } else if (A.size() == 2) {
-                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+ "\n" + A.get(1).getUsername() + "-----Rank:" + 2);
+                T.setText("--Rank"+1+"-- "+ A.get(0).getUsername()+"\n--Rank"+2+"-- "+ A.get(1).getUsername());
             } else  {
-                T.setText(A.get(0).getUsername() + "-----Rank:" + 1+ "\n" + A.get(1).getUsername() + "-----Rank:" + 2 + "\n" + A.get(2).getUsername() + "-----Rank:" + 3);
+                T.setText("--Rank"+1+"-- "+ A.get(0).getUsername()+"\n--Rank"+2+"-- "+ A.get(1).getUsername()+"\n--Rank"+3+"-- "+ A.get(2).getUsername());
             }
         }
     }

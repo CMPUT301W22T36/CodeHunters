@@ -20,6 +20,8 @@ import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link BestCodesFragment#newInstance} factory method to
@@ -109,12 +111,6 @@ public class BestCodesFragment extends Fragment {
 
     }
     public void rank(ArrayList<QRCodeData> A){
-        /**
-        if(A.size()>0){
-            Toast.makeText(getActivity().getApplicationContext(), "wrong code "+A.size(), Toast.LENGTH_SHORT)
-                    .show();
-        }else if(A.size()==0){Toast.makeText(getActivity().getApplicationContext(), "wrong query", Toast.LENGTH_SHORT)
-                .show();}*/
         for (int i = 0; i<A.size();i++){
             QRCode qrcode = new QRCode(A.get(i));
             codeArrayList.add(qrcode);
@@ -124,8 +120,10 @@ public class BestCodesFragment extends Fragment {
         //test
         QRCode code1 = new QRCode("BFG5DGW54");
         if (codeArrayList.size() == 0){codeArrayList.add(code1);}
-
+        Collections.sort(codeArrayList, Collections.reverseOrder());
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
+
+
     }
 }
