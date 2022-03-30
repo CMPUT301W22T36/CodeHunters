@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
@@ -36,9 +38,6 @@ public class BestCodesFragment extends Fragment {
     ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
     private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
-
-
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,7 +77,6 @@ public class BestCodesFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-
         }
     }
 
@@ -125,5 +123,21 @@ public class BestCodesFragment extends Fragment {
         bestcodes.setAdapter(codeArrayAdapter);
 
 
+    }
+
+    public ArrayList<QRCode> getBestCodes() {
+        ArrayList<QRCode> codes = new ArrayList<QRCode>();
+        QRCodeMapper qrmapper = new QRCodeMapper();
+        qrmapper.getAllCodes(qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> data) {
+                for (int i=0; i<data.size(); i++) {
+                    QRCode cur_code = new QRCode(data.get(i));
+                    codes.add(cur_code);
+                }
+                Collections.sort(codes, Collections.reverseOrder());
+            }
+        });
+        return codes;
     }
 }

@@ -1,6 +1,7 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,6 @@ import com.cmput301w22t36.codehunters.R;
  * Display the fragment to change the user's email and manage any edits to the email.
  */
 public class EditEmailFragment extends Fragment {
-
-    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
 
     // Initialize views to manage them within a fragment
     private TextView editName;
@@ -84,10 +83,26 @@ public class EditEmailFragment extends Fragment {
         editEmail = (EditText)view.findViewById(R.id.editEmail);
         confirmChangeE = (Button)view.findViewById(R.id.confirmChangeE);
 
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: get username from the user.
-        // The username is static and not currently being edited.
-        editName.setText("John Doe");
+        String uuid = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // The username is static and not currently being edited. Display this username.
+        UserMapper um = new UserMapper();
+        um.queryUDID(uuid, um.new CompletionHandler<User>() {
+            @Override
+            public void handleSuccess(User data) {
+                // Do something with returned user data.
+                // This will (probably) execute after the FixedCase1 function returns.
+
+                // Display the username
+                String username = data.getUsername();
+                editName.setText(username);
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         confirmChangeE.setOnClickListener(new View.OnClickListener() {
@@ -101,16 +116,39 @@ public class EditEmailFragment extends Fragment {
                 String newEmail = editEmail.getText().toString();
 
                 // Store the edited attributes
-                // TODO: implementation with database from later user stories, currently a placeholder.
-                // TODO: make the change to the user profile, ensure stored to database
-                tempUser.setEmail(newEmail);
-                //UserMapper um = new UserMapper();
-                //um.update();
+                UserMapper um = new UserMapper();
+                um.queryUDID(uuid, um.new CompletionHandler<User>() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // Do something with returned user data.
+                        // This will (probably) execute after the FixedCase1 function returns.
 
-                // Return to the user profile
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
-                        .commit();
+                        // Store the new email
+                        data.setEmail(newEmail);
+                        um.update(data, um.new CompletionHandler<User>(){
+                            @Override
+                            public void handleSuccess(User data) {
+                                // Do something with returned user data.
+                                // This will (probably) execute after the FixedCase1 function returns.
+
+                                // Return to the user profile
+                                getParentFragmentManager().beginTransaction()
+                                        .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                                        .commit();
+                            }
+
+                            @Override
+                            public void handleError(Exception e) {
+                                // Handle the case where user not found.
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleError(Exception e) {
+                        // Handle the case where user not found.
+                    }
+                });
             }
         });
     }

@@ -2,6 +2,7 @@ package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.cmput301w22t36.codehunters.UUIDPairing;
 
@@ -24,8 +27,6 @@ import com.cmput301w22t36.codehunters.UUIDPairing;
  * Display the fragment to change the user's name and manage any edits to the username.
  */
 public class EditNameFragment extends Fragment {
-
-    User tempUser = new User();     // TODO: REMOVE THIS WHEN DATABASE READY!
 
     // Initialize views to manage them within a fragment
     private EditText editName;
@@ -86,10 +87,26 @@ public class EditNameFragment extends Fragment {
         editEmail = (TextView)view.findViewById(R.id.editEmail);
         confirmChangeN = (Button)view.findViewById(R.id.confirmChangeN);
 
-        // TODO: implementation with database from later user stories, currently a placeholder.
-        // TODO: get email from user.
-        // The email is static and not currently being edited.
-        editEmail.setText("example@example.com");
+        String uuid = Settings.Secure.getString(getActivity().getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // The email is static and not currently being edited. Display this email.
+        UserMapper um = new UserMapper();
+        um.queryUDID(uuid, um.new CompletionHandler<User>() {
+            @Override
+            public void handleSuccess(User data) {
+                // Do something with returned user data.
+                // This will (probably) execute after the FixedCase1 function returns.
+
+                // Display the username
+                String email = data.getEmail();
+                editEmail.setText(email);
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
 
         // Set the confirm button to respond to user clicks and call their corresponding functions
         confirmChangeN.setOnClickListener(new View.OnClickListener() {
@@ -100,43 +117,68 @@ public class EditNameFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // Obtain the new name
-                String message = editName.getText().toString();
+                String username = editName.getText().toString();
 
-                // TODO: implementation with database from later user stories, currently a placeholder.
-                // TODO: ensure the username is unique! Search the database.
-                boolean uniqueName = true;
+                // Ensure the username is unique
+                UserMapper um = new UserMapper();
+                um.usernameUnique(username, um.new CompletionHandler<User>() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // Name is unique. Store the edited attributes
+                        UserMapper um = new UserMapper();
+                        um.queryUDID(uuid, um.new CompletionHandler<User>() {
+                            @Override
+                            public void handleSuccess(User data) {
+                                // Do something with returned user data.
+                                // This will (probably) execute after the FixedCase1 function returns.
 
-                if (uniqueName) {
-                    // Store the edited attributes
-                    // TODO: implementation with database from later user stories, currently a placeholder.
-                    // TODO: make the change to the user profile, ensure stored to database
-                    tempUser.setUsername(message);
-                    UUIDPairing.setUsername(message);
+                                // Store the new name
+                                data.setUsername(username);
+                                um.update(data, um.new CompletionHandler<User>(){
+                                    @Override
+                                    public void handleSuccess(User data) {
+                                        // Do something with returned user data.
+                                        // This will (probably) execute after the FixedCase1 function returns.
 
-                    // Return to the user profile
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
-                            .commit();
-                } else {
-                    // prompt the user to enter a unique name
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Unique Username Required");
-                    builder.setMessage("This username is unavailable, please try another username.");
-                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        /**
-                         * Dismiss the notification
-                         * @param dialogInterface: the current dialog interface
-                         * @param i: button id of button clicked
-                         */
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    builder.show();
+                                        // Return to the user profile
+                                        getParentFragmentManager().beginTransaction()
+                                                .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                                                .commit();
+                                    }
+                                    @Override
+                                    public void handleError(Exception e) {
+                                        // Handle the case where user not found.
+                                    }
+                                });
+                            }
+                            @Override
+                            public void handleError(Exception e) {
+                                // Handle the case where user not found.
+                            }
+                        });
+                    }
 
-                    // remain within this fragment as the user must choose another username
-                }
+                    @Override
+                    public void handleError(Exception e) {
+                        // Name entered is not unique. Prompt the user to enter a unique name
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Unique Username Required");
+                        builder.setMessage("This username is unavailable, please try another username.");
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            /**
+                             * Dismiss the notification
+                             * @param dialogInterface: the current dialog interface
+                             * @param i: button id of button clicked
+                             */
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.show();
+                        // remain within this fragment as the user must choose another username
+                    }
+                });
             }
         });
     }
