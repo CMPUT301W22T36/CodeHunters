@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,11 +34,10 @@ import java.util.Collections;
 //              It can replace socialFragmentView in SocialFragment
 //              just for  now: No actual functions but all display and navigation are completed.
 public class BestCodesFragment extends Fragment {
-    private TextView title;
-    private ListView bestcodes;
-    //ArrayList<String> BestCodes = new ArrayList<>();
-    private ArrayList<QRCode> BestCodes = new ArrayList<QRCode>();
+    TextView title;
+    ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
+    private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,20 +89,38 @@ public class BestCodesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //just for test, you may find if you get back from search user, the add will double.But in really implements,
-        // i wont add anything
         title = view.findViewById(R.id.bestCodesT);
         bestcodes = view.findViewById(R.id.bestCodes);
-
-        BestCodes = getBestCodes();
-        //ArrayAdapter arrayAdapter = new ArrayAdapter(this.getContext(), android.R.layout.simple_expandable_list_item_1,BestCodes);
-        //Populate qrcode listview and connect to customlist
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), BestCodes);
-        bestcodes.setAdapter(codeArrayAdapter);
-
         //todo
         //get bestcodes, need get all data from database and do some sorts.
+        QRCodeMapper qrm = new QRCodeMapper();
+        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> QRA) {
+                rank(QRA);
+            }
 
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
+
+
+    }
+    public void rank(ArrayList<QRCodeData> A){
+        for (int i = 0; i<A.size();i++){
+            QRCode qrcode = new QRCode(A.get(i));
+            codeArrayList.add(qrcode);
+        }
+        Toast.makeText(getActivity().getApplicationContext(), "list size "+codeArrayList.size(), Toast.LENGTH_SHORT)
+                .show();
+        //test
+        QRCode code1 = new QRCode("BFG5DGW54");
+        if (codeArrayList.size() == 0){codeArrayList.add(code1);}
+        Collections.sort(codeArrayList, Collections.reverseOrder());
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
+        bestcodes.setAdapter(codeArrayAdapter);
 
 
     }

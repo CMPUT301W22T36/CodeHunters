@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,11 +34,10 @@ public class SocialFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String username;
     TextView bestCodesNav, scoreBoardNav;
     FloatingActionButton searchUser;
     AlertDialog dialogSearchUser;
@@ -51,16 +51,14 @@ public class SocialFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param name
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SocialFragment newInstance(String param1, String param2) {
+    public static SocialFragment newInstance(String name) {
         SocialFragment fragment = new SocialFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, name);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,8 +67,8 @@ public class SocialFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            username = (String) getArguments().getString(ARG_PARAM1);
+
         }
     }
 
@@ -87,6 +85,7 @@ public class SocialFragment extends Fragment {
         if (savedInstanceState == null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
+                    //.add(R.id.socialFragmentView, ScoreBoardFragment.class, null)
                     .add(R.id.socialFragmentView, BestCodesFragment.class, null)
                     .commit();
         }
@@ -110,10 +109,11 @@ public class SocialFragment extends Fragment {
         scoreBoardNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.socialFragmentView, ScoreBoardFragment.class, null)
-                        .commit();
+                FragmentTransaction ft2 = getActivity().getSupportFragmentManager().beginTransaction();
+                ScoreBoardFragment fragmentDemo2 = ScoreBoardFragment.newInstance(username);
+                ft2.replace(R.id.socialFragmentView,fragmentDemo2);
+                ft2.commit();
+
             }
         });
         // Swap to the SearchUserFragment when the search bottom is clicked and enter a valid user name

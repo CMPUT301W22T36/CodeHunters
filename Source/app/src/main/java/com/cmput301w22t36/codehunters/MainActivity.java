@@ -104,10 +104,15 @@ public class MainActivity extends AppCompatActivity {
         socialNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
+                SocialFragment fragmentDemoS = SocialFragment.newInstance(loggedinUser.getUsername());
+                fts.replace(R.id.mainActivityFragmentView,fragmentDemoS);
+                fts.commit();
+                /**
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
                         .replace(R.id.mainActivityFragmentView, SocialFragment.class, null)
-                        .commit();
+                        .commit();*/
             }
         });
 
