@@ -13,42 +13,6 @@ import java.util.ArrayList;
 public class User extends Data {
     // the user's unique username
     private String username;
-
-    public String getBestScore() {
-        return bestScore;
-    }
-
-    public void setBestScore(String bestScore) {
-        this.bestScore = bestScore;
-    }
-
-    public String getScanCount() {
-        return ScanCount;
-    }
-
-    public void setScanCount(String scanCount) {
-        ScanCount = scanCount;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
-
-    public Boolean getOwner() {
-        return isOwner;
-    }
-
-    public void setOwner(Boolean owner) {
-        isOwner = owner;
-    }
-
-    private String bestScore;
-    private String ScanCount;
-    private String score;
     // the user's email for contact information
     private String email;
     // the QR code allowing a user to login to their account from another device
