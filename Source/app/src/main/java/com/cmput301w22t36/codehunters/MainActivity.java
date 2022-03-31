@@ -157,12 +157,13 @@ public class MainActivity extends AppCompatActivity {
                             cur_code.setLon(current_code.getGeolocation().get(1));
                             cur_code.setScore(current_code.getScore());
                             cur_code.setPhoto(current_code.getPhoto());
+                            cur_code.setUserRef(loggedinUser.getId());
 
                             //TEST QRCODE CONSTRUCTOR
                             QRCode code1 = new QRCode(cur_code);
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                     updateCodeLists();
