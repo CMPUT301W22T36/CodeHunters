@@ -98,7 +98,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         List<DocumentSnapshot> documents= task.getResult().getDocuments();
                         ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                         for (DocumentSnapshot docSnap : documents) {
-                            qrData.add(mapToData(docSnap.getData()));
+                            qrData.add(mapToData(docSnap.getData(), docSnap));
                         }
                         lch.handleSuccess(qrData);
                     } else {
@@ -123,7 +123,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                                 ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                                 CountDownLatch latch = new CountDownLatch(documents.size());
                                 for (DocumentSnapshot docSnap : documents) {
-                                    QRCodeData qrCode = mapToData(docSnap.getData());
+                                    QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
                                     if (qrCode.getPhotourl() != null) {
                                         // Async get photo from database.
                                         getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
@@ -226,7 +226,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                     ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
 
                     for (DocumentSnapshot document : results) {
-                        matchedCodes.add(mapToData(document.getData()));
+                        matchedCodes.add(mapToData(document.getData(), document));
                     }
                     ch.handleSuccess(matchedCodes);
 
@@ -282,6 +282,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 });
     }
 
+
     @Override
     protected Map<String, Object> dataToMap(QRCodeData data) {
         Map<String, Object> qrCodeMap = new HashMap<>();
@@ -292,6 +293,12 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         qrCodeMap.put(Fields.LON.toString(), data.getLon());
         qrCodeMap.put(Fields.PHOTOURL.toString(), data.getPhotourl());
         return qrCodeMap;
+    }
+
+    protected QRCodeData mapToData(@NonNull Map<String, Object> dataMap, DocumentSnapshot document) {
+        QRCodeData qrCodeData = mapToData(dataMap);
+        qrCodeData.setId(document.getId());
+        return qrCodeData;
     }
 
     @Override
