@@ -185,18 +185,13 @@ public class SearchUserFragment extends Fragment {
         searchedUserT= view.findViewById(R.id.t1);
         searchedUser = view.findViewById(R.id.stats);
 
-        searchedUser.setText("username: "+MainActivity.mainActivity.searchUser.getUsername()
+        searchedUser.setText("username:"+MainActivity.mainActivity.searchUser.getUsername()
                 +"\r\n"
-                +"BestScore: "+MainActivity.mainActivity.searchUser.getBestScore()
+                +"BestScore:"+MainActivity.mainActivity.searchUser.getBestScore()
                 +"\r\n"
-                +"Email: "+MainActivity.mainActivity.searchUser.getEmail()
+                +"TotalScore:"+MainActivity.mainActivity.searchUser.getScore()
                 +"\r\n"
-                +"Is Owner: "+MainActivity.mainActivity.searchUser.getOwner()
-                +"\r\n"
-                +"Total Score: "+MainActivity.mainActivity.searchUser.getScore()
-                +"\r\n"
-                +"Scan Count: "+MainActivity.mainActivity.searchUser.getScanCount()
-
+                +"ScanCount:"+MainActivity.mainActivity.searchUser.getScanCount()
         );
 
 
