@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
-    public ArrayList<QRCode> globalcodeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
     public User loggedinUser;
@@ -76,13 +75,6 @@ public class MainActivity extends AppCompatActivity {
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
 
-        //DEMO Code for CODES TEST - MEHUL
-//        QRCode code1 = new QRCode("BFG5DGW54");
-//        QRCode code2 = new QRCode("W4GAF75A7");
-//        QRCode code3 = new QRCode("Z56SJHGF76");
-//        codeArrayList.add(code1);
-//        codeArrayList.add(code2);
-//        codeArrayList.add(code3);
         updateCodeLists();
 
         // Swap to the CodesFragment when the "Codes" textview is clicked
@@ -209,8 +201,6 @@ public class MainActivity extends AppCompatActivity {
                                     codeArrayList.add(current_code);
                                     QRCodeData cur_code = new QRCodeData();
                                     cur_code.setHash(current_code.getHash());
-                                    cur_code.setLat(current_code.getGeolocation().get(0));
-                                    cur_code.setLon(current_code.getGeolocation().get(1));
                                     cur_code.setScore(current_code.getScore());
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
@@ -293,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateCodeLists() {
         codeArrayList.clear();
-        globalcodeArrayList.clear();
         QRCodeMapper qrmapper = new QRCodeMapper();
         String UDID = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         qrmapper.queryUsersCodes(UDID, qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
@@ -303,16 +292,6 @@ public class MainActivity extends AppCompatActivity {
                     QRCode cur_code = new QRCode(data.get(i));
                     codeArrayList.add(cur_code);
                 }
-            }
-        });
-        qrmapper.getAllCodes(qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
-            @Override
-            public void handleSuccess(ArrayList<QRCodeData> data) {
-                for (int i=0; i<data.size(); i++) {
-                    QRCode cur_code = new QRCode(data.get(i));
-                    globalcodeArrayList.add(cur_code);
-                }
-                Collections.sort(globalcodeArrayList, Collections.reverseOrder());
             }
         });
     }

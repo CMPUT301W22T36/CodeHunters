@@ -121,23 +121,5 @@ public class BestCodesFragment extends Fragment {
         Collections.sort(codeArrayList, Collections.reverseOrder());
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
-
-
-    }
-
-    public ArrayList<QRCode> getBestCodes() {
-        ArrayList<QRCode> codes = new ArrayList<QRCode>();
-        QRCodeMapper qrmapper = new QRCodeMapper();
-        qrmapper.getAllCodes(qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
-            @Override
-            public void handleSuccess(ArrayList<QRCodeData> data) {
-                for (int i=0; i<data.size(); i++) {
-                    QRCode cur_code = new QRCode(data.get(i));
-                    codes.add(cur_code);
-                }
-                Collections.sort(codes, Collections.reverseOrder());
-            }
-        });
-        return codes;
     }
 }
