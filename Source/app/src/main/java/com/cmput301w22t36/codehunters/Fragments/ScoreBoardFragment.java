@@ -95,7 +95,8 @@ public class ScoreBoardFragment extends Fragment {
         byHighestScore = view.findViewById(R.id.byHighestScore);
         byNumber = view.findViewById(R.id.byNumber);
         byTotalScore = view.findViewById(R.id.byTotalScore);
-
+        Toast.makeText(getActivity().getApplicationContext(), "You are "+username, Toast.LENGTH_SHORT)
+                .show();
 
         // ordered by score
         UserMapper ums = new UserMapper();
