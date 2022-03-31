@@ -115,11 +115,13 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, mapFragment)
-                        .commit();
+                QRCodeMapper codeMapper = new QRCodeMapper();
+                codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                    @Override
+                    public void handleSuccess(ArrayList<QRCodeData> codes) {
+                        openMap(codes);
+                    }
+                });
             }
         });
 
@@ -310,5 +312,13 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(globalcodeArrayList, Collections.reverseOrder());
             }
         });
+    }
+
+    public void openMap(ArrayList<? extends QRCodeData> codes) {
+        MapFragment mapFragment = MapFragment.newInstance(codes);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.mainActivityFragmentView, mapFragment)
+                .commit();
     }
 }
