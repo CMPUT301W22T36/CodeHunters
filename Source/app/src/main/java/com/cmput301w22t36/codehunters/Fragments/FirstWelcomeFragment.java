@@ -16,13 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.cmput301w22t36.codehunters.Capture;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.cmput301w22t36.codehunters.ScanToLogin;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 /**
  * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
@@ -155,15 +153,8 @@ public class FirstWelcomeFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to scan the QR code
                 // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                IntentIntegrator intentIntegrator = new IntentIntegrator(
-                        getActivity()
-                );
-                intentIntegrator.setBeepEnabled(false);
-                intentIntegrator.setPrompt("Scan QR Code");
-                intentIntegrator.setOrientationLocked(true);
-                intentIntegrator.setCaptureActivity(Capture.class);
-                intentIntegrator.setRequestCode(2);
-                intentIntegrator.initiateScan();
+                Intent myIntent = new Intent(getActivity().getApplicationContext(), ScanToLogin.class);
+                getActivity().startActivity(myIntent);
             }
         });
     }
