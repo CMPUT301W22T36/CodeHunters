@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -61,8 +60,8 @@ public class MapFragment extends Fragment {
 
     // List of "OverlayItem"s (i.e. list of qrCodes in map form)
     protected ArrayList<OverlayItem> qrPinsList;
-    private ArrayList<QRCodeData> mappedQrPinsList;
-    private ArrayList<QRCodeData> codeArrayList;
+    private ArrayList<QRCode> mappedQrPinsList;
+    private ArrayList<QRCode> codeArrayList;
 
     // Objects used for permission checking
     private Boolean locPermission, netPermission, netStatePermission;
@@ -83,7 +82,7 @@ public class MapFragment extends Fragment {
      * @param codes an ArrayList of all the QRCodes
      * @return a new instance of the MapFragment ready to go
      */
-    public static MapFragment newInstance(ArrayList<? extends QRCodeData> codes) {
+    public static MapFragment newInstance(ArrayList<QRCode> codes) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, codes);
@@ -100,11 +99,11 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         qrPinsList = new ArrayList<OverlayItem>();
-        mappedQrPinsList = new ArrayList<QRCodeData>();
+        mappedQrPinsList = new ArrayList<QRCode>();
 
         if (getArguments() != null) {
-            codeArrayList = (ArrayList<QRCodeData>) getArguments().getSerializable(ARG_PARAM1);
-            for (QRCodeData code : codeArrayList) {
+            codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
+            for (QRCode code : codeArrayList) {
                 if (code.getLat() != 0) {
                     GeoPoint codeGeoPoint = new GeoPoint(
                             code.getLat(),
@@ -212,7 +211,7 @@ public class MapFragment extends Fragment {
                     @Override
                     public boolean onItemLongPress(final int index, final OverlayItem item) {
                         // when long pressed, show the image of the code
-                        QRCode qrCodeClicked = new QRCode(mappedQrPinsList.get(index));
+                        QRCode qrCodeClicked = mappedQrPinsList.get(index);
                         new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
 
                         // This return value was given in the example, I'm just leaving it

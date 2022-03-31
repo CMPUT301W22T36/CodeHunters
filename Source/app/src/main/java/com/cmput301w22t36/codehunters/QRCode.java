@@ -86,6 +86,8 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
         this.setScore(data.getScore());
         this.setUserRef(data.getUserRef());
         this.setId(data.getId());
+        this.setLat(data.getLat());
+        this.setLon(data.getLon());
         //Check to see if data has a location, if so, add that to our QrCode
         if (String.valueOf(data.getLat()) != null) {
             ArrayList<Double> location = new ArrayList<Double>();

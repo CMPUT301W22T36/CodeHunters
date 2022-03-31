@@ -116,7 +116,11 @@ public class MainActivity extends AppCompatActivity {
                 codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
                     @Override
                     public void handleSuccess(ArrayList<QRCodeData> codes) {
-                        openMap(codes);
+                        ArrayList<QRCode> newCodes= new ArrayList<>();
+                        for (QRCodeData code : codes) {
+                            newCodes.add(new QRCode(code));
+                        }
+                        openMap(newCodes);
                     }
                 });
             }
@@ -298,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void openMap(ArrayList<? extends QRCodeData> codes) {
+    public void openMap(ArrayList<QRCode> codes) {
         MapFragment mapFragment = MapFragment.newInstance(codes);
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
