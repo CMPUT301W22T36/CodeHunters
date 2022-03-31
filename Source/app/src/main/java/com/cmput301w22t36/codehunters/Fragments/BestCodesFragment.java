@@ -113,11 +113,7 @@ public class BestCodesFragment extends Fragment {
             QRCode qrcode = new QRCode(A.get(i));
             codeArrayList.add(qrcode);
         }
-        Toast.makeText(getActivity().getApplicationContext(), "list size "+codeArrayList.size(), Toast.LENGTH_SHORT)
-                .show();
-        //test
-        QRCode code1 = new QRCode("BFG5DGW54");
-        if (codeArrayList.size() == 0){codeArrayList.add(code1);}
+
         Collections.sort(codeArrayList, Collections.reverseOrder());
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
