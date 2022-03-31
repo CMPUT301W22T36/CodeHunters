@@ -1,7 +1,6 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
-import com.cmput301w22t36.codehunters.ScanToLogin;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 /**

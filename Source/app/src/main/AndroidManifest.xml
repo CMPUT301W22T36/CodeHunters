@@ -33,22 +33,6 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"/>
 
-        <activity
-            android:name=".QRcodeGenerator"
-            android:exported="true" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ScanToLogin"
-            android:exported="true" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
     </application>
 
 </manifest>
