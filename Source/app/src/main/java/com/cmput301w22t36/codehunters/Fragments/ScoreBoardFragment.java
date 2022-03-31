@@ -95,7 +95,38 @@ public class ScoreBoardFragment extends Fragment {
         //todo
         //get byHighestScore,byNumber,byTotalScore text and set text, need get all data from database and do some sorts.
 
+        Toast.makeText(getActivity().getApplicationContext(), "You are "+username, Toast.LENGTH_SHORT)
+                .show();
 
+        // ordered by score
+        UserMapper ums = new UserMapper();
+        ums.usersOrderedBy("score", ums.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAS) {
+                Collections.reverse(UAS);
+                handleData(UAS,byTotalScore);
+            }
+        });
+
+        // ordered by scanCount
+        UserMapper umc = new UserMapper();
+        umc.usersOrderedBy("scanCount", umc.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAC) {
+                Collections.reverse(UAC);
+                handleData(UAC,byNumber);
+            }
+        });
+
+        // ordered by bestScore
+        UserMapper umb = new UserMapper();
+        umb.usersOrderedBy("bestScore", umb.new CompletionHandler<ArrayList<User>>() {
+            @Override
+            public void handleSuccess(ArrayList<User> UAB) {
+                Collections.reverse(UAB);
+                handleData(UAB,byHighestScore);
+            }
+        });
 
     }
 }

@@ -12,17 +12,19 @@
 
         <TextView
             android:id="@+id/scoreBoardT1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text=" Estimated Ranking:"
+            android:textStyle="bold"
             android:textSize="25sp" />
         <TextView
             android:id="@+id/scoreBoardT2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:text=" By Highest Score:"
+            android:background="#e6ccff"
             android:textSize="25sp" />
         <TextView
             android:id="@+id/byHighestScore"
@@ -32,10 +34,11 @@
             android:textSize="25sp" />
         <TextView
             android:id="@+id/scoreBoardT3"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:text=" By Number of Codes Scanned:"
+            android:background="#e6ccff"
             android:textSize="25sp" />
         <TextView
             android:id="@+id/byNumber"
@@ -45,10 +48,11 @@
             android:textSize="25sp" />
         <TextView
             android:id="@+id/scoreBoardT4"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:text=" By Total Score:"
+            android:background="#e6ccff"
             android:textSize="25sp" />
         <TextView
             android:id="@+id/byTotalScore"

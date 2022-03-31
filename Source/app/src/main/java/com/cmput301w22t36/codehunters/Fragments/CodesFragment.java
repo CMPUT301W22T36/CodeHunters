@@ -17,6 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
@@ -194,7 +197,26 @@ public class CodesFragment extends Fragment {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             //Gets session that was long-pressed
             QRCode selected_code = (QRCode) codeList.getItemAtPosition(info.position);
+            QRCodeData cur_code = new QRCodeData();
+            cur_code.setHash(selected_code.getHash());
+            cur_code.setScore(selected_code.getScore());
+            cur_code.setId(selected_code.getId());
+            if(String.valueOf(selected_code.getLat()) != null) {
+                cur_code.setLat(selected_code.getGeolocation().get(0));
+                cur_code.setLon(selected_code.getGeolocation().get(1));
+            }
+            if(selected_code.getPhoto() != null) {
+                cur_code.setPhoto(selected_code.getPhoto());
+            }
             codeArrayList.remove(selected_code);
+            codeArrayAdapter.notifyDataSetChanged();
+            QRCodeMapper qrmapper = new QRCodeMapper();
+            qrmapper.delete(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                @Override
+                public void handleSuccess(QRCodeData data) {
+                    ((MainActivity)getActivity()).updateCodeLists();
+                }
+            });
             num_codes.setText(String.valueOf(codeArrayList.size()));
             Integer totalscore = Integer.valueOf((String) total_score.getText());
             totalscore = totalscore - selected_code.getScore();
@@ -202,5 +224,9 @@ public class CodesFragment extends Fragment {
             codeArrayAdapter.notifyDataSetChanged();
         }
         return true;
+    }
+
+    public void notifyCodesAdapter() {
+        codeArrayAdapter.notifyDataSetChanged();
     }
 }

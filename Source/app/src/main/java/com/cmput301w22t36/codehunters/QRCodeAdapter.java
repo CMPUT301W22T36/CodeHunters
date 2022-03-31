@@ -54,7 +54,7 @@ public class QRCodeAdapter extends ArrayAdapter<QRCode> {
         TextView score = view.findViewById(R.id.qr_score);
 
         //Populate TextViews with roll value
-        code.setText("Hash: " + String.valueOf(qrcode.getHash()).substring(0, 9));
+        code.setText("Hash: " + String.valueOf(qrcode.getHash()).substring(0, 10));
         score.setText("Score: "+ String.valueOf(qrcode.getScore()));
 
         return view;

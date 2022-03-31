@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
+    public CodesFragment codesFragment;
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
-                ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
+                codesFragment = CodesFragment.newInstance(codeArrayList);
+                ft.replace(R.id.mainActivityFragmentView, codesFragment);
                 ft.commit();
 //                getSupportFragmentManager().beginTransaction()
 //                        .setReorderingAllowed(true)
@@ -116,11 +117,17 @@ public class MainActivity extends AppCompatActivity {
         mapNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, mapFragment)
-                        .commit();
+                QRCodeMapper codeMapper = new QRCodeMapper();
+                codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                    @Override
+                    public void handleSuccess(ArrayList<QRCodeData> codes) {
+                        ArrayList<QRCode> newCodes= new ArrayList<>();
+                        for (QRCodeData code : codes) {
+                            newCodes.add(new QRCode(code));
+                        }
+                        openMap(newCodes);
+                    }
+                });
             }
         });
 
@@ -155,12 +162,14 @@ public class MainActivity extends AppCompatActivity {
                             cur_code.setLon(current_code.getGeolocation().get(1));
                             cur_code.setScore(current_code.getScore());
                             cur_code.setPhoto(current_code.getPhoto());
+                            cur_code.setUserRef("/users/"+loggedinUser.getId());
+                            cur_code.setId(current_code.getId());
 
                             //TEST QRCODE CONSTRUCTOR
                             QRCode code1 = new QRCode(cur_code);
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                 }
@@ -215,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
                                     cur_code.setLat(current_code.getGeolocation().get(0));
                                     cur_code.setLon(current_code.getGeolocation().get(1));
                                     cur_code.setScore(current_code.getScore());
+                                    cur_code.setId(current_code.getId());
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                     QRCodeMapper qrmapper = new QRCodeMapper();
@@ -247,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                                         //test
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
+                                        cur_code.setId(current_code.getId());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
@@ -264,6 +275,8 @@ public class MainActivity extends AppCompatActivity {
                                         codeArrayList.add(current_code);
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
+                                        cur_code.setId(current_code.getId());
+                                        cur_code.setId(current_code.getId());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
@@ -288,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                 }
             }
+
 
             else if (requestCode == 2){
 
@@ -368,9 +382,31 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+    public void updateCodeLists() {
+        QRCodeMapper qrmapper = new QRCodeMapper();
+        String UDID = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        qrmapper.queryUsersCodes(UDID, qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> data) {
+                codeArrayList.clear();
+                for (int i=0; i<data.size(); i++) {
+                    QRCode cur_code = new QRCode(data.get(i));
+                    codeArrayList.add(cur_code);
+                    if (codesFragment != null) {
+                        codesFragment.notifyCodesAdapter();
+                    }
+                }
             }
 
 
         }
+    }
+
+    public void openMap(ArrayList<QRCode> codes) {
+        MapFragment mapFragment = MapFragment.newInstance(codes);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.mainActivityFragmentView, mapFragment)
+                .commit();
     }
 }

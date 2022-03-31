@@ -104,13 +104,13 @@ public class MapFragment extends Fragment {
         if (getArguments() != null) {
             codeArrayList = (ArrayList<QRCode>) getArguments().getSerializable(ARG_PARAM1);
             for (QRCode code : codeArrayList) {
-                if (code.getGeolocation() != null) {
+                if (code.getLat() != 0) {
                     GeoPoint codeGeoPoint = new GeoPoint(
-                            code.getGeolocation().get(0),
-                            code.getGeolocation().get(1)
+                            code.getLat(),
+                            code.getLon()
                     );
                     qrPinsList.add(new OverlayItem(
-                            code.getHash(),
+                            code.getHash().substring(0, 10),
                             String.valueOf(code.getScore()).concat(" Points"),
                             codeGeoPoint
                     ));

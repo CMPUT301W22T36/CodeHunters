@@ -31,6 +31,11 @@ public class CommentMapper extends DataMapper<Comment> {
         }
     }
 
+    public void getCommentsForQrCode(String qrId) {
+        String qrPath = "/qrcode/" + qrId;
+
+    }
+
 
     @Override
     protected Map<String, Object> dataToMap(Comment data) {
