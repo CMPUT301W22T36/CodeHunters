@@ -88,12 +88,16 @@ public class UserMapper extends DataMapper<User> {
                         if(task.isSuccessful()) {
                             User foundUser = null;
                             QuerySnapshot queryResult = task.getResult();
-                            if (queryResult.size() >= 1) {
+                            if (queryResult.getDocuments().size() > 1) {
                                 ch.handleError(new FSAccessException("Username is not unique"));
-                            } else if (queryResult.size() == 1) {
+                            } else if (queryResult.getDocuments().size() == 1) {
                                 foundUser = mapToData(queryResult.getDocuments().get(0).getData());
+                                foundUser.setId(queryResult.getDocuments().get(0).getId());
+                                ch.handleSuccess(foundUser);
+                            }else {
+                                ch.handleError(new FSAccessException("Username is not unique"));
                             }
-                            ch.handleSuccess(foundUser);
+
                         } else {
                             ch.handleError(new FSAccessException("Firestore query not successful"));
                         }
@@ -129,6 +133,9 @@ public class UserMapper extends DataMapper<User> {
         User user = new User();
         user.setUsername((String) dataMap.get("username"));
         user.setEmail((String) dataMap.get("email"));
+        user.setBestScore(String.valueOf( dataMap.get("bestScore")));
+        user.setScanCount(String.valueOf(dataMap.get("scanCount")));
+        user.setScore(String.valueOf(dataMap.get("score")) );
         user.setUdid((ArrayList<String>)dataMap.get("udid"));
         return user;
     }
