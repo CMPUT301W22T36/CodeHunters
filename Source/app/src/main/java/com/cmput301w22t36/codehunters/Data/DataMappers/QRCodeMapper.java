@@ -152,7 +152,6 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             if (task.isSuccessful() && task.getResult().getDocuments().size() != 0) {
                                 List<DocumentSnapshot> documents= task.getResult().getDocuments();
                                 ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
-                                CountDownLatch latch = new CountDownLatch(documents.size());
                                 for (DocumentSnapshot docSnap : documents) {
                                     QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
                                     if (qrCode.getPhotourl() != null) {
@@ -162,25 +161,28 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                                             public void handleSuccess(Bitmap bMap) {
                                                 qrCode.setPhoto(bMap);
                                                 qrData.add(qrCode);
-                                                latch.countDown();
+                                                if (qrData.size() == documents.size()) {
+                                                    while (qrData.remove(null));
+                                                    lch.handleSuccess(qrData);
+                                                }
                                             }
                                             @Override
                                             public void handleError(Exception e) {
-                                                latch.countDown();
+                                                qrData.add(null);
+                                                if (qrData.size() == documents.size()) {
+                                                    while (qrData.remove(null));
+                                                    lch.handleSuccess(qrData);
+                                                }
                                             }
                                         });
                                     }
                                     else {
                                         qrData.add(qrCode);
-                                        latch.countDown();
+                                        if (qrData.size() == documents.size()) {
+                                            while (qrData.remove(null));
+                                            lch.handleSuccess(qrData);
+                                        }
                                     }
-                                }
-                                try {
-                                    latch.await();
-                                    lch.handleSuccess(qrData);
-                                }
-                                catch (Exception e) {
-                                    lch.handleError(e);
                                 }
                             } else {
                                 lch.handleError(new FSAccessException("Username not unique or other error"));
