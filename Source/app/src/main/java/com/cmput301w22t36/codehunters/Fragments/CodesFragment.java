@@ -209,6 +209,7 @@ public class CodesFragment extends Fragment {
                 cur_code.setPhoto(selected_code.getPhoto());
             }
             codeArrayList.remove(selected_code);
+            codeArrayAdapter.notifyDataSetChanged();
             QRCodeMapper qrmapper = new QRCodeMapper();
             qrmapper.delete(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                 @Override
@@ -223,5 +224,9 @@ public class CodesFragment extends Fragment {
             codeArrayAdapter.notifyDataSetChanged();
         }
         return true;
+    }
+
+    public void notifyCodesAdapter() {
+        codeArrayAdapter.notifyDataSetChanged();
     }
 }

@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
+    public CodesFragment codesFragment;
 
     //TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
@@ -82,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
-                ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
+                codesFragment = CodesFragment.newInstance(codeArrayList);
+                ft.replace(R.id.mainActivityFragmentView, codesFragment);
                 ft.commit();
 //                getSupportFragmentManager().beginTransaction()
 //                        .setReorderingAllowed(true)
@@ -294,15 +295,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateCodeLists() {
-        codeArrayList.clear();
         QRCodeMapper qrmapper = new QRCodeMapper();
         String UDID = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         qrmapper.queryUsersCodes(UDID, qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> data) {
+                codeArrayList.clear();
                 for (int i=0; i<data.size(); i++) {
                     QRCode cur_code = new QRCode(data.get(i));
                     codeArrayList.add(cur_code);
+                    if (codesFragment != null) {
+                        codesFragment.notifyCodesAdapter();
+                    }
                 }
             }
         });
