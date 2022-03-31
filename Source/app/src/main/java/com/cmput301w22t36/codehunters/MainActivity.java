@@ -157,12 +157,14 @@ public class MainActivity extends AppCompatActivity {
                             cur_code.setLon(current_code.getGeolocation().get(1));
                             cur_code.setScore(current_code.getScore());
                             cur_code.setPhoto(current_code.getPhoto());
+                            cur_code.setUserRef("/users/"+loggedinUser.getId());
+                            cur_code.setId(current_code.getId());
 
                             //TEST QRCODE CONSTRUCTOR
                             QRCode code1 = new QRCode(cur_code);
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                     updateCodeLists();
@@ -208,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
                                     QRCodeData cur_code = new QRCodeData();
                                     cur_code.setHash(current_code.getHash());
                                     cur_code.setScore(current_code.getScore());
+                                    cur_code.setId(current_code.getId());
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                     QRCodeMapper qrmapper = new QRCodeMapper();
@@ -241,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
                                         //test
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
+                                        cur_code.setId(current_code.getId());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
@@ -259,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
                                         //codeArrayList.add(current_code);
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
+                                        cur_code.setId(current_code.getId());
+                                        cur_code.setId(current_code.getId());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
