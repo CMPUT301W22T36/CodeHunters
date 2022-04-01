@@ -7,17 +7,13 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class UserMapper extends DataMapper<User> {
@@ -88,12 +84,16 @@ public class UserMapper extends DataMapper<User> {
                         if(task.isSuccessful()) {
                             User foundUser = null;
                             QuerySnapshot queryResult = task.getResult();
-                            if (queryResult.size() >= 1) {
+                            if (queryResult.getDocuments().size() > 1) {
                                 ch.handleError(new FSAccessException("Username is not unique"));
-                            } else if (queryResult.size() == 1) {
+                            } else if (queryResult.getDocuments().size() == 1) {
                                 foundUser = mapToData(queryResult.getDocuments().get(0).getData());
+                                foundUser.setId(queryResult.getDocuments().get(0).getId());
+                                ch.handleSuccess(foundUser);
+                            }else {
+                                ch.handleError(new FSAccessException("Username is not unique"));
                             }
-                            ch.handleSuccess(foundUser);
+
                         } else {
                             ch.handleError(new FSAccessException("Firestore query not successful"));
                         }
@@ -119,6 +119,10 @@ public class UserMapper extends DataMapper<User> {
         Map<String, Object> map = new HashMap<>();
         map.put("username", data.getUsername());
         map.put("email", data.getEmail());
+        map.put("bestScore", data.getBestScore());
+        map.put("scanCount", data.getScanCount());
+        map.put("score", data.getScore());
+        map.put("isOwner", data.getOwner());
         map.put("udid", data.getUdid());
         return map;
     }
@@ -129,7 +133,11 @@ public class UserMapper extends DataMapper<User> {
         User user = new User();
         user.setUsername((String) dataMap.get("username"));
         user.setEmail((String) dataMap.get("email"));
+        user.setBestScore(String.valueOf( dataMap.get("bestScore")));
+        user.setScanCount(String.valueOf(dataMap.get("scanCount")));
+        user.setScore(String.valueOf(dataMap.get("score")) );
         user.setUdid((ArrayList<String>)dataMap.get("udid"));
+        user.setOwner(Boolean.valueOf(String.valueOf(dataMap.get("isOwner"))));
         return user;
     }
 }

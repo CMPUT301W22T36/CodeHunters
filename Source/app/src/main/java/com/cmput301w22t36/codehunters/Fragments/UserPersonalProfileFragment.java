@@ -1,9 +1,11 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
@@ -11,11 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 /**
  * Class: UserPersonalProfileFragment, a {@link Fragment} subclass.
@@ -35,6 +44,7 @@ public class UserPersonalProfileFragment extends Fragment {
     private Button edit_email_button;
     private Button get_account_QR_button;
     private Button share_profile_button;
+    private String username;
 
     /**
      * Required empty public constructor
@@ -107,7 +117,7 @@ public class UserPersonalProfileFragment extends Fragment {
                 // This will (probably) execute after the FixedCase1 function returns.
 
                 // Display the username
-                String username = data.getUsername();
+                username = data.getUsername();
                 String email = data.getEmail();
                 usernameView.setText(username);
                 userEmailView.setText(email);
@@ -156,6 +166,27 @@ public class UserPersonalProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // TODO: Placeholder
+                MultiFormatWriter writer = new MultiFormatWriter();
+                try {
+                    //Initialize bit matrix
+                    BitMatrix matrix = writer.encode(username, BarcodeFormat.QR_CODE,550,550);
+                    //Initialize barcode encoder
+                    BarcodeEncoder encoder = new BarcodeEncoder();
+                    //Initialize bitmap
+                    Bitmap bitmap = encoder.createBitmap(matrix);
+                    //Set bitmap on image view
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            getActivity());
+                    // Set title
+                    ImageView imageView = new ImageView(getActivity());
+                    imageView.setImageBitmap(bitmap);
+
+                    builder.setView(imageView);
+                    // Set positive button
+                    builder.show();
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -167,6 +198,27 @@ public class UserPersonalProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // TODO: Placeholder
+                MultiFormatWriter writer = new MultiFormatWriter();
+                try {
+                    //Initialize bit matrix
+                    BitMatrix matrix = writer.encode(username, BarcodeFormat.QR_CODE,550,550);
+                    //Initialize barcode encoder
+                    BarcodeEncoder encoder = new BarcodeEncoder();
+                    //Initialize bitmap
+                    Bitmap bitmap = encoder.createBitmap(matrix);
+                    //Set bitmap on image view
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            getActivity());
+                    // Set title
+                    ImageView imageView = new ImageView(getActivity());
+                    imageView.setImageBitmap(bitmap);
+
+                    builder.setView(imageView);
+                    // Set positive button
+                    builder.show();
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
