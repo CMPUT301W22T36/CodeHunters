@@ -14,11 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cmput301w22t36.codehunters.Capture;
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -125,10 +131,30 @@ public class SocialFragment extends Fragment {
         });
 
     }
+
+    public void setDis(){
+        dialogSearchUser.dismiss();
+    }
     public void buildDialogSearchUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_searchuser, null);
         EditText username = view.findViewById(R.id.user_name_searchText);
+        ImageView imageView = view.findViewById(R.id.image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(
+                        getActivity()
+                );
+                intentIntegrator.setBeepEnabled(false);
+                intentIntegrator.setPrompt("Scan QR Code");
+                intentIntegrator.setOrientationLocked(true);
+                intentIntegrator.setCaptureActivity(Capture.class);
+                intentIntegrator.setRequestCode(3);
+                intentIntegrator.initiateScan();
+                setDis();
+            }
+        });
         builder.setView(view)
                 .setTitle("Search User")
                 .setNegativeButton("Cancel",null)
@@ -137,15 +163,34 @@ public class SocialFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         if(!username.getText().toString().equals("")) {
-                            if(true){
-                                //todo
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .setReorderingAllowed(true)
-                                        .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
-                                        .addToBackStack("tag").commit();
-                                 }
-                            else{Toast.makeText(getActivity(), "User not exist", Toast.LENGTH_SHORT)
-                                    .show();}
+
+                            UserMapper um = new UserMapper();
+                            um.queryUsername(username.getText().toString(), um.new CompletionHandler<User>() {
+                                @Override
+                                public void handleSuccess(User data) {
+                                    // Successfully stored user data.
+                                    // goto the main game screen
+                                    if (data!=null){
+
+                                        MainActivity.mainActivity.searchUser = data;
+
+                                        getActivity().getSupportFragmentManager().beginTransaction()
+                                                .setReorderingAllowed(true)
+                                                .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
+                                                .addToBackStack("tag").commit();
+                                    }else {
+                                        Toast.makeText(getActivity(), data.getUsername()+"", Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+
+                                }
+                                @Override
+                                public void handleError(Exception e) {
+                                    // Could not store user data.
+                                    Toast.makeText(getActivity(), "User not exist", Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
                         }
                         else{Toast.makeText(getActivity(), "Please enter a user name.", Toast.LENGTH_SHORT)
                                 .show();}
