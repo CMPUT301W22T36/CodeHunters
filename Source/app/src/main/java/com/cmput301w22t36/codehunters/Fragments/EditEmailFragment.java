@@ -87,7 +87,7 @@ public class EditEmailFragment extends Fragment {
 
         // The username is static and not currently being edited. Display this username.
         UserMapper um = new UserMapper();
-        um.queryUDID(uuid, um.new CompletionHandler<User>() {
+        /*um.queryUDID(uuid, um.new CompletionHandler<User>() {
             @Override
             public void handleSuccess(User data) {
                 // Do something with returned user data.
@@ -102,7 +102,7 @@ public class EditEmailFragment extends Fragment {
             public void handleError(Exception e) {
                 // Handle the case where user not found.
             }
-        });
+        });*/
 
         // Set the buttons to respond to user clicks and call their corresponding functions
         confirmChangeE.setOnClickListener(new View.OnClickListener() {
