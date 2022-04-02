@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.Comment;
-import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.Data.FSAccessException;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,9 +33,24 @@ public class CommentMapper extends DataMapper<Comment> {
         }
     }
 
-    public void getCommentsForQrCode(String qrId) {
-        String qrPath = "/qrcode/" + qrId;
-
+    public void getCommentsForQrCode(String qrId, CompletionHandler<ArrayList<Comment>> ch) {
+        String qrRef = "/users/" + qrId;
+        collectionRef.whereEqualTo("qrCodeRef", qrId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> documents= task.getResult().getDocuments();
+                        ArrayList<Comment> comments = new ArrayList<Comment>();
+                        for (DocumentSnapshot docSnap : documents) {
+                            Comment c = mapToData(docSnap.getData());
+                            c.setId(docSnap.getId());
+                            comments.add(c);
+                        }
+                        ch.handleSuccess(comments);
+                    } else {
+                        ch.handleError(new FSAccessException("Username not unique or other error"));
+                    }
+                });
     }
 
 
