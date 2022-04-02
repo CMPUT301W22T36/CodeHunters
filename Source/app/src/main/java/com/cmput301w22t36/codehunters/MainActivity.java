@@ -42,6 +42,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
+import com.cmput301w22t36.codehunters.Fragments.SearchNearbyCodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.SearchUserFragment;
 import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
 import com.cmput301w22t36.codehunters.Fragments.UserPersonalProfileFragment;
@@ -463,11 +464,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.my_account:
+                // Navigate to the user's profile page
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new UserPersonalProfileFragment()).commit();
                 break;
             case R.id.list_nearby_codes:
-                // TODO: Placeholder
+                // Navigate to the search nearby QR codes by geolocation fragment
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new SearchNearbyCodesFragment()).commit();
                 break;
         }
 
