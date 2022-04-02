@@ -10,13 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+
 import java.util.ArrayList;
 
 /**
  * Custom Array Adapter for QRCode listview functionality
  */
-public class QRCodeAdapter extends ArrayAdapter<QRCode> {
-    private ArrayList<QRCode> codes;
+public class QRCodeAdapter2 extends ArrayAdapter<QRCodeData> {
+    private ArrayList<QRCodeData> codes;
     private Context context;
 
     /**
@@ -24,7 +26,7 @@ public class QRCodeAdapter extends ArrayAdapter<QRCode> {
      * @param context
      * @param code_list array list of QRCode objects
      */
-    public QRCodeAdapter(Context context, ArrayList<QRCode> code_list){
+    public QRCodeAdapter2(Context context, ArrayList<QRCodeData> code_list){
         super(context, 0, code_list);
         this.codes = code_list;
         this.context = context;
@@ -47,14 +49,14 @@ public class QRCodeAdapter extends ArrayAdapter<QRCode> {
             view = LayoutInflater.from(context).inflate(R.layout.qrcode_content, parent,false);
         }
 
-        QRCode qrcode = codes.get(position);
+        QRCodeData qrcode = codes.get(position);
 
         //Connect to TextViews in xml file
         TextView code = view.findViewById(R.id.qr_code);
         TextView score = view.findViewById(R.id.qr_score);
 
         //Populate TextViews with roll value
-        code.setText("Hash: " + String.valueOf(qrcode.getHash()).substring(0, 10));
+        code.setText("Hash: " + String.valueOf(qrcode.getHash()).substring(0, 9));
         score.setText("Score: "+ String.valueOf(qrcode.getScore()));
 
         return view;

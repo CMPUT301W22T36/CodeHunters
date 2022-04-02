@@ -11,6 +11,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class QRCodeMapper extends DataMapper<QRCodeData> {
 
@@ -60,27 +62,62 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
     @Override
     public void create(QRCodeData data, CompletionHandler<QRCodeData> ch) {
-        this.putImage(data.getPhoto(), this.new CompletionHandler<String>() {
-            @Override
-            public void handleSuccess(String photoUrl) {
-                data.setPhotourl(photoUrl);
-                Map<String, Object> dataMap = dataToMap(data);
-                collectionRef.add(dataMap)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                DocumentReference docRef = task.getResult();
-                                data.setId(docRef.getId());
-                                ch.handleSuccess(data);
-                            } else {
-                                ch.handleError(new FSAccessException("Data creation failed"));
-                            }
-                        });
-            }
-            @Override
-            public void handleError(Exception e) {
-                ch.handleError(e);
-            }
-        });
+        if (data.getPhoto() != null) {
+            this.putImage(data.getPhoto(), this.new CompletionHandler<String>() {
+                @Override
+                public void handleSuccess(String photoUrl) {
+                    data.setPhotourl(photoUrl);
+                    Map<String, Object> dataMap = dataToMap(data);
+                    collectionRef.add(dataMap)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    DocumentReference docRef = task.getResult();
+                                    data.setId(docRef.getId());
+                                    ch.handleSuccess(data);
+                                } else {
+                                    ch.handleError(new FSAccessException("Data creation failed"));
+                                }
+                            });
+                }
+                @Override
+                public void handleError(Exception e) {
+                    ch.handleError(e);
+                }
+            });
+        } else {
+            super.create(data, ch);
+        }
+
+    }
+
+    @Override
+    public void set(QRCodeData data, CompletionHandler<QRCodeData> ch) {
+        Map<String, Object> dataMap = this.dataToMap(data);
+        collectionRef.document(data.getId())
+                .set(dataMap)
+                .addOnCompleteListener(task -> ch.handleSuccess(data));
+    }
+
+    public void update(QRCodeData data, CompletionHandler<QRCodeData> ch) {
+        if (data.getPhoto() != null) {
+            putImage(data.getPhoto(), this.new CompletionHandler<String>() {
+                @Override
+                public void handleSuccess(String photoUrl) {
+                    data.setPhotourl(photoUrl);
+                    Map<String, Object> dataMap = dataToMap(data);
+                    collectionRef.document(data.getId())
+                            .update(dataMap)
+                            .addOnCompleteListener(task -> ch.handleSuccess(data));
+                }
+                @Override
+                public void handleError(Exception e) {
+                    ch.handleError(e);
+                }
+            });
+        }
+        else {
+            super.update(data, ch);
+        }
     }
 
     public void queryQRCodes(User user, CompletionHandler<ArrayList<QRCodeData>> lch) {
@@ -92,7 +129,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         List<DocumentSnapshot> documents= task.getResult().getDocuments();
                         ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                         for (DocumentSnapshot docSnap : documents) {
-                            qrData.add(mapToData(docSnap.getData()));
+                            qrData.add(mapToData(docSnap.getData(), docSnap));
                         }
                         lch.handleSuccess(qrData);
                     } else {
@@ -112,13 +149,41 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 collectionRef.whereEqualTo("userRef", userref)
                         .get()
                         .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult().getDocuments().size() == 0) {
+                            if (task.isSuccessful() && task.getResult().getDocuments().size() != 0) {
                                 List<DocumentSnapshot> documents= task.getResult().getDocuments();
                                 ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                                 for (DocumentSnapshot docSnap : documents) {
-                                    qrData.add(mapToData(docSnap.getData()));
+                                    QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
+                                    if (qrCode.getPhotourl() != null) {
+                                        // Async get photo from database.
+                                        getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                            @Override
+                                            public void handleSuccess(Bitmap bMap) {
+                                                qrCode.setPhoto(bMap);
+                                                qrData.add(qrCode);
+                                                if (qrData.size() == documents.size()) {
+                                                    while (qrData.remove(null));
+                                                    lch.handleSuccess(qrData);
+                                                }
+                                            }
+                                            @Override
+                                            public void handleError(Exception e) {
+                                                qrData.add(null);
+                                                if (qrData.size() == documents.size()) {
+                                                    while (qrData.remove(null));
+                                                    lch.handleSuccess(qrData);
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        qrData.add(qrCode);
+                                        if (qrData.size() == documents.size()) {
+                                            while (qrData.remove(null));
+                                            lch.handleSuccess(qrData);
+                                        }
+                                    }
                                 }
-                                lch.handleSuccess(qrData);
                             } else {
                                 lch.handleError(new FSAccessException("Username not unique or other error"));
                             }
@@ -141,6 +206,11 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                     // build up a hashmap of all the unique codes, first come first serve
                     HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
                     for (DocumentSnapshot code : task.getResult()) {
+                        // TODO: Fix database so that this code doesn't make the app crash:
+                        if (code.getData().get(Fields.CODE.toString()).equals("AZ09")) { continue; }
+
+
+
                         QRCodeData thisCode = mapToData(code.getData());
                         // nullify specific fields
                         thisCode.setUserRef(null);
@@ -149,7 +219,8 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             uniqueCodes.put(thisCode.getHash(), thisCode);
                         }
                     }
-                    ch.handleSuccess((ArrayList<QRCodeData>) uniqueCodes.values());
+                    ArrayList<QRCodeData> codes = new ArrayList<QRCodeData>(uniqueCodes.values());
+                    ch.handleSuccess(codes);
                 } else {
                     ch.handleError(new FSAccessException("I guess firestore didn't feel like it"));
                 }
@@ -188,7 +259,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                     ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
 
                     for (DocumentSnapshot document : results) {
-                        matchedCodes.add(mapToData(document.getData()));
+                        matchedCodes.add(mapToData(document.getData(), document));
                     }
                     ch.handleSuccess(matchedCodes);
 
@@ -229,20 +300,32 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public void putImage(Bitmap bmap, CompletionHandler<String> ch) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
+        String fileName = Long.toString(System.currentTimeMillis());
+        StorageReference fileRef = storageRef.child(fileName);
+
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        storageRef.putBytes(data)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ch.handleSuccess(storageRef.getPath());
-                    } else {
-                        ch.handleError(new FSAccessException("Could not store image"));
-                    }
+        UploadTask uploadTask = fileRef.putBytes(data);
+        uploadTask.addOnSuccessListener(task -> {
+                    //if (task.isSuccessful()) {
+                    ch.handleSuccess(fileName);
+                    //else {
+                     //   ch.handleError(new FSAccessException("Could not store image"));
+                    //
                 });
-    }
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        });
+
+
+        }
+
 
     @Override
     protected Map<String, Object> dataToMap(QRCodeData data) {
@@ -256,15 +339,21 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         return qrCodeMap;
     }
 
+    protected QRCodeData mapToData(@NonNull Map<String, Object> dataMap, DocumentSnapshot document) {
+        QRCodeData qrCodeData = mapToData(dataMap);
+        qrCodeData.setId(document.getId());
+        return qrCodeData;
+    }
+
     @Override
     protected QRCodeData mapToData(@NonNull Map<String, Object> dataMap) {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();
-        qrCodeData.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
-        qrCodeData.setScore(Objects.requireNonNull((Integer) dataMap.get(Fields.SCORE.toString())));
+        qrCodeData.setUserRef(Objects.requireNonNull(String.valueOf(dataMap.get(Fields.USERREF.toString()))));
+        qrCodeData.setScore(Objects.requireNonNull((int)(long) dataMap.get(Fields.SCORE.toString())));
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
-        qrCodeData.setLat((Double) dataMap.get(Fields.LAT.toString()));
-        qrCodeData.setLon((Double) dataMap.get(Fields.LON.toString()));
+        qrCodeData.setLat(((Number) dataMap.get(Fields.LAT.toString())).doubleValue());
+        qrCodeData.setLon(((Number) dataMap.get(Fields.LON.toString())).doubleValue());
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
         return qrCodeData;
     }

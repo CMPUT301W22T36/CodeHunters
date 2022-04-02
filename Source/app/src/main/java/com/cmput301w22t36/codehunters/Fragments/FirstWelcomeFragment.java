@@ -1,7 +1,6 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,11 +15,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Capture;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
+import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
-import com.cmput301w22t36.codehunters.ScanToLogin;
+import com.google.zxing.integration.android.IntentIntegrator;
+
+import java.util.ArrayList;
 
 /**
  * Class: FirstWelcomeFragment, a {@link Fragment} subclass.
@@ -114,10 +119,25 @@ public class FirstWelcomeFragment extends Fragment {
 
     private void userFound(User user, View view) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
-        ((MainActivity) getActivity()).loggedinUser = user;
+        /*((MainActivity) getActivity()).loggedinUser = user;
+<<<<<<< HEAD
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, MapFragment.class, null)
                 .commit();
+=======
+
+        QRCodeMapper codeMapper = new QRCodeMapper();
+        codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> codes) {
+                ArrayList<QRCode> newCodes= new ArrayList<>();
+                for (QRCodeData code : codes) {
+                    newCodes.add(new QRCode(code));
+                }
+                ((MainActivity) getActivity()).openMap(newCodes);
+            }
+        });
+>>>>>>> main*/
     }
 
     private void userNotFound(String UDID, View view) {
@@ -153,8 +173,15 @@ public class FirstWelcomeFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to scan the QR code
                 // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                Intent myIntent = new Intent(getActivity().getApplicationContext(), ScanToLogin.class);
-                getActivity().startActivity(myIntent);
+                IntentIntegrator intentIntegrator = new IntentIntegrator(
+                        getActivity()
+                );
+                intentIntegrator.setBeepEnabled(false);
+                intentIntegrator.setPrompt("Scan QR Code");
+                intentIntegrator.setOrientationLocked(true);
+                intentIntegrator.setCaptureActivity(Capture.class);
+                intentIntegrator.setRequestCode(2);
+                intentIntegrator.initiateScan();
             }
         });
     }
@@ -179,7 +206,7 @@ public class FirstWelcomeFragment extends Fragment {
                     public void handleSuccess(User data) {
                         // Successfully stored user data.
                         // goto the main game screen
-                        ((MainActivity) getActivity()).loggedinUser = user;
+                        //((MainActivity) getActivity()).loggedinUser = user;
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, UserPersonalProfileFragment.class, null)
                                 .commit();

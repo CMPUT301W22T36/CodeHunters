@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 
 import com.cmput301w22t36.codehunters.Data.Data;
 
-public class QRCodeData extends Data {
+import java.io.Serializable;
+
+public class QRCodeData extends Data implements Serializable {
     private String userRef;
     private int score;
     private String hash;

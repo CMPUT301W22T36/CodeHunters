@@ -78,6 +78,8 @@ public class FirstWelcomeActivity extends AppCompatActivity {
 
     private void userFound(User user) {
         // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
+        MainActivity.mainActivity.loggedinUser = user;
+
         // Return to the main activity to the Map Fragment
         Intent intent = new Intent();
         intent.putExtra("ReturnToMapFrag", "tempMessage");
