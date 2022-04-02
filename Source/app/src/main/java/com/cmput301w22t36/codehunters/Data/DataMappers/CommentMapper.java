@@ -48,7 +48,7 @@ public class CommentMapper extends DataMapper<Comment> {
                         }
                         ch.handleSuccess(comments);
                     } else {
-                        ch.handleError(new FSAccessException("Username not unique or other error"));
+                        ch.handleError(new FSAccessException("Failed to retrieve comments."));
                     }
                 });
     }
