@@ -49,7 +49,7 @@ import java.util.Collections;
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
 public class MainActivity extends AppCompatActivity {
-    public  static MainActivity mainActivity;
+    public static MainActivity mainActivity;
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mainActivity= this;
+        mainActivity = this;
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
                 SocialFragment fragmentDemoS = SocialFragment.newInstance(loggedinUser.getUsername());
-                fts.replace(R.id.mainActivityFragmentView,fragmentDemoS);
+                fts.replace(R.id.mainActivityFragmentView, fragmentDemoS);
                 fts.commit();
                 /**
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, SocialFragment.class, null)
-                        .commit();*/
+                 getSupportFragmentManager().beginTransaction()
+                 .setReorderingAllowed(true)
+                 .replace(R.id.mainActivityFragmentView, SocialFragment.class, null)
+                 .commit();*/
             }
         });
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
                     @Override
                     public void handleSuccess(ArrayList<QRCodeData> codes) {
-                        ArrayList<QRCode> newCodes= new ArrayList<>();
+                        ArrayList<QRCode> newCodes = new ArrayList<>();
                         for (QRCodeData code : codes) {
                             newCodes.add(new QRCode(code));
                         }
@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
 //                requestCode,resultCode,data
 //        );
         IntentResult intentResult = IntentIntegrator.parseActivityResult(
-                resultCode,data
+                resultCode, data
         );
-        if (intentResult!= null) {
+        if (intentResult != null) {
             if (requestCode == 1) {
                 String QRString = intentResult.getContents();
                 if (intentResult.getContents() != null) {
@@ -211,76 +211,204 @@ public class MainActivity extends AppCompatActivity {
                             builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    //User has said no to photo-location so we create code with string code only
-                                    QRCodeData cur_code = new QRCodeData();
-                                    cur_code.setHash(current_code.getHash());
-                                    cur_code.setScore(current_code.getScore());
-                                    cur_code.setUserRef("/users/"+loggedinUser.getId());
-
-                                    QRCodeMapper qrmapper = new QRCodeMapper();
-                                    qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(
+                                            MainActivity.this
+                                    );
+                                    builder2.setTitle("Would You Like To Store The Geolocation");
+                                    builder2.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                         @Override
-                                        public void handleSuccess(QRCodeData data) {
-                                            updateCodeLists();
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            //User has said no to photo-location so we create code with string code only
+//                                            for (int x = 0; x <= codeArrayList.size(); x++) {
+////                                                boolean ans = codeArrayList.get(x).getHash().equals(current_code.getHash());
+////
+////                                                if (ans) {
+////                                                    Toast.makeText(getApplicationContext(), "You already scanned this QR Code", Toast.LENGTH_SHORT)
+////                                                            .show();
+////                                                }
+//
+//
+                                            codeArrayList.add(current_code);
+                                            QRCodeData cur_code = new QRCodeData();
+                                            cur_code.setHash(current_code.getHash());
+                                            cur_code.setScore(current_code.getScore());
+                                            cur_code.setId(current_code.getId());
+                                            cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                            QRCodeMapper qrmapper = new QRCodeMapper();
+                                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                @Override
+                                                public void handleSuccess(QRCodeData data) {
+                                                    updateCodeLists();
+                                                }
+                                            });
+                                            dialogInterface.dismiss();
+//
+                                        }
+
+                                    });
+
+                                    builder2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                                                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                                Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                                double longi = loc.getLongitude();
+                                                double lat = loc.getLatitude();
+                                                String longitude = String.valueOf(longi);
+                                                String latitude = String.valueOf(lat);
+                                                ArrayList<Double> geolocation = new ArrayList<Double>();
+                                                geolocation.add(lat);
+                                                geolocation.add(longi);
+                                                current_code.setGeolocation(geolocation);
+                                                codeArrayList.add(current_code);
+                                                //test
+                                                QRCodeData cur_code = new QRCodeData();
+                                                cur_code.setHash(current_code.getHash());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setLat(current_code.getGeolocation().get(0));
+                                                cur_code.setLon(current_code.getGeolocation().get(1));
+                                                cur_code.setScore(current_code.getScore());
+                                                cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                                QRCodeMapper qrmapper = new QRCodeMapper();
+                                                qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                    @Override
+                                                    public void handleSuccess(QRCodeData data) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            } else {
+                                                ActivityCompat.requestPermissions(MainActivity.this, new String[]
+                                                        {Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+                                                //codeArrayList.add(current_code);
+                                                QRCodeData cur_code = new QRCodeData();
+                                                cur_code.setHash(current_code.getHash());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setLat(current_code.getGeolocation().get(0));
+                                                cur_code.setLon(current_code.getGeolocation().get(1));
+                                                cur_code.setScore(current_code.getScore());
+                                                cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                                QRCodeMapper qrmapper = new QRCodeMapper();
+                                                qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                    @Override
+                                                    public void handleSuccess(QRCodeData data) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
-                                    dialogInterface.dismiss();
+                                    builder2.show();
                                 }
                             });
                             builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    if (ActivityCompat.checkSelfPermission(MainActivity.this,
-                                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                                        Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                                        double longi = loc.getLongitude();
-                                        double lat = loc.getLatitude();
-                                        String longitude = String.valueOf(longi);
-                                        String latitude = String.valueOf(lat);
-                                        ArrayList<Double> geolocation = new ArrayList<Double>();
-                                        geolocation.add(lat);
-                                        geolocation.add(longi);
-                                        current_code.setGeolocation(geolocation);
-                                        //test
-                                        QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setHash(current_code.getHash());
-                                        cur_code.setLat(current_code.getGeolocation().get(0));
-                                        cur_code.setLon(current_code.getGeolocation().get(1));
-                                        cur_code.setScore(current_code.getScore());
-                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+                                    AlertDialog.Builder builder3 = new AlertDialog.Builder(
+                                            MainActivity.this
+                                    );
+                                    builder3.setTitle("Would You Like To Store The Geolocation");
+                                    builder3.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                                        QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
-                                            @Override
-                                            public void handleSuccess(QRCodeData data) {
-                                                updateCodeLists();
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                activityResultLauncher.launch(intent);
-                                            }
-                                        });
-                                    } else {
-                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]
-                                                {Manifest.permission.ACCESS_FINE_LOCATION},44);
-                                        QRCodeData cur_code = new QRCodeData();
-                                        cur_code.setHash(current_code.getHash());
-                                        cur_code.setScore(current_code.getScore());
-                                        cur_code.setUserRef("/users/"+loggedinUser.getId());
+                                            double longi = 0.0;
+                                            double lat = 0.0;
+                                            ArrayList<Double> geolocation = new ArrayList<Double>();
+                                            geolocation.add(lat);
+                                            geolocation.add(longi);
+                                            current_code.setGeolocation(geolocation);
 
-                                        QRCodeMapper qrmapper = new QRCodeMapper();
-                                        qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
-                                            @Override
-                                            public void handleSuccess(QRCodeData data) {
-                                                updateCodeLists();
-                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                activityResultLauncher.launch(intent);
+                                            codeArrayList.add(current_code);
+                                            QRCodeData cur_code = new QRCodeData();
+                                            cur_code.setHash(current_code.getHash());
+                                            cur_code.setScore(current_code.getScore());
+                                            cur_code.setLat(current_code.getGeolocation().get(0));
+                                            cur_code.setLon(current_code.getGeolocation().get(1));
+                                            cur_code.setId(current_code.getId());
+                                            cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                            QRCodeMapper qrmapper = new QRCodeMapper();
+                                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                @Override
+                                                public void handleSuccess(QRCodeData data) {
+                                                    updateCodeLists();
+                                                }
+                                            });
+                                            dialogInterface.dismiss();
+                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                            activityResultLauncher.launch(intent);
+                                        }
+                                    });
+                                    builder3.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                                                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                                Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                                double longi = loc.getLongitude();
+                                                double lat = loc.getLatitude();
+                                                String longitude = String.valueOf(longi);
+                                                String latitude = String.valueOf(lat);
+                                                ArrayList<Double> geolocation = new ArrayList<Double>();
+                                                geolocation.add(lat);
+                                                geolocation.add(longi);
+                                                current_code.setGeolocation(geolocation);
+                                                codeArrayList.add(current_code);
+                                                //test
+                                                QRCodeData cur_code = new QRCodeData();
+                                                cur_code.setHash(current_code.getHash());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setLat(current_code.getGeolocation().get(0));
+                                                cur_code.setLon(current_code.getGeolocation().get(1));
+                                                cur_code.setScore(current_code.getScore());
+                                                cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                                QRCodeMapper qrmapper = new QRCodeMapper();
+                                                qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                    @Override
+                                                    public void handleSuccess(QRCodeData data) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            } else {
+                                                ActivityCompat.requestPermissions(MainActivity.this, new String[]
+                                                        {Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+                                                //codeArrayList.add(current_code);
+                                                QRCodeData cur_code = new QRCodeData();
+                                                cur_code.setHash(current_code.getHash());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setId(current_code.getId());
+                                                cur_code.setLat(current_code.getGeolocation().get(0));
+                                                cur_code.setLon(current_code.getGeolocation().get(1));
+                                                cur_code.setScore(current_code.getScore());
+                                                cur_code.setUserRef("/users/" + loggedinUser.getId());
+
+                                                QRCodeMapper qrmapper = new QRCodeMapper();
+                                                qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                                    @Override
+                                                    public void handleSuccess(QRCodeData data) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
                                             }
-                                        });
-                                    }
+                                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                            activityResultLauncher.launch(intent);
+
+                                        }
+                                    });
+                                    builder3.show();
+
+                                    //dialogInterface.dismiss();
                                 }
                             });
                             builder1.show();
-                            //dialogInterface.dismiss();
                         }
                     });
                     builder.show();
@@ -289,92 +417,92 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                 }
             }
-            else if (requestCode == 2){
+        } else if (requestCode == 2) {
 
-                if (intentResult==null)
-                    return;
-                String username = intentResult.getContents();
-                UserMapper um = new UserMapper();
-                um.queryUsername(username, um.new CompletionHandler<User>() {
-                    @Override
-                    public void handleSuccess(User data) {
-                        // User with UUID found.
-                        AlertDialog.Builder builder = new AlertDialog.Builder(
-                                MainActivity.this);
-                        // Set title
-                        builder.setTitle("Login Successful");
-                        // Set message
-                        builder.setMessage("Welcome! "+ username);
-                        // Set positive button
-                        builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Dismiss dialog
-                                dialogInterface.dismiss();
-                                MainActivity.mainActivity.toMap();
+            if (intentResult == null)
+                return;
+            String username = intentResult.getContents();
+            UserMapper um = new UserMapper();
+            um.queryUsername(username, um.new CompletionHandler<User>() {
+                @Override
+                public void handleSuccess(User data) {
+                    // User with UUID found.
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            MainActivity.this);
+                    // Set title
+                    builder.setTitle("Login Successful");
+                    // Set message
+                    builder.setMessage("Welcome! " + username);
+                    // Set positive button
+                    builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Dismiss dialog
+                            dialogInterface.dismiss();
+                            MainActivity.mainActivity.toMap();
 
-                            }
-                        });
-                        builder.show();
-                    }
-
-                    @Override
-                    public void handleError(Exception e) {
-                        // UUID not found in system.
-                        AlertDialog.Builder builder = new AlertDialog.Builder(
-                                MainActivity.this);
-                        // Set title
-                        builder.setTitle("Login Err");
-                        // Set message
-                        builder.setMessage("not find user! "+ username);
-                        // Set positive button
-                        builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Dismiss dialog
-                                dialogInterface.dismiss();
-
-                            }
-                        });
-                        builder.show();
-                    }
-                });
-
-            } else if (requestCode == 3){
-                if (intentResult==null)
-                    return;
-
-                String username = intentResult.getContents();
-                UserMapper um = new UserMapper();
-                um.queryUsername(username, um.new CompletionHandler<User>() {
-                    @Override
-                    public void handleSuccess(User data) {
-                        // User with UUID found.
-                        if (data!=null&&!TextUtils.isEmpty(data.getUsername())){
-                            searchUser = data;
-                            getSupportFragmentManager().beginTransaction()
-                                    .setReorderingAllowed(true)
-                                    .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
-                                    .addToBackStack("tag").commit();
                         }
+                    });
+                    builder.show();
+                }
 
+                @Override
+                public void handleError(Exception e) {
+                    // UUID not found in system.
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            MainActivity.this);
+                    // Set title
+                    builder.setTitle("Login Err");
+                    // Set message
+                    builder.setMessage("not find user! " + username);
+                    // Set positive button
+                    builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Dismiss dialog
+                            dialogInterface.dismiss();
+
+                        }
+                    });
+                    builder.show();
+                }
+            });
+
+        } else if (requestCode == 3) {
+            if (intentResult == null)
+                return;
+
+            String username = intentResult.getContents();
+            UserMapper um = new UserMapper();
+            um.queryUsername(username, um.new CompletionHandler<User>() {
+                @Override
+                public void handleSuccess(User data) {
+                    // User with UUID found.
+                    if (data != null && !TextUtils.isEmpty(data.getUsername())) {
+                        searchUser = data;
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
+                                .addToBackStack("tag").commit();
                     }
 
-                    @Override
-                    public void handleError(Exception e) {
-                        // UUID not found in system.
-                        Toast.makeText(MainActivity.this, "User not exist", Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                });
+                }
 
-            }
-
+                @Override
+                public void handleError(Exception e) {
+                    // UUID not found in system.
+                    Toast.makeText(MainActivity.this, "User not exist", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
 
         }
+
+
     }
 
-    public void toMap(){
+
+    public void toMap() {
         MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
@@ -389,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> data) {
                 codeArrayList.clear();
-                for (int i=0; i<data.size(); i++) {
+                for (int i = 0; i < data.size(); i++) {
                     QRCode cur_code = new QRCode(data.get(i));
                     codeArrayList.add(cur_code);
                     if (codesFragment != null) {
@@ -407,4 +535,24 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.mainActivityFragmentView, mapFragment)
                 .commit();
     }
+
+    public void qrDistance(ArrayList<QRCode> qrdistance) {
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longi = loc.getLongitude();
+            double lat = loc.getLatitude();
+            for (int i = 0; i < qrdistance.size(); i++) {
+                QRCode qrcode = new QRCode(qrdistance.get(i));
+                double databaseCodeLat = qrcode.getLat();
+                double databaseCodeLongi = qrcode.getLon();
+                double latDistance = Math.abs(lat - databaseCodeLat);
+                double longiDistance = Math.abs(longi - databaseCodeLongi);
+                double qrManhattanDistance = latDistance + longiDistance;
+            }
+        }
+    }
+
 }

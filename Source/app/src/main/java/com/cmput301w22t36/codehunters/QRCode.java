@@ -125,6 +125,7 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
      * @return
      *      has_location boolean
      */
+
     public boolean hasLocation() {
         return has_location;
     }

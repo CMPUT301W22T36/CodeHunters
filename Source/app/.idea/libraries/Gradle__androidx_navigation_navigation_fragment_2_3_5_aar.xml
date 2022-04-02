@@ -4,6 +4,9 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/4eb963c2c29e0f43790ec917eef3ca4d/transformed/navigation-fragment-2.3.5/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4eb963c2c29e0f43790ec917eef3ca4d/transformed/navigation-fragment-2.3.5/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4eb963c2c29e0f43790ec917eef3ca4d/transformed/navigation-fragment-2.3.5/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f003a6ce2d58a4434d76be50f3202d80/transformed/navigation-fragment-2.3.5/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/f003a6ce2d58a4434d76be50f3202d80/transformed/navigation-fragment-2.3.5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f003a6ce2d58a4434d76be50f3202d80/transformed/navigation-fragment-2.3.5/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
