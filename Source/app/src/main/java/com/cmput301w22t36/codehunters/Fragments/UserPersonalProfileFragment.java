@@ -129,7 +129,7 @@ public class UserPersonalProfileFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to edit the username
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, EditNameFragment.class, null)
+                        .replace(R.id.fragment_container, EditNameFragment.class, null)
                         .commit();
             }
         });
@@ -143,7 +143,7 @@ public class UserPersonalProfileFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to edit the email for the users contact information
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, EditEmailFragment.class, null)
+                        .replace(R.id.fragment_container, EditEmailFragment.class, null)
                         .commit();
             }
         });

@@ -78,7 +78,7 @@ public class ScanToLogin extends AppCompatActivity {
                     // TODO: return to the MapFragment.
 //                    getSupportFragmentManager().beginTransaction()
 //                                .setReorderingAllowed(true)
-//                                .add(R.id.mainActivityFragmentView, MapFragment.class, null)
+//                                .add(R.id.fragment_container, MapFragment.class, null)
 //                                .commit();
 
                 }

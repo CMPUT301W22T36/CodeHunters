@@ -4,13 +4,19 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +26,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +40,9 @@ import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
 import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
+import com.cmput301w22t36.codehunters.Fragments.UserPersonalProfileFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -43,7 +53,10 @@ import java.util.ArrayList;
  *
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String TAG = "MainActivity"; // For activityResultLaunch debugging
+    private DrawerLayout drawer; // For the screen header
 
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
@@ -55,20 +68,70 @@ public class MainActivity extends AppCompatActivity {
 
     public User loggedinUser;
 
+    // Launch the FirstWelcomeActivity requiring returned results to indicate if
+    // the user selected ScanToLogin
+    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                /**
+                 * This accepts and analyzes the result codes from the FirstWelcomeActivity
+                 * @param result: the result that FirstWelcomeActivity returns after returning
+                 */
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    // Indicate return to MainActivity
+                    Log.d(TAG, "OnActivityResult: ");
+
+                    // Test the result code for the next screen to load
+                    if (result.getResultCode() == 12) {
+                        // Load the Map Fragment
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .add(R.id.fragment_container, MapFragment.class, null)
+                                .commit();
+                    } else if (result.getResultCode() == 22) {
+                        // Load the ScanToLogin activity
+                        // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
+                        /*Intent myIntent = new Intent(MainActivity.this, ScanToLogin.class);
+                        startActivity(myIntent);*/
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .add(R.id.fragment_container, SocialFragment.class, null)
+                                .commit();
+                    }
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.mainActivityFragmentView, FirstWelcomeFragment.class, null)
-                    .commit();
-        }
+        Intent intent = new Intent(MainActivity.this, FirstWelcomeActivity.class);
+        activityResultLaunch.launch(intent);
 
+        // TODO: check
+        // Set the hamburger menu
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Open and close the hamburger menu sidebar
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+
+
+
+
+
+        // The remaining setup for the main screens
         codesNav = findViewById(R.id.navToCodes);
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
@@ -87,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 CodesFragment fragmentDemo = CodesFragment.newInstance(codeArrayList);
-                ft.replace(R.id.mainActivityFragmentView, fragmentDemo);
+                ft.replace(R.id.fragment_container, fragmentDemo);
                 ft.commit();
 //                getSupportFragmentManager().beginTransaction()
 //                        .setReorderingAllowed(true)
-//                        .replace(R.id.mainActivityFragmentView, CodesFragment.class, null)
+//                        .replace(R.id.fragment_container, CodesFragment.class, null)
 //                        .commit();
             }
         });
@@ -102,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, SocialFragment.class, null)
+                        .replace(R.id.fragment_container, SocialFragment.class, null)
                         .commit();
             }
         });
@@ -114,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.mainActivityFragmentView, mapFragment)
+                        .replace(R.id.fragment_container, mapFragment)
                         .commit();
             }
         });
@@ -275,6 +338,35 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                 }
             }
+        }
+    }
+
+
+    // When items are clicked in the sidebar, move to the specified fragment.
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.my_account:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new UserPersonalProfileFragment()).commit();
+                break;
+            case R.id.list_nearby_codes:
+                // TODO: Placeholder
+                break;
+        }
+
+        // Select the clicked item
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    // To close the sidebar drawer if it is open
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 }

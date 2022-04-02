@@ -26,7 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  */
 
 //Introduction: This fragment is used to contain and display all fragments related to users social communication in the App, also provide a search bottom for user to search other users.
-//              It can replace mainActivityFragmentView in MainActivity
+//              It can replace fragment_container in MainActivity
 //              just for  now: No actual functions but all display and navigation are completed.
 public class SocialFragment extends Fragment {
 
@@ -141,7 +141,7 @@ public class SocialFragment extends Fragment {
                                 //todo
                                 getActivity().getSupportFragmentManager().beginTransaction()
                                         .setReorderingAllowed(true)
-                                        .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
+                                        .replace(R.id.fragment_container, SearchUserFragment.class, null)
                                         .addToBackStack("tag").commit();
                                  }
                             else{Toast.makeText(getActivity(), "User not exist", Toast.LENGTH_SHORT)
