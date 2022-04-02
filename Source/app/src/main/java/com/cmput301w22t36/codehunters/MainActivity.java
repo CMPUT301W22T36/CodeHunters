@@ -535,6 +535,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void qrDistance(ArrayList<QRCode> qrdistance) {
+
         if (ActivityCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -551,4 +552,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
