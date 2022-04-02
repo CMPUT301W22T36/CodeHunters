@@ -16,7 +16,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,13 +33,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
-import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
 import com.cmput301w22t36.codehunters.Fragments.SearchNearbyCodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.SearchUserFragment;
@@ -52,7 +49,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class: MainActivity
