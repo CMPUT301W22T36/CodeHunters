@@ -162,13 +162,15 @@ public class MainActivity extends AppCompatActivity {
                             cur_code.setScore(current_code.getScore());
                             cur_code.setPhoto(current_code.getPhoto());
                             cur_code.setUserRef("/users/"+loggedinUser.getId());
-                            cur_code.setId(current_code.getId());
-
-                            //TEST QRCODE CONSTRUCTOR
-                            QRCode code1 = new QRCode(cur_code);
+                            for (QRCode code : codeArrayList) {
+                                if (cur_code.getHash().equals(code.getHash())) {
+                                    cur_code.setId(code.getId());
+                                    break;
+                                }
+                            }
 
                             QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.create(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
                                     updateCodeLists();
@@ -210,11 +212,9 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     //User has said no to photo-location so we create code with string code only
-                                    codeArrayList.add(current_code);
                                     QRCodeData cur_code = new QRCodeData();
                                     cur_code.setHash(current_code.getHash());
                                     cur_code.setScore(current_code.getScore());
-                                    cur_code.setId(current_code.getId());
                                     cur_code.setUserRef("/users/"+loggedinUser.getId());
 
                                     QRCodeMapper qrmapper = new QRCodeMapper();
@@ -230,8 +230,6 @@ public class MainActivity extends AppCompatActivity {
                             builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    activityResultLauncher.launch(intent);
                                     if (ActivityCompat.checkSelfPermission(MainActivity.this,
                                             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                                         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -244,11 +242,9 @@ public class MainActivity extends AppCompatActivity {
                                         geolocation.add(lat);
                                         geolocation.add(longi);
                                         current_code.setGeolocation(geolocation);
-                                        codeArrayList.add(current_code);
                                         //test
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
-                                        cur_code.setId(current_code.getId());
                                         cur_code.setLat(current_code.getGeolocation().get(0));
                                         cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
@@ -259,18 +255,15 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                                 updateCodeLists();
+                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                activityResultLauncher.launch(intent);
                                             }
                                         });
                                     } else {
                                         ActivityCompat.requestPermissions(MainActivity.this, new String[]
                                                 {Manifest.permission.ACCESS_FINE_LOCATION},44);
-                                        //codeArrayList.add(current_code);
                                         QRCodeData cur_code = new QRCodeData();
                                         cur_code.setHash(current_code.getHash());
-                                        cur_code.setId(current_code.getId());
-                                        cur_code.setId(current_code.getId());
-                                        cur_code.setLat(current_code.getGeolocation().get(0));
-                                        cur_code.setLon(current_code.getGeolocation().get(1));
                                         cur_code.setScore(current_code.getScore());
                                         cur_code.setUserRef("/users/"+loggedinUser.getId());
 
@@ -279,6 +272,8 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void handleSuccess(QRCodeData data) {
                                                 updateCodeLists();
+                                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                activityResultLauncher.launch(intent);
                                             }
                                         });
                                     }
