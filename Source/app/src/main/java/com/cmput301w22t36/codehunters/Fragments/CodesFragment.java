@@ -127,7 +127,6 @@ public class CodesFragment extends Fragment {
         }
         total_score.setText(String.valueOf(sum));
 
-
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);

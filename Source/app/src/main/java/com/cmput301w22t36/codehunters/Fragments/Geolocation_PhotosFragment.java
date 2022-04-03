@@ -15,8 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.CommentMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.Comment;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
+
+import java.util.ArrayList;
 
 /**
  * Introductory Comments:
@@ -59,11 +63,26 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         } else {
             geolocation.setText("You did not record a location");
         }
+
         if (qrCodeClicked.getPhoto() != null) {
             photo.setImageBitmap(qrCodeClicked.getPhoto());
         } else {
             photo.setImageBitmap(null);
         }
+
+        // Collect comments for the qrcode post:
+
+        CommentMapper cm = new CommentMapper();
+        cm.getCommentsForQrCode(qrCodeClicked.getId(), cm.new CompletionHandler<ArrayList<Comment>>() {
+            @Override
+            public void handleSuccess(ArrayList<Comment> comments) {
+                String aggregateComments = "";
+                for (Comment c : comments) {
+                    aggregateComments += c.getComment() + "\n";
+                }
+                commentBox.setText(aggregateComments);
+            }
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
