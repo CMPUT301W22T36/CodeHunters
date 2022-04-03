@@ -644,7 +644,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double longiDistance = Math.abs(longi - databaseCodeLongi);
                 double qrManhattanDistance = latDistance + longiDistance;
             }
-
         }
     }
 

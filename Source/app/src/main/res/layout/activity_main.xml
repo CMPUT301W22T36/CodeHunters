@@ -92,15 +92,6 @@
     </androidx.drawerlayout.widget.DrawerLayout>
 
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/mainActivityFragmentView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/navToMap"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/scanQRCode"
         android:layout_width="wrap_content"
