@@ -40,7 +40,8 @@ public class FirstWelcomeActivity extends AppCompatActivity {
         // The back button should do nothing
     }
 
-    /**
+    /**                setResult(22, intent); // Use 22 to indicate that the ScanToLogin activity should be loaded
+
      * Test if this device already has an associated account, then either load that account or
      * prompt to setup a new account.
      * @param savedInstanceState: This is the bundle that will be called through the superclass

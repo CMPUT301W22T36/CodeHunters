@@ -374,29 +374,62 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (intentResult==null)
                     return;
-                String username = intentResult.getContents();
+                String userID = intentResult.getContents();
                 UserMapper um = new UserMapper();
-                um.queryUsername(username, um.new CompletionHandler<User>() {
+                um.get(userID, um.new CompletionHandler<User>() {
                     @Override
                     public void handleSuccess(User data) {
                         // User with UUID found.
-                        AlertDialog.Builder builder = new AlertDialog.Builder(
-                                MainActivity.this);
-                        // Set title
-                        builder.setTitle("Login Successful");
-                        // Set message
-                        builder.setMessage("Welcome! "+ username);
-                        // Set positive button
-                        builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                        ArrayList<String> UDIDs = data.getUdid();
+                        UDIDs.add(Settings.Secure.getString(getApplicationContext().
+                                                            getContentResolver(),
+                                                            Settings.Secure.ANDROID_ID));
+                        data.setUdid(UDIDs);
+                        um.update(data, um.new CompletionHandler<User>() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Dismiss dialog
-                                dialogInterface.dismiss();
-                                MainActivity.mainActivity.toMap();
+                            public void handleSuccess(User data) {
+                                // User udid list successfully updated and is logged in
+                                loggedinUser = data;
+                                AlertDialog.Builder builder = new AlertDialog.Builder(
+                                        MainActivity.this);
+                                // Set title
+                                builder.setTitle("Login Successful");
+                                // Set message
+                                builder.setMessage("Welcome! " + loggedinUser.getUsername());
+                                // Set positive button
+                                builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Dismiss dialog
+                                        dialogInterface.dismiss();
+                                        MainActivity.mainActivity.toMap();
+                                    }
+                                });
+                                builder.show();
+                            }
 
+                            @Override
+                            public void handleError(Exception e) {
+                                // UUID not found in system.
+                                AlertDialog.Builder builder = new AlertDialog.Builder(
+                                        MainActivity.this);
+                                // Set title
+                                builder.setTitle("Login Err");
+                                // Set message
+                                builder.setMessage("failed to update user associated with that code!\n" +
+                                        "Please try again later or verify login QR code\n\n" +
+                                        "Continuing to use the app not logged in is not a supported experience.");
+                                // Set positive button
+                                builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Dismiss dialog
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                builder.show();
                             }
                         });
-                        builder.show();
                     }
 
                     @Override
@@ -407,14 +440,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         // Set title
                         builder.setTitle("Login Err");
                         // Set message
-                        builder.setMessage("not find user! "+ username);
+                        builder.setMessage("Could not find user with that login code. " +
+                                "Please verify your login code.\n\n" +
+                                "Continuing to use the app not logged in is not a supported experience.");
                         // Set positive button
                         builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Dismiss dialog
                                 dialogInterface.dismiss();
-
                             }
                         });
                         builder.show();

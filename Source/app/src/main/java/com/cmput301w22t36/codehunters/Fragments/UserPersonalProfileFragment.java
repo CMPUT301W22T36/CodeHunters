@@ -168,8 +168,9 @@ public class UserPersonalProfileFragment extends Fragment {
                 // TODO: Placeholder
                 MultiFormatWriter writer = new MultiFormatWriter();
                 try {
+                    User loggedInUser = ((MainActivity) getActivity()).loggedinUser;
                     //Initialize bit matrix
-                    BitMatrix matrix = writer.encode(username, BarcodeFormat.QR_CODE,550,550);
+                    BitMatrix matrix = writer.encode(loggedInUser.getId(), BarcodeFormat.QR_CODE,550,550);
                     //Initialize barcode encoder
                     BarcodeEncoder encoder = new BarcodeEncoder();
                     //Initialize bitmap
