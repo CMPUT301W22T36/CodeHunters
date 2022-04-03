@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityResultLauncher<Intent> activityResultLauncher;
     public CodesFragment codesFragment;
     public User searchUser;
-    //TEST - MEHUL (populate list of qrcodes to test listview)
+    //TODO TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
@@ -264,17 +264,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
 
+
+                            // Update the User's score and bestScore:
                             QRCodeMapper qrmapper = new QRCodeMapper();
                             qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
-                                    updateCodeLists();
+                                    // Update User Score:
+                                    UserMapper um = new UserMapper();
+                                    um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
+                                        @Override
+                                        public void handleSuccess(User user) {
+                                            user.setScore(user.getScore() + cur_code.getScore());
+                                            if (cur_code.getScore() > loggedinUser.getBestScore()) {
+                                                loggedinUser.setBestScore(cur_code.getScore());
+                                                um.update(user, um.new CompletionHandler<User>(){
+                                                    @Override
+                                                    public void handleSuccess(User user) {
+                                                        updateCodeLists();
+                                                    }
+                                                    @Override
+                                                    public void handleError(Exception e) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        @Override
+                                        public void handleError(Exception e) {
+                                            updateCodeLists();
+                                        }
+                                    });
                                 }
                             });
+
+
+
                         }
                     }
                 });
-
     }
 
     @Override
@@ -654,11 +682,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double databaseCodeLongi = qrcode.getLon();
                 double latDistance = Math.abs(lat - databaseCodeLat);
                 double longiDistance = Math.abs(longi - databaseCodeLongi);
-//                double qrManhattanDistance = latDistance + longiDistance;
                 double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
                 double c = 2 * Math.asin(Math.sqrt(a));
                 double km = 6371 * c;
-
             }
         }
     }

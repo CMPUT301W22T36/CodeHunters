@@ -187,11 +187,11 @@ public class SearchUserFragment extends Fragment {
                 +"\r\n"
                 +"Is Owner: "+MainActivity.mainActivity.searchUser.getOwner()
                 +"\r\n"
-                +"BestScore: "+MainActivity.mainActivity.searchUser.getBestScore()
+                +"BestScore: "+String.valueOf(MainActivity.mainActivity.searchUser.getBestScore())
                 +"\r\n"
-                +"TotalScore: "+MainActivity.mainActivity.searchUser.getScore()
+                +"TotalScore: "+String.valueOf(MainActivity.mainActivity.searchUser.getScore())
                 +"\r\n"
-                +"ScanCount: "+MainActivity.mainActivity.searchUser.getScanCount()
+                +"ScanCount: "+String.valueOf(MainActivity.mainActivity.searchUser.getScanCount())
         );
 
 
