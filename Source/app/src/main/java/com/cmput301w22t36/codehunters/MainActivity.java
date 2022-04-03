@@ -4,10 +4,15 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -20,36 +25,43 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.MenuItem;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Fragments.CodesFragment;
-import com.cmput301w22t36.codehunters.Fragments.FirstWelcomeFragment;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
+import com.cmput301w22t36.codehunters.Fragments.SearchNearbyCodesFragment;
 import com.cmput301w22t36.codehunters.Fragments.SearchUserFragment;
 import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
+import com.cmput301w22t36.codehunters.Fragments.UserPersonalProfileFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class: MainActivity
  *
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
  */
-public class MainActivity extends AppCompatActivity {
-    public static MainActivity mainActivity;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    public  static MainActivity mainActivity;
+
+    public static final String TAG = "MainActivity"; // For activityResultLaunch debugging
+    private DrawerLayout drawer; // For the screen header
+
     TextView codesNav, mapNav, socialNav;
     FloatingActionButton scanQRCode;
     ActivityResultLauncher<Intent> activityResultLauncher;
@@ -61,6 +73,62 @@ public class MainActivity extends AppCompatActivity {
 
     public User loggedinUser;
 
+    // Launch the FirstWelcomeActivity requiring returned results to indicate if
+    // the user selected ScanToLogin
+    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                /**
+                 * This accepts and analyzes the result codes from the FirstWelcomeActivity
+                 * @param result: the result that FirstWelcomeActivity returns after returning
+                 */
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    // Indicate return to MainActivity
+                    Log.d(TAG, "OnActivityResult: ");
+
+                    // Test the result code for the next screen to load
+                    if (result.getResultCode() == 12) {
+                        // Load the Map Fragment
+                        QRCodeMapper codeMapper = new QRCodeMapper();
+                        codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                            @Override
+                            public void handleSuccess(ArrayList<QRCodeData> codes) {
+                                ArrayList<QRCode> newCodes= new ArrayList<>();
+                                for (QRCodeData code : codes) {
+                                    newCodes.add(new QRCode(code));
+                                }
+                                openMap(newCodes);
+                            }
+                        });
+                        /*getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .add(R.id.fragment_container, MapFragment.class, null)
+                                .commit();*/
+                    } else if (result.getResultCode() == 22) {
+                        // Load the ScanToLogin activity
+                        // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
+                        /*Intent myIntent = new Intent(MainActivity.this, ScanToLogin.class);
+                        startActivity(myIntent);*/
+
+                        IntentIntegrator intentIntegrator = new IntentIntegrator(
+                                com.cmput301w22t36.codehunters.MainActivity.this//getActivity()
+                        );
+                        intentIntegrator.setBeepEnabled(false);
+                        intentIntegrator.setPrompt("Scan QR Code");
+                        intentIntegrator.setOrientationLocked(true);
+                        intentIntegrator.setCaptureActivity(Capture.class);
+                        intentIntegrator.setRequestCode(2);
+                        intentIntegrator.initiateScan();
+
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .add(R.id.fragment_container, MapFragment.class, null)
+                                .commit();
+                    }
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,13 +136,25 @@ public class MainActivity extends AppCompatActivity {
 
         mainActivity = this;
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.mainActivityFragmentView, FirstWelcomeFragment.class, null)
-                    .commit();
-        }
+        Intent intent = new Intent(MainActivity.this, FirstWelcomeActivity.class);
+        activityResultLaunch.launch(intent);
 
+        // Set the hamburger menu
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Open and close the hamburger menu sidebar
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+
+
+        // The remaining setup for the main screens
         codesNav = findViewById(R.id.navToCodes);
         mapNav = findViewById(R.id.navToMap);
         socialNav = findViewById(R.id.navToSocial);
@@ -85,13 +165,14 @@ public class MainActivity extends AppCompatActivity {
         codesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                updateCodeLists();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 codesFragment = CodesFragment.newInstance(codeArrayList);
-                ft.replace(R.id.mainActivityFragmentView, codesFragment);
+                ft.replace(R.id.fragment_container, codesFragment);
                 ft.commit();
 //                getSupportFragmentManager().beginTransaction()
 //                        .setReorderingAllowed(true)
-//                        .replace(R.id.mainActivityFragmentView, CodesFragment.class, null)
+//                        .replace(R.id.fragment_container, CodesFragment.class, null)
 //                        .commit();
             }
         });
@@ -102,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
                 SocialFragment fragmentDemoS = SocialFragment.newInstance(loggedinUser.getUsername());
-                fts.replace(R.id.mainActivityFragmentView, fragmentDemoS);
+                fts.replace(R.id.fragment_container,fragmentDemoS);
                 fts.commit();
-                /**
-                 getSupportFragmentManager().beginTransaction()
-                 .setReorderingAllowed(true)
-                 .replace(R.id.mainActivityFragmentView, SocialFragment.class, null)
-                 .commit();*/
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragment_container, SocialFragment.class, null)
+                        .commit();*/
             }
         });
 
@@ -241,11 +322,9 @@ public class MainActivity extends AppCompatActivity {
                                                     }
                                                 });
                                                 dialogInterface.dismiss();
-//
                                             }
 
                                         });
-
                                         builder2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -396,99 +475,132 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "You did not scan anything", Toast.LENGTH_SHORT)
                             .show();
                 }
-            }
-        } else if (requestCode == 2) {
+            } else if (requestCode == 2){
 
-            if (intentResult == null)
-                return;
-            String username = intentResult.getContents();
-            UserMapper um = new UserMapper();
-            um.queryUsername(username, um.new CompletionHandler<User>() {
-                @Override
-                public void handleSuccess(User data) {
-                    // User with UUID found.
-                    AlertDialog.Builder builder = new AlertDialog.Builder(
-                            MainActivity.this);
-                    // Set title
-                    builder.setTitle("Login Successful");
-                    // Set message
-                    builder.setMessage("Welcome! " + username);
-                    // Set positive button
-                    builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //Dismiss dialog
-                            dialogInterface.dismiss();
-                            MainActivity.mainActivity.toMap();
+                if (intentResult==null)
+                    return;
+                String userID = intentResult.getContents();
+                UserMapper um = new UserMapper();
+                um.get(userID, um.new CompletionHandler<User>() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // User with UUID found.
+                        ArrayList<String> UDIDs = data.getUdid();
+                        UDIDs.add(Settings.Secure.getString(getApplicationContext().
+                                        getContentResolver(),
+                                Settings.Secure.ANDROID_ID));
+                        data.setUdid(UDIDs);
+                        um.update(data, um.new CompletionHandler<User>() {
+                            @Override
+                            public void handleSuccess(User data) {
+                                // User udid list successfully updated and is logged in
+                                loggedinUser = data;
+                                AlertDialog.Builder builder = new AlertDialog.Builder(
+                                        MainActivity.this);
+                                // Set title
+                                builder.setTitle("Login Successful");
+                                // Set message
+                                builder.setMessage("Welcome! " + loggedinUser.getUsername());
+                                // Set positive button
+                                builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Dismiss dialog
+                                        dialogInterface.dismiss();
+                                        QRCodeMapper codeMapper = new QRCodeMapper();
+                                        codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                                            @Override
+                                            public void handleSuccess(ArrayList<QRCodeData> codes) {
+                                                ArrayList<QRCode> newCodes= new ArrayList<>();
+                                                for (QRCodeData code : codes) {
+                                                    newCodes.add(new QRCode(code));
+                                                }
+                                                openMap(newCodes);
+                                            }
+                                        });
+                                    }
+                                });
+                                builder.show();
+                            }
 
-                        }
-                    });
-                    builder.show();
-                }
-
-                @Override
-                public void handleError(Exception e) {
-                    // UUID not found in system.
-                    AlertDialog.Builder builder = new AlertDialog.Builder(
-                            MainActivity.this);
-                    // Set title
-                    builder.setTitle("Login Err");
-                    // Set message
-                    builder.setMessage("not find user! " + username);
-                    // Set positive button
-                    builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //Dismiss dialog
-                            dialogInterface.dismiss();
-
-                        }
-                    });
-                    builder.show();
-                }
-            });
-
-        } else if (requestCode == 3) {
-            if (intentResult == null)
-                return;
-
-            String username = intentResult.getContents();
-            UserMapper um = new UserMapper();
-            um.queryUsername(username, um.new CompletionHandler<User>() {
-                @Override
-                public void handleSuccess(User data) {
-                    // User with UUID found.
-                    if (data != null && !TextUtils.isEmpty(data.getUsername())) {
-                        searchUser = data;
-                        getSupportFragmentManager().beginTransaction()
-                                .setReorderingAllowed(true)
-                                .replace(R.id.mainActivityFragmentView, SearchUserFragment.class, null)
-                                .addToBackStack("tag").commit();
+                            @Override
+                            public void handleError(Exception e) {
+                                // UUID not found in system.
+                                AlertDialog.Builder builder = new AlertDialog.Builder(
+                                        MainActivity.this);
+                                // Set title
+                                builder.setTitle("Login Err");
+                                // Set message
+                                builder.setMessage("failed to update user associated with that code!\n" +
+                                        "Please try again later or verify login QR code\n\n" +
+                                        "Continuing to use the app not logged in is not a supported experience.");
+                                // Set positive button
+                                builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Dismiss dialog
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                builder.show();
+                            }
+                        });
                     }
 
-                }
+                    @Override
+                    public void handleError(Exception e) {
+                        // UUID not found in system.
+                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                MainActivity.this);
+                        // Set title
+                        builder.setTitle("Login Err");
+                        // Set message
+                        builder.setMessage("Could not find user with that login code. " +
+                                "Please verify your login code.\n\n" +
+                                "Continuing to use the app not logged in is not a supported experience.");
+                        // Set positive button
+                        builder.setPositiveButton("Enter CodeHunters", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Dismiss dialog
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.show();
+                    }
+                });
 
-                @Override
-                public void handleError(Exception e) {
-                    // UUID not found in system.
-                    Toast.makeText(MainActivity.this, "User not exist", Toast.LENGTH_SHORT)
-                            .show();
-                }
-            });
+            } else if (requestCode == 3){
+                if (intentResult==null)
+                    return;
 
+                String username = intentResult.getContents();
+                UserMapper um = new UserMapper();
+                um.queryUsername(username, um.new CompletionHandler<User>() {
+                    @Override
+                    public void handleSuccess(User data) {
+                        // User with UUID found.
+                        if (data!=null&&!TextUtils.isEmpty(data.getUsername())){
+                            searchUser = data;
+                            getSupportFragmentManager().beginTransaction()
+                                    .setReorderingAllowed(true)
+                                    .replace(R.id.fragment_container, SearchUserFragment.class, null)
+                                    .addToBackStack("tag").commit();
+                        }
+
+                    }
+
+                    @Override
+                    public void handleError(Exception e) {
+                        // UUID not found in system.
+                        Toast.makeText(MainActivity.this, "User not exist", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+            }
         }
-
-
     }
 
-
-    public void toMap() {
-        MapFragment mapFragment = MapFragment.newInstance(codeArrayList);
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.mainActivityFragmentView, mapFragment)
-                .commit();
-    }
 
     public void updateCodeLists() {
         QRCodeMapper qrmapper = new QRCodeMapper();
@@ -512,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
         MapFragment mapFragment = MapFragment.newInstance(codes);
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.mainActivityFragmentView, mapFragment)
+                .replace(R.id.fragment_container, mapFragment)
                 .commit();
     }
 
@@ -532,7 +644,38 @@ public class MainActivity extends AppCompatActivity {
                 double longiDistance = Math.abs(longi - databaseCodeLongi);
                 double qrManhattanDistance = latDistance + longiDistance;
             }
+
         }
     }
 
+    // When items are clicked in the sidebar, move to the specified fragment.
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.my_account:
+                // Navigate to the user's profile page
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new UserPersonalProfileFragment()).commit();
+                break;
+            case R.id.list_nearby_codes:
+                // Navigate to the search nearby QR codes by geolocation fragment
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new SearchNearbyCodesFragment()).commit();
+                break;
+        }
+
+        // Select the clicked item
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    // To close the sidebar drawer if it is open
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

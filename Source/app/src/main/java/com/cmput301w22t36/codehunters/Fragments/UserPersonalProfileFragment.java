@@ -139,7 +139,7 @@ public class UserPersonalProfileFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to edit the username
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, EditNameFragment.class, null)
+                        .replace(R.id.fragment_container, EditNameFragment.class, null)
                         .commit();
             }
         });
@@ -153,7 +153,7 @@ public class UserPersonalProfileFragment extends Fragment {
             public void onClick(View view) {
                 // Move to the fragment to edit the email for the users contact information
                 getParentFragmentManager().beginTransaction()
-                        .replace(R.id.mainActivityFragmentView, EditEmailFragment.class, null)
+                        .replace(R.id.fragment_container, EditEmailFragment.class, null)
                         .commit();
             }
         });
@@ -168,8 +168,9 @@ public class UserPersonalProfileFragment extends Fragment {
                 // TODO: Placeholder
                 MultiFormatWriter writer = new MultiFormatWriter();
                 try {
+                    User loggedInUser = ((MainActivity) getActivity()).loggedinUser;
                     //Initialize bit matrix
-                    BitMatrix matrix = writer.encode(username, BarcodeFormat.QR_CODE,550,550);
+                    BitMatrix matrix = writer.encode(loggedInUser.getId(), BarcodeFormat.QR_CODE,550,550);
                     //Initialize barcode encoder
                     BarcodeEncoder encoder = new BarcodeEncoder();
                     //Initialize bitmap
