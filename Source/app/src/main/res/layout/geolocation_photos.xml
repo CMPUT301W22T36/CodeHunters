@@ -1,32 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_marginTop="100dp"
-        android:textAlignment="center"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
+        <LinearLayout
+            android:textAlignment="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="QR Code Coordinates"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="35dp"
+            android:background="#e6ccff"/>
         <TextView
             android:id="@+id/geolocation"
-            android:text="Location Coordinates"
-            android:textSize="20dp"
-            android:textAlignment="center"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:background="#333333"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:textColor="#FFFFFF"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#e6ccff"
+            android:textAlignment="center"
+            android:text="Location Of QR Code"
+            android:textColor="@color/black"
+            android:textSize="35dp"
+            android:gravity="center"/>
 
         <ImageView
             android:textAlignment="center"
             android:id="@+id/photo"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="300dp"
+            android:background="#333333"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comments"
+            android:textColor="@color/black"
+            android:textSize="35dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:background="#e6ccff"  />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textSize="25dp"
+            android:textAlignment="center"
+            android:id="@+id/commentbox"
+            android:background="#333333"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
 
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

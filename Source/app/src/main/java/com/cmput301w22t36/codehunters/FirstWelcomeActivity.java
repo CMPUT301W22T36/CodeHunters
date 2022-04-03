@@ -15,10 +15,27 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+
+import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Capture;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Fragments.MapFragment;
 import com.cmput301w22t36.codehunters.Fragments.UserPersonalProfileFragment;
+import com.cmput301w22t36.codehunters.MainActivity;
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.R;
+import com.google.zxing.integration.android.IntentIntegrator;
+
+import java.util.ArrayList;
 
 /**
  * Class: FirstWelcomeActivity
@@ -146,6 +163,7 @@ public class FirstWelcomeActivity extends AppCompatActivity {
                     @Override
                     public void handleSuccess(User data) {
                         // Successfully stored user data.
+                        MainActivity.mainActivity.loggedinUser = data;
 
                         // Return to the main activity to the Map Fragment
                         Intent intent = new Intent();

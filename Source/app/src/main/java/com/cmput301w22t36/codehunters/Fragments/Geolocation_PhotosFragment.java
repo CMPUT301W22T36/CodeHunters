@@ -33,6 +33,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
 
     private QRCode qrCodeClicked;
     private TextView geolocation;
+    private TextView commentBox;
     private ImageView photo;
 
     public Geolocation_PhotosFragment(QRCode qrCodeClicked) {
@@ -51,6 +52,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.geolocation_photos,null);
         geolocation = (TextView) view.findViewById(R.id.geolocation);
         photo = (ImageView) view.findViewById(R.id.photo);
+        commentBox = (TextView) view.findViewById(R.id.commentbox);
 
         if (qrCodeClicked.getGeolocation() != null) {
             geolocation.setText(qrCodeClicked.getGeolocation().toString());

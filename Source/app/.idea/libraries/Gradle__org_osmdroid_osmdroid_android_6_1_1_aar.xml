@@ -4,6 +4,9 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/e9d5037f99268e4341189c493c8d3b1b/transformed/jetified-osmdroid-android-6.1.1/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e9d5037f99268e4341189c493c8d3b1b/transformed/jetified-osmdroid-android-6.1.1/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e9d5037f99268e4341189c493c8d3b1b/transformed/jetified-osmdroid-android-6.1.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c8b0680053273647f1777367b48cdb66/transformed/jetified-osmdroid-android-6.1.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c8b0680053273647f1777367b48cdb66/transformed/jetified-osmdroid-android-6.1.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c8b0680053273647f1777367b48cdb66/transformed/jetified-osmdroid-android-6.1.1/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.osmdroid/osmdroid-android/6.1.1/2ae42b1b18e014ba76131be57bc670a6db52cfd9/osmdroid-android-6.1.1-javadoc.jar!/" />
