@@ -14,26 +14,40 @@
             android:id="@+id/navToBestCodes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="        Best Codes"
+            android:text="  Best Codes"
+            android:background="#e6ccff"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/navToAllUsers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/navToAllUsers"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="  All Users"
             android:background="#e6ccff"
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/navToScoreBoard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/navToBestCodes"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/navToBestCodes"/>
 
         <TextView
             android:id="@+id/navToScoreBoard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="         Scoreboard"
+            android:text="Scoreboard"
             android:background="#e6ccff"
-            android:textSize="25sp"
+            android:textSize="23sp"
             android:textStyle="bold"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/navToBestCodes"
+            app:layout_constraintStart_toEndOf="@id/navToAllUsers"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/navToBestCodes"/>
 

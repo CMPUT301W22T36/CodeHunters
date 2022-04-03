@@ -44,7 +44,7 @@ public class SocialFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String username;
-    TextView bestCodesNav, scoreBoardNav;
+    TextView bestCodesNav, scoreBoardNav, allUsersNav;
     FloatingActionButton searchUser;
     AlertDialog dialogSearchUser;
     static Context context;
@@ -97,6 +97,7 @@ public class SocialFragment extends Fragment {
         }
         bestCodesNav = view.findViewById(R.id.navToBestCodes);
         scoreBoardNav = view.findViewById(R.id.navToScoreBoard);
+        allUsersNav = view.findViewById(R.id.navToAllUsers);
         searchUser = view.findViewById(R.id.searchUser);
         buildDialogSearchUser();
 
@@ -107,6 +108,16 @@ public class SocialFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
                         .replace(R.id.socialFragmentView, BestCodesFragment.class, null)
+                        .commit();
+            }
+        });
+
+        allUsersNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.socialFragmentView, AllUsersFragment.class, null)
                         .commit();
             }
         });
