@@ -206,11 +206,6 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                     // build up a hashmap of all the unique codes, first come first serve
                     HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
                     for (DocumentSnapshot code : task.getResult()) {
-                        // TODO: Fix database so that this code doesn't make the app crash:
-                        if (code.getData().get(Fields.CODE.toString()).equals("AZ09")) { continue; }
-
-
-
                         QRCodeData thisCode = mapToData(code.getData());
                         // nullify specific fields
                         thisCode.setUserRef(null);

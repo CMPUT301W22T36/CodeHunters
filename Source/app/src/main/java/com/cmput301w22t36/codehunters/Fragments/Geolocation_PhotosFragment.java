@@ -1,14 +1,10 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -77,7 +73,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         // Collect comments for the qrcode post:
 
         CommentMapper cm = new CommentMapper();
-        cm.getCommentsForQrCode(qrCodeClicked.getId(), cm.new CompletionHandler<ArrayList<Comment>>() {
+        cm.getCommentsForHash(qrCodeClicked.getHash(), cm.new CompletionHandler<ArrayList<Comment>>() {
             @Override
             public void handleSuccess(ArrayList<Comment> comments) {
                 String aggregateComments = "";
@@ -97,14 +93,29 @@ public class Geolocation_PhotosFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 AlertDialog.Builder addCommentBuilder = new AlertDialog.Builder(getContext());
                 addCommentBuilder.setTitle("Add Your Comments");
-                addCommentBuilder.setPositiveButton("Confirm", null);
-                addCommentBuilder.setView(editText);
-                String userComment = editText.getText().toString();
-                addCommentBuilder.show();
-            }
-        })
+                addCommentBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String userComment = editText.getText().toString();
+                        Comment comment = new Comment();
+                        comment.setUserRef("/users/" + MainActivity.mainActivity.loggedinUser.getId().toString());
+                        comment.setHashRef(qrCodeClicked.getHash());
+                        comment.setComment(userComment);
 
-               .create();
+                        cm.create(comment, cm.new CompletionHandler<Comment>() {
+                            @Override
+                            public void handleSuccess(Comment comment) {
+
+                            }
+
+                        });
+                    }
+                });
+                addCommentBuilder.setView(editText);
+                addCommentBuilder.show();
+
+            }
+        }).create();
 
     }
 }

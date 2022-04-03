@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityResultLauncher<Intent> activityResultLauncher;
     public CodesFragment codesFragment;
     public User searchUser;
-    //TEST - MEHUL (populate list of qrcodes to test listview)
+    //TODO TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
