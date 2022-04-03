@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
@@ -41,7 +40,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class: MainActivity
@@ -171,17 +169,45 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
+
+                            // Update the User's score and bestScore:
                             QRCodeMapper qrmapper = new QRCodeMapper();
                             qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
-                                    updateCodeLists();
+                                    // Update User Score:
+                                    UserMapper um = new UserMapper();
+                                    um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
+                                        @Override
+                                        public void handleSuccess(User user) {
+                                            user.setScore(user.getScore() + cur_code.getScore());
+                                            if (cur_code.getScore() > loggedinUser.getBestScore()) {
+                                                loggedinUser.setBestScore(cur_code.getScore());
+                                                um.update(user, um.new CompletionHandler<User>(){
+                                                    @Override
+                                                    public void handleSuccess(User user) {
+                                                        updateCodeLists();
+                                                    }
+                                                    @Override
+                                                    public void handleError(Exception e) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        @Override
+                                        public void handleError(Exception e) {
+                                            updateCodeLists();
+                                        }
+                                    });
                                 }
                             });
+
+
+
                         }
                     }
                 });
-
     }
 
     @Override

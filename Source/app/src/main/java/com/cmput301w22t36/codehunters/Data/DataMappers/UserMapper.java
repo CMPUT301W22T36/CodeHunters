@@ -133,9 +133,16 @@ public class UserMapper extends DataMapper<User> {
         User user = new User();
         user.setUsername((String) dataMap.get("username"));
         user.setEmail((String) dataMap.get("email"));
-        user.setBestScore(String.valueOf( dataMap.get("bestScore")));
-        user.setScanCount(String.valueOf(dataMap.get("scanCount")));
-        user.setScore(String.valueOf(dataMap.get("score")) );
+
+        Integer bestScore = dataMap.get("bestScore") == null ? 0 : (int)(long)dataMap.get("bestScore");
+        user.setBestScore(bestScore);
+
+        Integer scanCount = dataMap.get("scanCount") == null ? 0 : (int)(long)dataMap.get("scanCount");
+        user.setScanCount(scanCount);
+
+        Integer score = dataMap.get("score") == null ? 0 : (int)(long)dataMap.get("score");
+        user.setScore(score);
+
         user.setUdid((ArrayList<String>)dataMap.get("udid"));
         user.setOwner(Boolean.valueOf(String.valueOf(dataMap.get("isOwner"))));
         return user;

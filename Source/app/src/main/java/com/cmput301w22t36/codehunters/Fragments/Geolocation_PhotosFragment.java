@@ -29,7 +29,7 @@ import java.util.ArrayList;
  *      and photo of the QR Code and QR Code Location respectively. If location or photo was not
  *      provided, this fragment will not show anything
  *
- *      **Outstanding issue: The XML for this file is currently plain and needs to be
+ *      **TODO: Outstanding issue: The XML for this file is currently plain and needs to be
  *      updated to look better**
  */
 

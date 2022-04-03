@@ -11,44 +11,10 @@ import java.util.ArrayList;
  * Initialize and track a user's attributes.
  */
 public class User extends Data {
-    // the user's unique username
-    private String username;
 
-    public String getBestScore() {
-        return bestScore;
-    }
-
-    public void setBestScore(String bestScore) {
-        this.bestScore = bestScore;
-    }
-
-    public String getScanCount() {
-        return ScanCount;
-    }
-
-    public void setScanCount(String scanCount) {
-        ScanCount = scanCount;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
-
-    public Boolean getOwner() {
-        return isOwner;
-    }
-
-    public void setOwner(Boolean owner) {
-        isOwner = owner;
-    }
-
-    private String bestScore;
-    private String ScanCount;
-    private String score;
+    private Integer bestScore;
+    private Integer ScanCount;
+    private Integer score;
     // the user's email for contact information
     private String email;
     // the QR code allowing a user to login to their account from another device
@@ -61,8 +27,41 @@ public class User extends Data {
     private ArrayList<String> udid = new ArrayList<String>();
     // Whether user is owner
     private Boolean isOwner;
+    // the user's unique username
+    private String username;
 
-    // Getters and Setters
+    public Integer getBestScore() {
+        return bestScore;
+    }
+
+    public void setBestScore(Integer bestScore) {
+        this.bestScore = bestScore;
+    }
+
+    public Integer getScanCount() {
+        return ScanCount;
+    }
+
+    public void setScanCount(Integer scanCount) {
+        ScanCount = scanCount;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Boolean getOwner() {
+        return isOwner;
+    }
+
+    public void setOwner(Boolean owner) {
+        isOwner = owner;
+    }
+
     /**
      * Get the UUIDs associated with this unique username
      */
