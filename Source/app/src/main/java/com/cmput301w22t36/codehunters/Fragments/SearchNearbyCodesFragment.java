@@ -52,8 +52,9 @@ public class SearchNearbyCodesFragment extends Fragment {
     private EditText lonInput;
     private Button search;
     //private ArrayList<QRCode> codeArrayList;
-    private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
+    private ArrayList<QRCode> codeArrayList = new ArrayList<>();
     private ArrayAdapter<QRCode> codeArrayAdapter;
+    private ArrayList<QRCode> sortedDistanceQRList = new ArrayList<>();
 
     /**
      * Required empty public constructor
@@ -148,7 +149,7 @@ public class SearchNearbyCodesFragment extends Fragment {
                 double c = 2 * Math.asin(Math.sqrt(a));
                 double km = 6371 * c;
                 if (km < 5) {
-                    codeArrayList.add(qrcode);
+                    sortedDistanceQRList.add(qrcode);
                 }
 
             }
@@ -202,7 +203,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
 
         qrDistance(codeArrayList);
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), sortedDistanceQRList);
         codeList.setAdapter(codeArrayAdapter);
 
     }
