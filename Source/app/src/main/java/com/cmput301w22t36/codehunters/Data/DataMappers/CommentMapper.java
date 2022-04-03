@@ -33,10 +33,15 @@ public class CommentMapper extends DataMapper<Comment> {
         }
     }
 
+    public CommentMapper() {
+        super();
+        collectionRef = db.collection("comments");
+
+    }
 
     public void getCommentsForQrCode(String qrId, CompletionHandler<ArrayList<Comment>> ch) {
-        String qrRef = "/users/" + qrId;
-        collectionRef.whereEqualTo("qrCodeRef", qrId)
+        String qrRef = "/qrcodes/" + qrId;
+        collectionRef.whereEqualTo("qrCodeRef", qrRef)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
