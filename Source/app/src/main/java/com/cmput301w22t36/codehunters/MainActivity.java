@@ -642,9 +642,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double databaseCodeLongi = qrcode.getLon();
                 double latDistance = Math.abs(lat - databaseCodeLat);
                 double longiDistance = Math.abs(longi - databaseCodeLongi);
-                double qrManhattanDistance = latDistance + longiDistance;
-            }
+//                double qrManhattanDistance = latDistance + longiDistance;
+                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
+                double c = 2 * Math.asin(Math.sqrt(a));
+                double km = 6371 * c;
 
+            }
         }
     }
 

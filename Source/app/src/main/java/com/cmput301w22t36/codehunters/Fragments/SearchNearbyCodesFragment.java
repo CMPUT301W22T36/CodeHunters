@@ -1,6 +1,12 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -18,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
@@ -121,6 +128,33 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
     }
 
+    public void qrDistance(ArrayList<QRCode> qrdistance) {
+
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longi = loc.getLongitude();
+            double lat = loc.getLatitude();
+            for (int i = 0; i < qrdistance.size(); i++) {
+                QRCode qrcode = new QRCode(qrdistance.get(i));
+                double databaseCodeLat = qrcode.getLat();
+                double databaseCodeLongi = qrcode.getLon();
+                double latDistance = Math.abs(lat - databaseCodeLat);
+                double longiDistance = Math.abs(longi - databaseCodeLongi);
+//                double qrManhattanDistance = latDistance + longiDistance;
+                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
+                double c = 2 * Math.asin(Math.sqrt(a));
+                double km = 6371 * c;
+                if (km < 5) {
+                    codeArrayList.add(qrcode);
+                }
+
+            }
+        }
+    }
+//
+
     // Obtain the nearby QR codes and display them with the ListView
     private void displayList(int latInteger, int lonInteger, ArrayList<QRCode> codeArrayList) {
 
@@ -135,6 +169,11 @@ public class SearchNearbyCodesFragment extends Fragment {
         codeArrayList.add(code1);
         codeArrayList.add(code2);
         codeArrayList.add(code3);*/
+
+        qrDistance(codeArrayList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
+        codeList.setAdapter(codeArrayAdapter);
+
 
         /*codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
