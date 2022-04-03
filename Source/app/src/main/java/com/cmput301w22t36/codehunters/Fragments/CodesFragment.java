@@ -127,7 +127,6 @@ public class CodesFragment extends Fragment {
         }
         total_score.setText(String.valueOf(sum));
 
-
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
@@ -201,7 +200,7 @@ public class CodesFragment extends Fragment {
             cur_code.setHash(selected_code.getHash());
             cur_code.setScore(selected_code.getScore());
             cur_code.setId(selected_code.getId());
-            if(String.valueOf(selected_code.getLat()) != null) {
+            if(selected_code.hasLocation()) {
                 cur_code.setLat(selected_code.getGeolocation().get(0));
                 cur_code.setLon(selected_code.getGeolocation().get(1));
             }

@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -105,7 +106,21 @@ public class BestCodesFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
+        bestcodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                QRCode qrCodeClicked = (QRCode) bestcodes.getItemAtPosition(i);
+                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
 
+            }
+        });
 
     }
     public void rank(ArrayList<QRCodeData> A){

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.SearchNearbyCodesFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#e6ccff">
+
+            <LinearLayout
+                android:id="@+id/sort_search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                >
+
+                <EditText
+                    android:id="@+id/lat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="6"
+                    android:hint="Latitude"
+                    android:textColor="#333333"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="11dp"/>
+
+                <EditText
+                    android:id="@+id/lon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="6"
+                    android:hint="Longitude"
+                    android:textColor="#333333"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="11dp" />
+
+                <Button
+                    android:id="@+id/searchCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="SEARCH"
+                    />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ListView
+            android:id="@+id/code_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"></ListView>
+    </LinearLayout>
+
+</FrameLayout>
