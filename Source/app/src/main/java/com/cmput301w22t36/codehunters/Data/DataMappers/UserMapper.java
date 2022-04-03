@@ -23,6 +23,7 @@ public class UserMapper extends DataMapper<User> {
         collectionRef = db.collection("users");
     }
 
+
     // Gets user associated with UDID.
     public void queryUDID(String udid, CompletionHandler<User> ch) {
         collectionRef.whereArrayContains("udid", udid)

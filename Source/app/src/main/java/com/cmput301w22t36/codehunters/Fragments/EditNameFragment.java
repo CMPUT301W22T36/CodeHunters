@@ -142,7 +142,7 @@ public class EditNameFragment extends Fragment {
 
                                         // Return to the user profile
                                         getParentFragmentManager().beginTransaction()
-                                                .replace(R.id.mainActivityFragmentView, UserPersonalProfileFragment.class, null)
+                                                .replace(R.id.fragment_container, UserPersonalProfileFragment.class, null)
                                                 .commit();
                                     }
                                     @Override

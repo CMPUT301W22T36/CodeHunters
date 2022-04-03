@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +19,8 @@ import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
+import com.cmput301w22t36.codehunters.QRCode;
+import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.QRCodeAdapter2;
 import com.cmput301w22t36.codehunters.R;
 
@@ -30,7 +33,7 @@ public class SearchUserFragment extends Fragment {
     ListView codesInCommon;
     TextView allCodesT;
     ListView allCodes;
-    ArrayList<QRCodeData> tempData = new ArrayList<>();
+    ArrayList<QRCode> tempData = new ArrayList<QRCode>();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -123,15 +126,20 @@ public class SearchUserFragment extends Fragment {
                                 for (int i = 0; i < data.size(); i++) {
                                     for (int j = 0; j < data1.size(); j++) {
                                         if (data.get(i).getHash().equals(data1.get(j).getHash())){
-                                            tempData.add(data1.get(j));
+                                            tempData.add(new QRCode(data1.get(j)));
                                         }
                                     }
                                 }
 
-                                QRCodeAdapter2 qrCodeAdapter = new QRCodeAdapter2(getActivity(),tempData);
+                                QRCodeAdapter qrCodeAdapter = new QRCodeAdapter(getActivity(),tempData);
                                 viewById.setAdapter(qrCodeAdapter);
 
-                                QRCodeAdapter2 qrCodeAdapter2 = new QRCodeAdapter2(getActivity(),data1);
+                                ArrayList<QRCode> qrCodes = new ArrayList<QRCode>();
+                                for (QRCodeData code : data1) {
+                                    QRCode qrCode = new QRCode(code);
+                                    qrCodes.add(qrCode);
+                                }
+                                QRCodeAdapter qrCodeAdapter2 = new QRCodeAdapter(getActivity(),qrCodes);
                                 allCodes.setAdapter(qrCodeAdapter2);
                             }
 
@@ -158,6 +166,7 @@ public class SearchUserFragment extends Fragment {
             }
         });
 
+        //TODO
       /*  CodesInCommon.add("code1");
         CodesInCommon.add("code2");
         CodesInCommon.add("code3");
@@ -193,7 +202,37 @@ public class SearchUserFragment extends Fragment {
         allCodesT = view.findViewById(R.id.t3);
         allCodes = view.findViewById(R.id.allCodes);
 
+        allCodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                QRCode qrCodeClicked = (QRCode) allCodes.getItemAtPosition(i);
+                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
 
+            }
+        });
+
+        codesInCommon.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                QRCode qrCodeClicked = (QRCode) codesInCommon.getItemAtPosition(i);
+                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+
+            }
+        });
 /*
         ArrayAdapter arrayAdapter1 = new ArrayAdapter(this.getContext(), android.R.layout.simple_expandable_list_item_1,CodesInCommon);
         codesInCommon.setAdapter(arrayAdapter1);

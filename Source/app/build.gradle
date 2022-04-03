@@ -105,4 +105,5 @@ dependencies {
     //androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.4.12'
     //androidTestCompile 'com.21buttons:fragment-test-rule:1.0.0'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    implementation "androidx.activity:activity:1.2.0"
 }
