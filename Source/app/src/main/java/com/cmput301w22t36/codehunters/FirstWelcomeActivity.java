@@ -49,6 +49,8 @@ public class FirstWelcomeActivity extends AppCompatActivity {
     private EditText editEmailField;
     private Button confirmButton;
     private Button scanButton;
+    private TextView welcomeHeader;
+    private TextView loadingHeader;
 
     // The user should not be able to exit this activity without having ensured the device has
     // connected to an account
@@ -113,6 +115,16 @@ public class FirstWelcomeActivity extends AppCompatActivity {
         editEmailField = (EditText) findViewById(R.id.userEmailView);
         confirmButton = (Button)findViewById(R.id.confirm_button);
         scanButton = (Button)findViewById(R.id.scan_button);
+        welcomeHeader = (TextView)findViewById(R.id.welcome);
+        loadingHeader = (TextView)findViewById(R.id.loadingMessage);
+
+        // Show the previously hidden views and hide the loading message
+        editNameField.setVisibility(View.VISIBLE);
+        editEmailField.setVisibility(View.VISIBLE);
+        confirmButton.setVisibility(View.VISIBLE);
+        scanButton.setVisibility(View.VISIBLE);
+        welcomeHeader.setVisibility(View.VISIBLE);
+        loadingHeader.setVisibility(View.GONE);
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
             /**
