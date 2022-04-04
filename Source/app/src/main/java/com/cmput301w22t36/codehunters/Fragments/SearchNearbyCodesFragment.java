@@ -110,6 +110,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         lonInput = (EditText)view.findViewById(R.id.lon);
         search = (Button)view.findViewById(R.id.searchCode);
 
+        //GET CURRENT LOCATION AS DEFAULT
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -127,15 +128,20 @@ public class SearchNearbyCodesFragment extends Fragment {
              */
             @Override
             public void onClick(View view) {
-                // Obtain the lat and lon values
-                String latValue = latInput.getText().toString();
-                String lonValue = lonInput.getText().toString();
+                if (latInput.getText() == null || lonInput.getText() == null) {
+                    // Obtain the lat and lon values
+                    String latValue = latInput.getText().toString();
+                    String lonValue = lonInput.getText().toString();
 
-                // Convert the values for searching
-                int latInteger = Integer.parseInt(latValue);
-                int lonInteger = Integer.parseInt(lonValue);
+                    // Convert the values for searching
+                    int latInteger = Integer.parseInt(latValue);
+                    int lonInteger = Integer.parseInt(lonValue);
 
-                displayList(latInteger, lonInteger, codeArrayList);
+                    displayList(latInteger, lonInteger, codeArrayList);
+                } else {
+                    Toast.makeText(getContext(), "Error: one or more of coordinate fields are empty", Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
     }
