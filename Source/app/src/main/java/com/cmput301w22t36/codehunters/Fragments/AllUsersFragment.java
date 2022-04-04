@@ -1,27 +1,20 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
+import com.cmput301w22t36.codehunters.Adapters.UsersAdapter;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
-import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
-import com.cmput301w22t36.codehunters.MainActivity;
-import com.cmput301w22t36.codehunters.QRCode;
-import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
@@ -38,7 +31,7 @@ import java.util.Collections;
 //              just for  now: No actual functions but all display and navigation are completed.
 public class AllUsersFragment extends Fragment {
     TextView title;
-    ListView allusers;
+    ListView allUsers;
     private ArrayAdapter<User> userArrayAdapter;
     private ArrayList<User> userArrayList = new ArrayList<>() ;
 
@@ -93,7 +86,7 @@ public class AllUsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         title = view.findViewById(R.id.allUsersT);
-        allusers = view.findViewById(R.id.allUsers);
+        allUsers = view.findViewById(R.id.allUsers);
 
         // all users (sorted by total score)
         UserMapper ums = new UserMapper();
@@ -107,7 +100,7 @@ public class AllUsersFragment extends Fragment {
 
     }
     public void display(ArrayList<User> A){
-        //userArrayAdapter = new UserAdapter(this.getContext(), A);
-        //allusers.setAdapter(userArrayAdapter);
+        userArrayAdapter = new UsersAdapter(this.getContext(), A);
+        allUsers.setAdapter(userArrayAdapter);
     }
 }
