@@ -117,7 +117,7 @@ public class SearchNearbyCodesFragment extends Fragment {
             Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             double longi = loc.getLongitude();
             double lat = loc.getLatitude();
-            displayList(lat, longi, codeArrayList);
+            displayList(lat,longi, codeArrayList);
         }
 
         // Set the search button to respond to user clicks
@@ -128,14 +128,14 @@ public class SearchNearbyCodesFragment extends Fragment {
              */
             @Override
             public void onClick(View view) {
-                if (latInput.getText() == null || lonInput.getText() == null) {
+                if (latInput.getText() != null && lonInput.getText() != null) {
                     // Obtain the lat and lon values
                     String latValue = latInput.getText().toString();
                     String lonValue = lonInput.getText().toString();
 
                     // Convert the values for searching
-                    int latInteger = Integer.parseInt(latValue);
-                    int lonInteger = Integer.parseInt(lonValue);
+                    double latInteger = Double.parseDouble(latValue);
+                    double lonInteger = Double.parseDouble(lonValue);
 
                     displayList(latInteger, lonInteger, codeArrayList);
                 } else {
