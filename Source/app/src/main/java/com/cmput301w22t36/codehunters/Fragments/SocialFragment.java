@@ -44,9 +44,9 @@ public class SocialFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String username;
-    TextView bestCodesNav, scoreBoardNav, allUsersNav;
-    FloatingActionButton searchUser;
-    AlertDialog dialogSearchUser;
+    private TextView bestCodesNav, scoreBoardNav, allUsersNav;
+    private FloatingActionButton searchUser;
+    private AlertDialog dialogSearchUser;
     static Context context;
 
     public SocialFragment() {

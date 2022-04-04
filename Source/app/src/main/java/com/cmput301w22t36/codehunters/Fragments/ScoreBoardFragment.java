@@ -30,13 +30,13 @@ import java.util.Collections;
 //              It can replace socialFragmentView in SocialFragment
 //              just for  now: No actual functions but all display and navigation are completed.
 public class ScoreBoardFragment extends Fragment {
-    TextView title;
-    TextView byHighestScoreT;
-    TextView byHighestScore;
-    TextView byNumberT;
-    TextView byNumber;
-    TextView byTotalScoreT;
-    TextView byTotalScore;
+    private TextView title;
+    private TextView byHighestScoreT;
+    private TextView byHighestScore;
+    private TextView byNumberT;
+    private TextView byNumber;
+    private TextView byTotalScoreT;
+    private TextView byTotalScore;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";

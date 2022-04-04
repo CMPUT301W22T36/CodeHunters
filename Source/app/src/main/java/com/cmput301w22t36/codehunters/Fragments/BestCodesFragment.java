@@ -33,8 +33,8 @@ import java.util.Collections;
 //              It can replace socialFragmentView in SocialFragment
 //              just for  now: No actual functions but all display and navigation are completed.
 public class BestCodesFragment extends Fragment {
-    TextView title;
-    ListView bestcodes;
+    private TextView title;
+    private ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
     private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
 

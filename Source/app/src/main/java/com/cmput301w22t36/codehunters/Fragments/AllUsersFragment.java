@@ -22,16 +22,14 @@ import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BestCodesFragment#newInstance} factory method to
+ * Use the {@link AllUsersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-//Introduction: This fragment is used to calculate and get codes with best scores.
-//              It will get all codes from online database, sort them and display them from high score to low.
-//              It can replace socialFragmentView in SocialFragment
-//              just for  now: No actual functions but all display and navigation are completed.
+//Introduction: This fragment is used to list all users name in game.
+//              It will help user check other users' name and search .
 public class AllUsersFragment extends Fragment {
-    TextView title;
-    ListView allUsers;
+    private TextView title;
+    private ListView allUsers;
     private ArrayAdapter<User> userArrayAdapter;
     private ArrayList<User> userArrayList = new ArrayList<>() ;
 
