@@ -1,4 +1,4 @@
-package com.cmput301w22t36.codehunters;
+package com.cmput301w22t36.codehunters.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
+import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
 

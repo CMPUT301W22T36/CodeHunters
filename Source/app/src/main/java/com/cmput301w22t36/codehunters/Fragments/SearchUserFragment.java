@@ -20,8 +20,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
-import com.cmput301w22t36.codehunters.QRCodeAdapter;
-import com.cmput301w22t36.codehunters.QRCodeAdapter2;
+import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
