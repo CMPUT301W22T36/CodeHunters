@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -231,6 +232,7 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         map.onResume();
+        ((MainActivity) getActivity()).updateNavBar(1);
     }
 
     /**

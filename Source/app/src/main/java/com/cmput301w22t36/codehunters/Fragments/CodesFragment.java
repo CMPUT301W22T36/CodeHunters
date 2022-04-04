@@ -228,4 +228,10 @@ public class CodesFragment extends Fragment {
     public void notifyCodesAdapter() {
         codeArrayAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).updateNavBar(0);
+    }
 }

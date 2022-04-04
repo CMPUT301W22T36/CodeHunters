@@ -210,4 +210,9 @@ public class SocialFragment extends Fragment {
         dialogSearchUser=builder.create();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).updateNavBar(2);
+    }
 }
