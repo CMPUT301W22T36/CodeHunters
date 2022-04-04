@@ -16,9 +16,12 @@ import com.cmput301w22t36.codehunters.Adapters.UsersAdapter;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.R;
+import com.cmput301w22t36.codehunters.TabSetter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +36,8 @@ public class AllUsersFragment extends Fragment {
     TextView title;
     ListView allUsers;
     private ArrayAdapter<User> userArrayAdapter;
-    private ArrayList<User> userArrayList = new ArrayList<>() ;
+    private ArrayList<User> userArrayList = new ArrayList<>();
+    private Observable tabChanger = new TabSetter();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -58,11 +62,10 @@ public class AllUsersFragment extends Fragment {
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AllUsersFragment newInstance(String param1, String param2) {
+    public static AllUsersFragment newInstance(Observer thingWithTabs) {
         AllUsersFragment fragment = new AllUsersFragment();
+        fragment.tabChanger.addObserver(thingWithTabs);
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -103,5 +106,11 @@ public class AllUsersFragment extends Fragment {
         userArrayAdapter = new UsersAdapter(this.getContext(), A);
         allUsers.setAdapter(userArrayAdapter);
         userArrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tabChanger.notifyObservers(1);
     }
 }

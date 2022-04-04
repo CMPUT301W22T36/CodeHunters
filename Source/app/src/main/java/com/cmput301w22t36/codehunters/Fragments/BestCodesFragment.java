@@ -19,9 +19,12 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
+import com.cmput301w22t36.codehunters.TabSetter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +39,8 @@ public class BestCodesFragment extends Fragment {
     TextView title;
     ListView bestcodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
-    private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
+    private ArrayList<QRCode> codeArrayList = new ArrayList<>();
+    private Observable tabChanger = new TabSetter();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,11 +65,10 @@ public class BestCodesFragment extends Fragment {
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BestCodesFragment newInstance(String param1, String param2) {
+    public static BestCodesFragment newInstance(Observer thingWithTabs) {
         BestCodesFragment fragment = new BestCodesFragment();
+        fragment.tabChanger.addObserver(thingWithTabs);
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -150,4 +153,15 @@ public class BestCodesFragment extends Fragment {
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         bestcodes.setAdapter(codeArrayAdapter);
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tabChanger.notifyObservers(0);
+    }
+
+
+
+
 }

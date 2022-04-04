@@ -16,9 +16,12 @@ import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.R;
+import com.cmput301w22t36.codehunters.TabSetter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +40,7 @@ public class ScoreBoardFragment extends Fragment {
     TextView byNumber;
     TextView byTotalScoreT;
     TextView byTotalScore;
+    private Observable tabChanger = new TabSetter();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -61,8 +65,9 @@ public class ScoreBoardFragment extends Fragment {
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ScoreBoardFragment newInstance(String name) {
+    public static ScoreBoardFragment newInstance(String name, Observer thingWithTabs) {
         ScoreBoardFragment fragment = new ScoreBoardFragment();
+        fragment.tabChanger.addObserver(thingWithTabs);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, name);
         fragment.setArguments(args);
@@ -172,5 +177,11 @@ public class ScoreBoardFragment extends Fragment {
                 T.setText("--Rank"+1+"-- "+ A.get(0).getUsername()+"\n--Rank"+2+"-- "+ A.get(1).getUsername()+"\n--Rank"+3+"-- "+ A.get(2).getUsername());
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tabChanger.notifyObservers(2);
     }
 }

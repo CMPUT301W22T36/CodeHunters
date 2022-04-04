@@ -2,6 +2,7 @@ package com.cmput301w22t36.codehunters.Fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,11 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.zxing.integration.android.IntentIntegrator;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +45,7 @@ public class SocialFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private Observer tabObserver;
 
 
     // TODO: Rename and change types of parameters
@@ -72,6 +78,7 @@ public class SocialFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tabObserver = new TabObserver();
         if (getArguments() != null) {
             username = (String) getArguments().getString(ARG_PARAM1);
 
@@ -89,10 +96,11 @@ public class SocialFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
+            BestCodesFragment bestCodesFragment = BestCodesFragment.newInstance(tabObserver);
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     //.add(R.id.socialFragmentView, ScoreBoardFragment.class, null)
-                    .add(R.id.socialFragmentView, BestCodesFragment.class, null)
+                    .add(R.id.socialFragmentView, bestCodesFragment, null)
                     .commit();
         }
         bestCodesNav = view.findViewById(R.id.navToBestCodes);
@@ -105,9 +113,10 @@ public class SocialFragment extends Fragment {
         bestCodesNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BestCodesFragment bestCodesFragment = BestCodesFragment.newInstance(tabObserver);
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.socialFragmentView, BestCodesFragment.class, null)
+                        .replace(R.id.socialFragmentView, bestCodesFragment, null)
                         .commit();
             }
         });
@@ -115,9 +124,10 @@ public class SocialFragment extends Fragment {
         allUsersNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AllUsersFragment allUsersFragment = AllUsersFragment.newInstance(tabObserver);
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
-                        .replace(R.id.socialFragmentView, AllUsersFragment.class, null)
+                        .replace(R.id.socialFragmentView, allUsersFragment, null)
                         .commit();
             }
         });
@@ -127,7 +137,7 @@ public class SocialFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft2 = getActivity().getSupportFragmentManager().beginTransaction();
-                ScoreBoardFragment fragmentDemo2 = ScoreBoardFragment.newInstance(username);
+                ScoreBoardFragment fragmentDemo2 = ScoreBoardFragment.newInstance(username, tabObserver);
                 ft2.replace(R.id.socialFragmentView,fragmentDemo2);
                 ft2.commit();
 
@@ -215,4 +225,24 @@ public class SocialFragment extends Fragment {
         super.onResume();
         ((MainActivity) getActivity()).updateNavBar(2);
     }
+
+    private class TabObserver implements Observer {
+        public void update(Observable activeFragment, Object arg) {
+            int index = (int) arg;
+            if (index == 0) {
+                bestCodesNav.setBackgroundColor(Color.parseColor("#9C27B0"));
+                scoreBoardNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+                scoreBoardNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+            } else if (index == 1) {
+                bestCodesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+                allUsersNav.setBackgroundColor(Color.parseColor("#9C27B0"));
+                scoreBoardNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+            } else if (index == 2) {
+                bestCodesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+                allUsersNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+                scoreBoardNav.setBackgroundColor(Color.parseColor("#9C27B0"));
+            }
+        }
+    }
+
 }
