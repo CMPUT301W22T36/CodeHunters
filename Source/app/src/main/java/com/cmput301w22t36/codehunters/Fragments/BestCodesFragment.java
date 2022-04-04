@@ -38,7 +38,7 @@ import java.util.Observer;
 //              just for  now: No actual functions but all display and navigation are completed.
 public class BestCodesFragment extends Fragment {
     private TextView title;
-    private ListView bestcodes;
+    private ListView bestCodes;
     private ArrayAdapter<QRCode> codeArrayAdapter;
     private ArrayList<QRCode> codeArrayList = new ArrayList<>() ;
 
