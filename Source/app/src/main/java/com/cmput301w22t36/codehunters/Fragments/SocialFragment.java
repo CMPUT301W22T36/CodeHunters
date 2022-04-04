@@ -231,7 +231,7 @@ public class SocialFragment extends Fragment {
             int index = (int) arg;
             if (index == 0) {
                 bestCodesNav.setBackgroundColor(Color.parseColor("#9C27B0"));
-                scoreBoardNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+                allUsersNav.setBackgroundColor(Color.parseColor("#e6ccff"));
                 scoreBoardNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             } else if (index == 1) {
                 bestCodesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
