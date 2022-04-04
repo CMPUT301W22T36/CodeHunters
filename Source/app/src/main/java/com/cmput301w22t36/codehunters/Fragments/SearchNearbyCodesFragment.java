@@ -36,6 +36,7 @@ import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -139,7 +140,7 @@ public class SearchNearbyCodesFragment extends Fragment {
             double longi = loc.getLongitude();
             double lat = loc.getLatitude();
             for (int i = 0; i < qrdistance.size(); i++) {
-                QRCode qrcode = new QRCode(qrdistance.get(i));
+                QRCode qrcode = qrdistance.get(i);
                 double databaseCodeLat = qrcode.getLat();
                 double databaseCodeLongi = qrcode.getLon();
                 double latDistance = Math.abs(lat - databaseCodeLat);
@@ -157,6 +158,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         }
         return sortedDistanceQRList;
     }
+
 //
 
     // Obtain the nearby QR codes and display them with the ListView
@@ -173,6 +175,11 @@ public class SearchNearbyCodesFragment extends Fragment {
         codeArrayList.add(code1);
         codeArrayList.add(code2);
         codeArrayList.add(code3);*/
+
+        ArrayList<QRCode> sortedQRDistanceList = new ArrayList<QRCode>();
+        sortedQRDistanceList = qrDistance(codeArrayList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), sortedQRDistanceList);
+        codeList.setAdapter(codeArrayAdapter);
 
 
         //get bestcodes, need get all data from database and do some sorts.
@@ -204,9 +211,6 @@ public class SearchNearbyCodesFragment extends Fragment {
             }
         });
 
-        qrDistance(codeArrayList);
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
-        codeList.setAdapter(codeArrayAdapter);
 
     }
 
