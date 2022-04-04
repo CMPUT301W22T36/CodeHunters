@@ -38,8 +38,11 @@ public class Geolocation_PhotosFragment extends DialogFragment {
 
     private QRCode qrCodeClicked;
     private TextView geolocation;
-    private TextView commentBox;
+    private ListView commentBox;
     private ImageView photo;
+    private ArrayList<String> commentsList = new ArrayList<String>();
+    private ArrayAdapter<String> commentsArrayAdapter;
+
 
     public Geolocation_PhotosFragment(QRCode qrCodeClicked) {
         this.qrCodeClicked = qrCodeClicked;
@@ -57,8 +60,9 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.geolocation_photos, null);
         geolocation = (TextView) view.findViewById(R.id.geolocation);
         photo = (ImageView) view.findViewById(R.id.photo);
-        commentBox = (TextView) view.findViewById(R.id.commentbox);
+        commentBox = (ListView) view.findViewById(R.id.commentbox);
         final EditText editText = new EditText(getContext());
+
 
 
         if (qrCodeClicked.getGeolocation() != null) {
@@ -81,11 +85,21 @@ public class Geolocation_PhotosFragment extends DialogFragment {
             public void handleSuccess(ArrayList<Comment> comments) {
                 String aggregateComments = "";
                 for (Comment c : comments) {
-                    aggregateComments += c.getComment() + "\n";
+//                      aggregateComments += c.getComment();
+                      commentsList.add(c.getComment());
+                    commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList);
+                    commentBox.setAdapter(commentsArrayAdapter);
+
+//                    aggregateComments += c.getComment() + "\n";
+//                    commentBox.setText(aggregateComments);
                 }
-                commentBox.setText(aggregateComments);
+
+
+
+
             }
         });
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
