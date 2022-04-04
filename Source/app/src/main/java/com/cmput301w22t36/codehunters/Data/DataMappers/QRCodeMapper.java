@@ -2,8 +2,10 @@ package com.cmput301w22t36.codehunters.Data.DataMappers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
@@ -129,9 +131,28 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         List<DocumentSnapshot> documents= task.getResult().getDocuments();
                         ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
                         for (DocumentSnapshot docSnap : documents) {
-                            qrData.add(mapToData(docSnap.getData(), docSnap));
+                            // Get photos for each qrcode.
+                            QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
+                            getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                @Override
+                                public void handleSuccess(Bitmap bMap) {
+                                    qrCode.setPhoto(bMap);
+                                    qrData.add(qrCode);
+                                    if (qrData.size() == documents.size()) {
+                                        while (qrData.remove(null));
+                                        lch.handleSuccess(qrData);
+                                    }
+                                }
+                                @Override
+                                public void handleError(Exception e) {
+                                    qrData.add(null);
+                                    if (qrData.size() == documents.size()) {
+                                        while (qrData.remove(null));
+                                        lch.handleSuccess(qrData);
+                                    }
+                                }
+                            });
                         }
-                        lch.handleSuccess(qrData);
                     } else {
                         lch.handleError(new FSAccessException("Username not unique or other error"));
                     }
@@ -200,24 +221,32 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public void getAllCodes(CompletionHandler<ArrayList<QRCodeData>> ch) {
         // get literally every QRcode :(
         collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)  // For hashMap
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     // build up a hashmap of all the unique codes, first come first serve
                     HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
                     for (DocumentSnapshot code : task.getResult()) {
-                        QRCodeData thisCode = mapToData(code.getData());
+                        QRCodeData qrCode = mapToData(code.getData());
                         // nullify specific fields
-                        thisCode.setUserRef(null);
-                        thisCode.setId(null);
-                        if (!uniqueCodes.containsKey(thisCode.getHash())) {
-                            uniqueCodes.put(thisCode.getHash(), thisCode);
+                        qrCode.setUserRef(null);
+                        qrCode.setId(null);
+                        if (!uniqueCodes.containsKey(qrCode.getHash())) {
+                            uniqueCodes.put(qrCode.getHash(), qrCode);
+                        }
+                        else {
+                            // Replace original if it doesn't have an image.
+                            if (uniqueCodes.get(qrCode.getHash()).getPhotourl() == null) {
+                                uniqueCodes.replace(qrCode.getHash(), qrCode);
+                            }
                         }
                     }
+
                     ArrayList<QRCodeData> codes = new ArrayList<QRCodeData>(uniqueCodes.values());
                     ch.handleSuccess(codes);
                 } else {
-                    ch.handleError(new FSAccessException("I guess firestore didn't feel like it"));
+                    ch.handleError(new FSAccessException("Failed to retrieve qrcodes from Firestore"));
                 }
             }
         });

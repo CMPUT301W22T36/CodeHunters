@@ -1,5 +1,6 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,26 +82,25 @@ public class BestCodesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_bestcodes, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         title = view.findViewById(R.id.bestCodesT);
         bestcodes = view.findViewById(R.id.bestCodes);
-        //todo
-        //get bestcodes, need get all data from database and do some sorts.
-        QRCodeMapper qrm = new QRCodeMapper();
-        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+
+        // Get all qrcodes from database, then sort.
+        QRCodeMapper qm = new QRCodeMapper();
+        qm.getAllCodes(qm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
-            public void handleSuccess(ArrayList<QRCodeData> QRA) {
-                rank(QRA);
+            public void handleSuccess(ArrayList<QRCodeData> qrCodes) {
+                rank(qrCodes);
             }
 
             @Override
             public void handleError(Exception e) {
-                // Handle the case where user not found.
             }
         });
         bestcodes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -114,15 +114,35 @@ public class BestCodesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 QRCode qrCodeClicked = (QRCode) bestcodes.getItemAtPosition(i);
-                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                Geolocation_PhotosFragment gpf = new Geolocation_PhotosFragment(qrCodeClicked);
 
+                // Retrieve image for clicked qr post:
+                QRCodeMapper qm = new QRCodeMapper();
+                if (qrCodeClicked.getPhotourl() != null) {
+                    qm.getImage(qrCodeClicked.getPhotourl(), qm.new CompletionHandler<Bitmap>() {
+                        @Override
+                        public void handleSuccess(Bitmap bMap) {
+                            qrCodeClicked.setPhoto(bMap);
+                            gpf.show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                        }
+
+                        @Override
+                        public void handleError(Exception e) {
+                            gpf.show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                        }
+                    });
+                }
+                else {
+                    gpf.show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                }
             }
         });
 
     }
-    public void rank(ArrayList<QRCodeData> A){
-        for (int i = 0; i<A.size();i++){
-            QRCode qrcode = new QRCode(A.get(i));
+
+    public void rank(ArrayList<QRCodeData> retrievedQrCodes){
+        for (int i = 0; i<retrievedQrCodes.size();i++){
+            QRCode qrcode = new QRCode(retrievedQrCodes.get(i));
             codeArrayList.add(qrcode);
         }
 

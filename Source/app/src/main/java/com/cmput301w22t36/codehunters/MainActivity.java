@@ -265,41 +265,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
 
 
-                            // Update the User's score and bestScore:
-                            QRCodeMapper qrmapper = new QRCodeMapper();
-                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
-                                @Override
-                                public void handleSuccess(QRCodeData data) {
-                                    // Update User Score:
-                                    UserMapper um = new UserMapper();
-                                    um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
-                                        @Override
-                                        public void handleSuccess(User user) {
-                                            user.setScore(user.getScore() + cur_code.getScore());
-                                            if (cur_code.getScore() > loggedinUser.getBestScore()) {
-                                                loggedinUser.setBestScore(cur_code.getScore());
-                                                um.update(user, um.new CompletionHandler<User>(){
-                                                    @Override
-                                                    public void handleSuccess(User user) {
-                                                        updateCodeLists();
-                                                    }
-                                                    @Override
-                                                    public void handleError(Exception e) {
-                                                        updateCodeLists();
-                                                    }
-                                                });
-                                            }
-                                        }
-                                        @Override
-                                        public void handleError(Exception e) {
-                                            updateCodeLists();
-                                        }
-                                    });
-                                }
-                            });
-
-
-
+                            // Update the user's score attributes.
+                            updateUsersScore(cur_code);
                         }
                     }
                 });
@@ -718,5 +685,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void updateUsersScore(QRCodeData scannedCode) {
+        // Update the User's score and bestScore:
+        QRCodeMapper qrmapper = new QRCodeMapper();
+        qrmapper.update(scannedCode, qrmapper.new CompletionHandler<QRCodeData>() {
+            @Override
+            public void handleSuccess(QRCodeData data) {
+                // Update User Score:
+                UserMapper um = new UserMapper();
+                um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
+                    @Override
+                    public void handleSuccess(User user) {
+                        // Update User's aggregate score
+                        user.setScore(user.getScore() + scannedCode.getScore());
+
+                        // Update User's best score
+                        if (scannedCode.getScore() > loggedinUser.getBestScore()) {
+                            loggedinUser.setBestScore(scannedCode.getScore());
+                            um.update(user, um.new CompletionHandler<User>(){
+                                @Override
+                                public void handleSuccess(User user) {
+                                    updateCodeLists();
+                                }
+                                @Override
+                                public void handleError(Exception e) {
+                                    updateCodeLists();
+                                }
+                            });
+                        }
+                        else {
+                            updateCodeLists();
+                        }
+                    }
+                    @Override
+                    public void handleError(Exception e) {
+                        updateCodeLists();
+                    }
+                });
+            }
+        });
     }
 }

@@ -6,6 +6,7 @@ public class Comment extends Data {
     private String userRef;
     private String hashRef;
     private String comment;
+    private long timestamp = System.currentTimeMillis();
 
     public String getUserRef() {
         return userRef;
