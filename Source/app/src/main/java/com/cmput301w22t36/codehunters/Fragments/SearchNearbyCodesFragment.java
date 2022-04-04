@@ -130,7 +130,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
     }
 
-    public void qrDistance(ArrayList<QRCode> qrdistance) {
+    public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance) {
 
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -153,7 +153,9 @@ public class SearchNearbyCodesFragment extends Fragment {
                 }
 
             }
+
         }
+        return sortedDistanceQRList;
     }
 //
 
@@ -203,7 +205,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
 
         qrDistance(codeArrayList);
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), sortedDistanceQRList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
 
     }
