@@ -20,8 +20,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
-import com.cmput301w22t36.codehunters.QRCodeAdapter;
-import com.cmput301w22t36.codehunters.QRCodeAdapter2;
+import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
@@ -187,11 +186,11 @@ public class SearchUserFragment extends Fragment {
                 +"\r\n"
                 +"Is Owner: "+MainActivity.mainActivity.searchUser.getOwner()
                 +"\r\n"
-                +"BestScore: "+MainActivity.mainActivity.searchUser.getBestScore()
+                +"BestScore: "+String.valueOf(MainActivity.mainActivity.searchUser.getBestScore())
                 +"\r\n"
-                +"TotalScore: "+MainActivity.mainActivity.searchUser.getScore()
+                +"TotalScore: "+String.valueOf(MainActivity.mainActivity.searchUser.getScore())
                 +"\r\n"
-                +"ScanCount: "+MainActivity.mainActivity.searchUser.getScanCount()
+                +"ScanCount: "+String.valueOf(MainActivity.mainActivity.searchUser.getScanCount())
         );
 
 

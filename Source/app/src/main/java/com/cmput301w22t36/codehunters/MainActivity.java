@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityResultLauncher<Intent> activityResultLauncher;
     public CodesFragment codesFragment;
     public User searchUser;
-    //TEST - MEHUL (populate list of qrcodes to test listview)
+    //TODO TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
@@ -134,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mainActivity = this;
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
         Intent intent = new Intent(MainActivity.this, FirstWelcomeActivity.class);
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Set the hamburger menu
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.BLACK);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -151,6 +156,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#e6ccff"));
+        actionBar.setBackgroundDrawable(colorDrawable);
+
 
 
 
@@ -252,17 +264,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
 
+
+                            // Update the User's score and bestScore:
                             QRCodeMapper qrmapper = new QRCodeMapper();
                             qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                                 @Override
                                 public void handleSuccess(QRCodeData data) {
-                                    updateCodeLists();
+                                    // Update User Score:
+                                    UserMapper um = new UserMapper();
+                                    um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
+                                        @Override
+                                        public void handleSuccess(User user) {
+                                            user.setScore(user.getScore() + cur_code.getScore());
+                                            if (cur_code.getScore() > loggedinUser.getBestScore()) {
+                                                loggedinUser.setBestScore(cur_code.getScore());
+                                                um.update(user, um.new CompletionHandler<User>(){
+                                                    @Override
+                                                    public void handleSuccess(User user) {
+                                                        updateCodeLists();
+                                                    }
+                                                    @Override
+                                                    public void handleError(Exception e) {
+                                                        updateCodeLists();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        @Override
+                                        public void handleError(Exception e) {
+                                            updateCodeLists();
+                                        }
+                                    });
                                 }
                             });
+
+
+
                         }
                     }
                 });
-
     }
 
     @Override
@@ -642,9 +682,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 double databaseCodeLongi = qrcode.getLon();
                 double latDistance = Math.abs(lat - databaseCodeLat);
                 double longiDistance = Math.abs(longi - databaseCodeLongi);
-                double qrManhattanDistance = latDistance + longiDistance;
+                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
+                double c = 2 * Math.asin(Math.sqrt(a));
+                double km = 6371 * c;
             }
-
         }
     }
 

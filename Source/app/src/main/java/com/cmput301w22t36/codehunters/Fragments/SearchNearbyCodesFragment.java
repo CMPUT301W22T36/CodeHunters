@@ -1,10 +1,12 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
-import android.content.DialogInterface;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,25 +14,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
-import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
-import com.cmput301w22t36.codehunters.Data.DataTypes.User;
-import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
-import com.cmput301w22t36.codehunters.QRCodeAdapter;
+import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
@@ -44,8 +40,10 @@ public class SearchNearbyCodesFragment extends Fragment {
     private EditText latInput;
     private EditText lonInput;
     private Button search;
-    private ArrayList<QRCode> codeArrayList;
+    //private ArrayList<QRCode> codeArrayList;
+    private ArrayList<QRCode> codeArrayList = new ArrayList<>();
     private ArrayAdapter<QRCode> codeArrayAdapter;
+    private ArrayList<QRCode> sortedDistanceQRList = new ArrayList<>();
 
     /**
      * Required empty public constructor
@@ -121,6 +119,33 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
     }
 
+    public void qrDistance(ArrayList<QRCode> qrdistance) {
+
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longi = loc.getLongitude();
+            double lat = loc.getLatitude();
+            for (int i = 0; i < qrdistance.size(); i++) {
+                QRCode qrcode = new QRCode(qrdistance.get(i));
+                double databaseCodeLat = qrcode.getLat();
+                double databaseCodeLongi = qrcode.getLon();
+                double latDistance = Math.abs(lat - databaseCodeLat);
+                double longiDistance = Math.abs(longi - databaseCodeLongi);
+//                double qrManhattanDistance = latDistance + longiDistance;
+                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
+                double c = 2 * Math.asin(Math.sqrt(a));
+                double km = 6371 * c;
+                if (km < 5) {
+                    sortedDistanceQRList.add(qrcode);
+                }
+
+            }
+        }
+    }
+//
+
     // Obtain the nearby QR codes and display them with the ListView
     private void displayList(int latInteger, int lonInteger, ArrayList<QRCode> codeArrayList) {
 
@@ -136,23 +161,48 @@ public class SearchNearbyCodesFragment extends Fragment {
         codeArrayList.add(code2);
         codeArrayList.add(code3);*/
 
-        /*codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
-        codeList.setAdapter(codeArrayAdapter);
 
+        //get bestcodes, need get all data from database and do some sorts.
+        QRCodeMapper qrm = new QRCodeMapper();
+        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+            @Override
+            public void handleSuccess(ArrayList<QRCodeData> QRA) {
+                listQRs(QRA);
+            }
+
+            @Override
+            public void handleError(Exception e) {
+                // Handle the case where user not found.
+            }
+        });
         codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            *//**
-         * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
-         * @param adapterView
-         * @param view
-         * @param i
-         * @param l
-         *//*
+            /**
+             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+             * @param adapterView
+             * @param view
+             * @param i
+             * @param l
+             */
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
                 new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+
             }
-        });*/
+        });
+
+        qrDistance(codeArrayList);
+        codeArrayAdapter = new QRCodeAdapter(this.getContext(), sortedDistanceQRList);
+        codeList.setAdapter(codeArrayAdapter);
+
+    }
+
+    // TODO: comments
+    public void listQRs(ArrayList<QRCodeData> A){
+        for (int i = 0; i<A.size();i++){
+            QRCode qrcode = new QRCode(A.get(i));
+            codeArrayList.add(qrcode);
+        }
     }
 
     // TODO: comments

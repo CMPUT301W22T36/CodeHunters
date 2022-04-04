@@ -17,7 +17,7 @@ public class CommentMapper extends DataMapper<Comment> {
     // Constants for document fields.
     enum Fields {
         USERREF("userRef"),
-        QRCODEREF("qrCodeRef"),
+        HASHREF("hashRef"),
         COMMENT("comment");
 
         private final String field;
@@ -39,9 +39,9 @@ public class CommentMapper extends DataMapper<Comment> {
 
     }
 
-    public void getCommentsForQrCode(String qrId, CompletionHandler<ArrayList<Comment>> ch) {
-        String qrRef = "/qrcodes/" + qrId;
-        collectionRef.whereEqualTo("qrCodeRef", qrRef)
+    // hash is the hash of a QRCode
+    public void getCommentsForHash(String hash, CompletionHandler<ArrayList<Comment>> ch) {
+        collectionRef.whereEqualTo(Fields.HASHREF.toString(), hash)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -64,7 +64,7 @@ public class CommentMapper extends DataMapper<Comment> {
     protected Map<String, Object> dataToMap(Comment data) {
         Map<String, Object> map = new HashMap<>();
         map.put("userRef", data.getUserRef());
-        map.put("qrCodeRef", data.getQrCodeRef());
+        map.put("hashRef", data.getHashRef());
         map.put("comment", data.getComment());
         return map;
     }
@@ -74,8 +74,8 @@ public class CommentMapper extends DataMapper<Comment> {
         // NOTE: Does not set the documentId!
         Comment c = new Comment();
         c.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
-        c.setQrCodeRef(Objects.requireNonNull((String) dataMap.get(Fields.QRCODEREF.toString())));
-        c.setComment(Objects.requireNonNull((String) dataMap.get(Fields.COMMENT.toString())));
+        c.setHashRef(Objects.requireNonNull((String) dataMap.get(Fields.HASHREF.toString())));
+        c.setComment((String) dataMap.get(Fields.COMMENT.toString()));
         return c;
     }
 }

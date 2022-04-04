@@ -4,7 +4,7 @@ import com.cmput301w22t36.codehunters.Data.Data;
 
 public class Comment extends Data {
     private String userRef;
-    private String qrCodeRef;
+    private String hashRef;
     private String comment;
 
     public String getUserRef() {
@@ -15,19 +15,19 @@ public class Comment extends Data {
         this.userRef = userRef;
     }
 
-    public String getQrCodeRef() {
-        return qrCodeRef;
-    }
-
-    public void setQrCodeRef(String qrCodeRef) {
-        this.qrCodeRef = qrCodeRef;
-    }
-
     public String getComment() {
         return comment;
     }
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getHashRef() {
+        return hashRef;
+    }
+
+    public void setHashRef(String hashRef) {
+        this.hashRef = hashRef;
     }
 }
