@@ -26,6 +26,7 @@ import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -98,6 +99,16 @@ public class SearchNearbyCodesFragment extends Fragment {
         lonInput = (EditText)view.findViewById(R.id.lon);
         search = (Button)view.findViewById(R.id.searchCode);
 
+        //GET CURRENT LOCATION AS DEFAULT
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            double longi = loc.getLongitude();
+            double lat = loc.getLatitude();
+            displayList(lat, longi, codeArrayList);
+        }
+
         // Set the search button to respond to user clicks
         search.setOnClickListener(new View.OnClickListener() {
             /**
@@ -106,33 +117,31 @@ public class SearchNearbyCodesFragment extends Fragment {
              */
             @Override
             public void onClick(View view) {
-                // Obtain the lat and lon values
-                String latValue = latInput.getText().toString();
-                String lonValue = lonInput.getText().toString();
+                if (latInput.getText() == null || lonInput.getText() == null) {
+                    // Obtain the lat and lon values
+                    String latValue = latInput.getText().toString();
+                    String lonValue = lonInput.getText().toString();
 
-                // Convert the values for searching
-                int latInteger = Integer.parseInt(latValue);
-                int lonInteger = Integer.parseInt(lonValue);
+                    // Convert the values for searching
+                    int latInteger = Integer.parseInt(latValue);
+                    int lonInteger = Integer.parseInt(lonValue);
 
-                displayList(latInteger, lonInteger, codeArrayList);
+                    displayList(latInteger, lonInteger, codeArrayList);
+                } else {
+                    Toast.makeText(getContext(), "Error: one or more of coordinate fields are empty", Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
     }
 
-    public void qrDistance(ArrayList<QRCode> qrdistance) {
-
-        if (ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            double longi = loc.getLongitude();
-            double lat = loc.getLatitude();
+    public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
             for (int i = 0; i < qrdistance.size(); i++) {
-                QRCode qrcode = new QRCode(qrdistance.get(i));
+                QRCode qrcode = qrdistance.get(i);
                 double databaseCodeLat = qrcode.getLat();
                 double databaseCodeLongi = qrcode.getLon();
                 double latDistance = Math.abs(lat - databaseCodeLat);
-                double longiDistance = Math.abs(longi - databaseCodeLongi);
+                double longiDistance = Math.abs(lon - databaseCodeLongi);
 //                double qrManhattanDistance = latDistance + longiDistance;
                 double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
                 double c = 2 * Math.asin(Math.sqrt(a));
@@ -142,12 +151,13 @@ public class SearchNearbyCodesFragment extends Fragment {
                 }
 
             }
-        }
+        return sortedDistanceQRList;
     }
+
 //
 
     // Obtain the nearby QR codes and display them with the ListView
-    private void displayList(int latInteger, int lonInteger, ArrayList<QRCode> codeArrayList) {
+    private void displayList(double latInteger, double lonInteger, ArrayList<QRCode> codeArrayList) {
 
         // TODO: obtain the QR codes
         // Obtain the list of codes with respect to the user input
@@ -168,6 +178,10 @@ public class SearchNearbyCodesFragment extends Fragment {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
                 listQRs(QRA);
+                ArrayList<QRCode> sortedQRDistanceList = new ArrayList<QRCode>();
+                sortedQRDistanceList = qrDistance(codeArrayList, latInteger, lonInteger);
+                codeArrayAdapter = new QRCodeAdapter(getContext(), sortedQRDistanceList);
+                codeList.setAdapter(codeArrayAdapter);
             }
 
             @Override
@@ -191,9 +205,6 @@ public class SearchNearbyCodesFragment extends Fragment {
             }
         });
 
-        qrDistance(codeArrayList);
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), sortedDistanceQRList);
-        codeList.setAdapter(codeArrayAdapter);
 
     }
 

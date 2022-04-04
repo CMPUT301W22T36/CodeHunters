@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -57,6 +59,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         photo = (ImageView) view.findViewById(R.id.photo);
         commentBox = (TextView) view.findViewById(R.id.commentbox);
         final EditText editText = new EditText(getContext());
+
 
         if (qrCodeClicked.getGeolocation() != null) {
             geolocation.setText(qrCodeClicked.getGeolocation().toString());
