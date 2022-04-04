@@ -264,9 +264,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
 
-
-                            // Update the user's score attributes.
-                            updateUsersScore(cur_code);
+                            // Update the scannedCode
+                            QRCodeMapper qrmapper = new QRCodeMapper();
+                            qrmapper.update(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
+                                @Override
+                                public void handleSuccess(QRCodeData data) {
+                                    updateCodeLists();
+                                }
+                            });
                         }
                     }
                 });
@@ -615,6 +620,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         qrmapper.queryUsersCodes(UDID, qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> data) {
+                updateUsersScore();
                 codeArrayList.clear();
                 for (int i = 0; i < data.size(); i++) {
                     QRCode cur_code = new QRCode(data.get(i));
@@ -687,43 +693,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void updateUsersScore(QRCodeData scannedCode) {
-        // Update the User's score and bestScore:
-        QRCodeMapper qrmapper = new QRCodeMapper();
-        qrmapper.update(scannedCode, qrmapper.new CompletionHandler<QRCodeData>() {
+    public void updateUsersScore() {
+        int totalScore = 0;
+        int bestCode = 0;
+        for (QRCode code : codeArrayList) {
+            totalScore += code.getScore();
+            if (code.getScore() > bestCode) {
+                bestCode = code.getScore();
+            }
+        }
+        loggedinUser.setBestScore(bestCode);
+        loggedinUser.setScore(totalScore);
+        loggedinUser.setScanCount(codeArrayList.size());
+        UserMapper um = new UserMapper();
+        um.update(loggedinUser, um.new CompletionHandler<User>() {
             @Override
-            public void handleSuccess(QRCodeData data) {
-                // Update User Score:
-                UserMapper um = new UserMapper();
-                um.get(loggedinUser.getId(), um.new CompletionHandler<User>() {
-                    @Override
-                    public void handleSuccess(User user) {
-                        // Update User's aggregate score
-                        user.setScore(user.getScore() + scannedCode.getScore());
-
-                        // Update User's best score
-                        if (scannedCode.getScore() > loggedinUser.getBestScore()) {
-                            loggedinUser.setBestScore(scannedCode.getScore());
-                            um.update(user, um.new CompletionHandler<User>(){
-                                @Override
-                                public void handleSuccess(User user) {
-                                    updateCodeLists();
-                                }
-                                @Override
-                                public void handleError(Exception e) {
-                                    updateCodeLists();
-                                }
-                            });
-                        }
-                        else {
-                            updateCodeLists();
-                        }
-                    }
-                    @Override
-                    public void handleError(Exception e) {
-                        updateCodeLists();
-                    }
-                });
+            public void handleSuccess(User user) {
+                loggedinUser = user;
             }
         });
     }

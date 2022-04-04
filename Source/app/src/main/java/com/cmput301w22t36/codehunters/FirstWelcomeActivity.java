@@ -155,6 +155,10 @@ public class FirstWelcomeActivity extends AppCompatActivity {
                 User user = new User();
                 user.setUsername(username);
                 user.setEmail(email);
+                user.setScore(0);
+                user.setScanCount(0);
+                user.setBestScore(0);
+                user.setOwner(false);
                 String UDID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                 user.appendUdid(UDID);
 

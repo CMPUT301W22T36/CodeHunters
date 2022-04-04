@@ -102,5 +102,6 @@ public class AllUsersFragment extends Fragment {
     public void display(ArrayList<User> A){
         userArrayAdapter = new UsersAdapter(this.getContext(), A);
         allUsers.setAdapter(userArrayAdapter);
+        userArrayAdapter.notifyDataSetChanged();
     }
 }
