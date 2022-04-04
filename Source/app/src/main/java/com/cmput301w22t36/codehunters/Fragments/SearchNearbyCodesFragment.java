@@ -2,15 +2,11 @@ package com.cmput301w22t36.codehunters.Fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,26 +14,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
-import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
-import com.cmput301w22t36.codehunters.Data.DataTypes.User;
-import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
-import com.cmput301w22t36.codehunters.QRCodeAdapter;
+import com.cmput301w22t36.codehunters.Adapters.QRCodeAdapter;
 import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
