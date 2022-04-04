@@ -1,5 +1,6 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -60,8 +61,6 @@ public class BestCodesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SocialFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -99,7 +98,9 @@ public class BestCodesFragment extends Fragment {
         qm.getAllCodes(qm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> qrCodes) {
-                rank(qrCodes);
+                if (this != null) {
+                    rank(qrCodes);
+                }
             }
 
             @Override
@@ -150,8 +151,11 @@ public class BestCodesFragment extends Fragment {
         }
 
         Collections.sort(codeArrayList, Collections.reverseOrder());
-        codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
-        bestcodes.setAdapter(codeArrayAdapter);
+        Context context = this.getContext();
+        if (context != null) {
+            codeArrayAdapter = new QRCodeAdapter(context, codeArrayList);
+            bestcodes.setAdapter(codeArrayAdapter);
+        }
     }
 
 
