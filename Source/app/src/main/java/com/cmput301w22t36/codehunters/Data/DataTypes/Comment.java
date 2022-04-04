@@ -31,4 +31,12 @@ public class Comment extends Data {
     public void setHashRef(String hashRef) {
         this.hashRef = hashRef;
     }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 }

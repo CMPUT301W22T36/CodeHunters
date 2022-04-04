@@ -2,9 +2,8 @@ package com.cmput301w22t36.codehunters;
 
 import android.graphics.Bitmap;
 
+import com.cmput301w22t36.codehunters.Data.DataTypes.Comment;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
-
-import com.cmput301w22t36.codehunters.Data.Comment;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

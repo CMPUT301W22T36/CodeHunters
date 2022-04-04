@@ -17,9 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
-import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
-import com.cmput301w22t36.codehunters.UUIDPairing;
 
 /**
  * Class: EditNameFragment, a {@link Fragment} subclass.

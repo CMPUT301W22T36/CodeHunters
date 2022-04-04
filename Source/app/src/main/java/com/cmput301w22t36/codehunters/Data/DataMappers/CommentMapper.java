@@ -18,7 +18,8 @@ public class CommentMapper extends DataMapper<Comment> {
     enum Fields {
         USERREF("userRef"),
         HASHREF("hashRef"),
-        COMMENT("comment");
+        COMMENT("comment"),
+        TIMESTAMP("timestamp");
 
         private final String field;
 
@@ -66,6 +67,7 @@ public class CommentMapper extends DataMapper<Comment> {
         map.put("userRef", data.getUserRef());
         map.put("hashRef", data.getHashRef());
         map.put("comment", data.getComment());
+        map.put("timestamp", data.getTimestamp());
         return map;
     }
 
@@ -76,6 +78,10 @@ public class CommentMapper extends DataMapper<Comment> {
         c.setUserRef(Objects.requireNonNull((String) dataMap.get(Fields.USERREF.toString())));
         c.setHashRef(Objects.requireNonNull((String) dataMap.get(Fields.HASHREF.toString())));
         c.setComment((String) dataMap.get(Fields.COMMENT.toString()));
+
+        Long timestamp = (Long)dataMap.get(Fields.TIMESTAMP.toString());
+        timestamp = timestamp == null ? 0 : timestamp;
+        c.setTimestamp(timestamp);
         return c;
     }
 }

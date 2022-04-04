@@ -12,11 +12,11 @@ import java.util.ArrayList;
  */
 public class User extends Data {
 
-    private Integer bestScore;
-    private Integer ScanCount;
-    private Integer score;
+    private Integer bestScore = 0;
+    private Integer ScanCount = 0;
+    private Integer score = 0;
     // the user's email for contact information
-    private String email;
+    private String email = "";
     // the QR code allowing a user to login to their account from another device
     private QRCode accountLoginQR;
     // the QR code to share their game profile
@@ -26,7 +26,7 @@ public class User extends Data {
     // the unique device IDs of the user's devices associated with their account
     private ArrayList<String> udid = new ArrayList<String>();
     // Whether user is owner
-    private Boolean isOwner;
+    private Boolean isOwner = false;
     // the user's unique username
     private String username;
 

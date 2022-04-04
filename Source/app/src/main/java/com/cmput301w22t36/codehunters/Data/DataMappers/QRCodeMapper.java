@@ -133,25 +133,36 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         for (DocumentSnapshot docSnap : documents) {
                             // Get photos for each qrcode.
                             QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
-                            getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
-                                @Override
-                                public void handleSuccess(Bitmap bMap) {
-                                    qrCode.setPhoto(bMap);
-                                    qrData.add(qrCode);
-                                    if (qrData.size() == documents.size()) {
-                                        while (qrData.remove(null));
-                                        lch.handleSuccess(qrData);
+                            if (qrCode.getPhotourl() != null) {
+                                getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                    @Override
+                                    public void handleSuccess(Bitmap bMap) {
+                                        qrCode.setPhoto(bMap);
+                                        qrData.add(qrCode);
+                                        if (qrData.size() == documents.size()) {
+                                            while (qrData.remove(null)) ;
+                                            lch.handleSuccess(qrData);
+                                        }
                                     }
-                                }
-                                @Override
-                                public void handleError(Exception e) {
-                                    qrData.add(null);
-                                    if (qrData.size() == documents.size()) {
-                                        while (qrData.remove(null));
-                                        lch.handleSuccess(qrData);
+
+                                    @Override
+                                    public void handleError(Exception e) {
+                                        qrData.add(null);
+                                        if (qrData.size() == documents.size()) {
+                                            while (qrData.remove(null)) ;
+                                            lch.handleSuccess(qrData);
+                                        }
                                     }
+                                });
+                            }
+                            else {
+                                // No photo associated with qrcode
+                                qrData.add(qrCode);
+                                if (qrData.size() == documents.size()) {
+                                    while (qrData.remove(null)) ;
+                                    lch.handleSuccess(qrData);
                                 }
-                            });
+                            }
                         }
                     } else {
                         lch.handleError(new FSAccessException("Username not unique or other error"));
