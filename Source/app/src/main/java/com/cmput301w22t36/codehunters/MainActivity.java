@@ -620,7 +620,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         qrmapper.queryUsersCodes(UDID, qrmapper.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> data) {
-                updateUsersScore();
                 codeArrayList.clear();
                 for (int i = 0; i < data.size(); i++) {
                     QRCode cur_code = new QRCode(data.get(i));
@@ -629,6 +628,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         codesFragment.notifyCodesAdapter();
                     }
                 }
+                updateUsersScore();
             }
         });
     }

@@ -228,7 +228,7 @@ public class CodesFragment extends Fragment {
             qrmapper.delete(cur_code, qrmapper.new CompletionHandler<QRCodeData>() {
                 @Override
                 public void handleSuccess(QRCodeData data) {
-                    ((MainActivity)getActivity()).updateCodeLists();
+                    ((MainActivity)getActivity()).updateUsersScore();
                 }
             });
             num_codes.setText(String.valueOf(codeArrayList.size()));
