@@ -19,7 +19,7 @@ import java.util.Hashtable;
  *      QRCode can have an associated Photo (Bitmap) and Geolocation (Array of doubles -- (x,y)) but
  *      these attributes are not needed to initialize a QRCode object.
  *
- *      **No outstanding issues**
+ *      **No Outstanding Issues**
  */
 
 /**
@@ -150,6 +150,11 @@ public class QRCode extends QRCodeData implements Serializable, Comparable<QRCod
         this.geolocation = geolocation;
     }
 
+    /**
+     * Set the photo of the QRCode to the one passed into the function
+     * @param photo
+     *      Photo we want to set as the QRCode's photo
+     */
     @Override
     public void setPhoto(Bitmap photo) {
         super.setPhoto(photo);

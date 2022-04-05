@@ -16,6 +16,13 @@ import com.cmput301w22t36.codehunters.R;
 import java.util.ArrayList;
 
 /**
+ * Introductory Comments:
+ *      This Java file is a custom Array Adapter for QRCode listview functionality
+ *
+ *      **No Outstanding Issues**
+ */
+
+/**
  * Custom Array Adapter for QRCode listview functionality
  */
 public class QRCodeAdapter extends ArrayAdapter<QRCode> {
