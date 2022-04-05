@@ -11,11 +11,6 @@ import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
-import com.cmput301w22t36.codehunters.QRCode;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 public class QRCodeMapper extends DataMapper<QRCodeData> {
 
@@ -129,38 +123,42 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<DocumentSnapshot> documents= task.getResult().getDocuments();
-                        ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                        ArrayList<QRCodeData> qrData = new ArrayList<>();
                         for (DocumentSnapshot docSnap : documents) {
                             // Get photos for each qrcode.
-                            QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
-                            if (qrCode.getPhotourl() != null) {
-                                getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
-                                    @Override
-                                    public void handleSuccess(Bitmap bMap) {
-                                        qrCode.setPhoto(bMap);
-                                        qrData.add(qrCode);
-                                        if (qrData.size() == documents.size()) {
-                                            while (qrData.remove(null)) ;
-                                            lch.handleSuccess(qrData);
+                            if (docSnap.getData() != null){
+                                QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
+                                if (qrCode.getPhotourl() != null) {
+                                    getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                        @Override
+                                        public void handleSuccess(Bitmap bMap) {
+                                            qrCode.setPhoto(bMap);
+                                            qrData.add(qrCode);
+                                            if (qrData.size() == documents.size()) {
+                                                //noinspection StatementWithEmptyBody
+                                                while (qrData.remove(null));
+                                                lch.handleSuccess(qrData);
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void handleError(Exception e) {
-                                        qrData.add(null);
-                                        if (qrData.size() == documents.size()) {
-                                            while (qrData.remove(null)) ;
-                                            lch.handleSuccess(qrData);
+                                        @Override
+                                        public void handleError(Exception e) {
+                                            qrData.add(null);
+                                            if (qrData.size() == documents.size()) {
+                                                //noinspection StatementWithEmptyBody
+                                                while (qrData.remove(null)) ;
+                                                lch.handleSuccess(qrData);
+                                            }
                                         }
+                                    });
+                                } else {
+                                    // No photo associated with qrcode
+                                    qrData.add(qrCode);
+                                    if (qrData.size() == documents.size()) {
+                                        //noinspection StatementWithEmptyBody
+                                        while (qrData.remove(null)) ;
+                                        lch.handleSuccess(qrData);
                                     }
-                                });
-                            }
-                            else {
-                                // No photo associated with qrcode
-                                qrData.add(qrCode);
-                                if (qrData.size() == documents.size()) {
-                                    while (qrData.remove(null)) ;
-                                    lch.handleSuccess(qrData);
                                 }
                             }
                         }
@@ -183,36 +181,41 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful() && task.getResult().getDocuments().size() != 0) {
                                 List<DocumentSnapshot> documents= task.getResult().getDocuments();
-                                ArrayList<QRCodeData> qrData = new ArrayList<QRCodeData>();
+                                ArrayList<QRCodeData> qrData = new ArrayList<>();
                                 for (DocumentSnapshot docSnap : documents) {
-                                    QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
-                                    if (qrCode.getPhotourl() != null) {
-                                        // Async get photo from database.
-                                        getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
-                                            @Override
-                                            public void handleSuccess(Bitmap bMap) {
-                                                qrCode.setPhoto(bMap);
-                                                qrData.add(qrCode);
-                                                if (qrData.size() == documents.size()) {
-                                                    while (qrData.remove(null));
-                                                    lch.handleSuccess(qrData);
+                                    if (docSnap.getData() != null) {
+                                        QRCodeData qrCode = mapToData(docSnap.getData(), docSnap);
+                                        if (qrCode.getPhotourl() != null) {
+                                            // Async get photo from database.
+                                            getImage(qrCode.getPhotourl(), new CompletionHandler<Bitmap>() {
+                                                @Override
+                                                public void handleSuccess(Bitmap bMap) {
+                                                    qrCode.setPhoto(bMap);
+                                                    qrData.add(qrCode);
+                                                    if (qrData.size() == documents.size()) {
+                                                        //noinspection StatementWithEmptyBody
+                                                        while (qrData.remove(null)) ;
+                                                        lch.handleSuccess(qrData);
+                                                    }
                                                 }
-                                            }
-                                            @Override
-                                            public void handleError(Exception e) {
-                                                qrData.add(null);
-                                                if (qrData.size() == documents.size()) {
-                                                    while (qrData.remove(null));
-                                                    lch.handleSuccess(qrData);
+
+                                                @Override
+                                                public void handleError(Exception e) {
+                                                    qrData.add(null);
+                                                    if (qrData.size() == documents.size()) {
+                                                        //noinspection StatementWithEmptyBody
+                                                        while (qrData.remove(null)) ;
+                                                        lch.handleSuccess(qrData);
+                                                    }
                                                 }
+                                            });
+                                        } else {
+                                            qrData.add(qrCode);
+                                            if (qrData.size() == documents.size()) {
+                                                //noinspection StatementWithEmptyBody
+                                                while (qrData.remove(null)) ;
+                                                lch.handleSuccess(qrData);
                                             }
-                                        });
-                                    }
-                                    else {
-                                        qrData.add(qrCode);
-                                        if (qrData.size() == documents.size()) {
-                                            while (qrData.remove(null));
-                                            lch.handleSuccess(qrData);
                                         }
                                     }
                                 }
@@ -229,36 +232,36 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
      * the codes returned have had any entry-specific fields nullified (e.g. ID, userRef)
      * @param ch the completion handler
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getAllCodes(CompletionHandler<ArrayList<QRCodeData>> ch) {
         // get literally every QRcode :(
-        collectionRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.N)  // For hashMap
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    // build up a hashmap of all the unique codes, first come first serve
-                    HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
-                    for (DocumentSnapshot code : task.getResult()) {
-                        QRCodeData qrCode = mapToData(code.getData());
+        // For hashMap
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // build up a hashmap of all the unique codes, first come first serve
+                HashMap<String, QRCodeData> uniqueCodes = new HashMap<>();
+                for (DocumentSnapshot docSnap : task.getResult()) {
+                    if (docSnap.getData() != null) {
+                        QRCodeData qrCode = mapToData(docSnap.getData());
                         // nullify specific fields
                         qrCode.setUserRef(null);
                         qrCode.setId(null);
                         if (!uniqueCodes.containsKey(qrCode.getHash())) {
                             uniqueCodes.put(qrCode.getHash(), qrCode);
-                        }
-                        else {
+                        } else {
                             // Replace original if it doesn't have an image.
-                            if (uniqueCodes.get(qrCode.getHash()).getPhotourl() == null) {
+                            QRCodeData uniqueQr = uniqueCodes.get(qrCode.getHash());
+                            if (uniqueQr != null && uniqueQr.getPhotourl() == null) {
                                 uniqueCodes.replace(qrCode.getHash(), qrCode);
                             }
                         }
                     }
-
-                    ArrayList<QRCodeData> codes = new ArrayList<QRCodeData>(uniqueCodes.values());
-                    ch.handleSuccess(codes);
-                } else {
-                    ch.handleError(new FSAccessException("Failed to retrieve qrcodes from Firestore"));
                 }
+
+                ArrayList<QRCodeData> codes = new ArrayList<>(uniqueCodes.values());
+                ch.handleSuccess(codes);
+            } else {
+                ch.handleError(new FSAccessException("Failed to retrieve qrcodes from Firestore"));
             }
         });
     }
@@ -284,25 +287,24 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         // to the codes in the justTheCodes list.
         collectionRef.whereEqualTo(Fields.USERREF.toString(), "/users/"+userToSearch.getId())
                 .whereIn(Fields.CODE.toString(), justTheCodes)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                // check if the query was successful
-                if (task.isSuccessful()) {
-                    // get the results and then turn them into a list
-                    QuerySnapshot results = task.getResult();
-                    ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
+                .get().addOnCompleteListener(task -> {
+                    // check if the query was successful
+                    if (task.isSuccessful()) {
+                        // get the results and then turn them into a list
+                        QuerySnapshot results = task.getResult();
+                        ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
 
-                    for (DocumentSnapshot document : results) {
-                        matchedCodes.add(mapToData(document.getData(), document));
+                        for (DocumentSnapshot docSnap : results) {
+                            if (docSnap.getData() != null) {
+                                matchedCodes.add(mapToData(docSnap.getData(), docSnap));
+                            }
+                        }
+                        ch.handleSuccess(matchedCodes);
+
+                    } else {
+                        ch.handleError(new FSAccessException("Firestore fetch unsuccessful"));
                     }
-                    ch.handleSuccess(matchedCodes);
-
-                } else {
-                    ch.handleError(new FSAccessException("Firestore fetch unsuccessful"));
-                }
-            }
-        });
+                });
     }
 
     /**
@@ -322,9 +324,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         pathRef.getBytes(MAX_DOWN).addOnSuccessListener(bytes -> {
             Bitmap bmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             ch.handleSuccess(bmap);
-        }).addOnFailureListener(e -> {
-            ch.handleError(e);
-        });
+        }).addOnFailureListener(ch::handleError);
     }
 
     /**
@@ -351,11 +351,8 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                      //   ch.handleError(new FSAccessException("Could not store image"));
                     //
                 });
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
+        uploadTask.addOnFailureListener(exception -> {
+            // Handle unsuccessful uploads
         });
 
 
@@ -385,11 +382,20 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         // Integer type is nullable (opposed to int). Explicitly states that Integer must not be null (fail-fast).
         QRCodeData qrCodeData = new QRCodeData();
         qrCodeData.setUserRef(Objects.requireNonNull(String.valueOf(dataMap.get(Fields.USERREF.toString()))));
-        qrCodeData.setScore(Objects.requireNonNull((int)(long) dataMap.get(Fields.SCORE.toString())));
+
+        Long score = (Long) dataMap.get(Fields.SCORE.toString());
+        qrCodeData.setScore(score != null ? (int)(long)score : 0);
+
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
-        qrCodeData.setLat(((Number) dataMap.get(Fields.LAT.toString())).doubleValue());
-        qrCodeData.setLon(((Number) dataMap.get(Fields.LON.toString())).doubleValue());
+
+        Long lat = (Long)dataMap.get(Fields.LAT.toString());
+        qrCodeData.setLat(lat != null ? lat.doubleValue() : 0);
+
+        Long lon = (Long)dataMap.get(Fields.LON.toString());
+        qrCodeData.setLon(lon != null ? lon.doubleValue() : 0);
+
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
         return qrCodeData;
     }
 }
+
