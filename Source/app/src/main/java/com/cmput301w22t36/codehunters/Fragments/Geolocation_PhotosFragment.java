@@ -3,8 +3,10 @@ package com.cmput301w22t36.codehunters.Fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -87,7 +89,21 @@ public class Geolocation_PhotosFragment extends DialogFragment {
                 for (Comment c : comments) {
 //                      aggregateComments += c.getComment();
                       commentsList.add(c.getComment());
-                    commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList);
+                    commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList){
+
+                        @Override
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View view =super.getView(position, convertView, parent);
+
+                            TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                            /*YOUR CHOICE OF COLOR*/
+                            textView.setTextColor(Color.BLACK);
+
+                            return view;
+                        }
+                    };
+
                     commentBox.setAdapter(commentsArrayAdapter);
 
 //                    aggregateComments += c.getComment() + "\n";
