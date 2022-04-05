@@ -33,7 +33,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         SCORE("score"),
         CODE("code"),
         LAT("lat"),
-        LON("lon"),  // TODO: CONVERT TO GEOPOINT!
+        LON("lon"),
         PHOTOURL("photourl");
 
         private final String field;
@@ -379,10 +379,10 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
 
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
 
-        Long lat = (Long)dataMap.get(Fields.LAT.toString());
+        Double lat = (Double)dataMap.get(Fields.LAT.toString());
         qrCodeData.setLat(lat != null ? lat.doubleValue() : 0);
 
-        Long lon = (Long)dataMap.get(Fields.LON.toString());
+        Double lon = (Double)dataMap.get(Fields.LON.toString());
         qrCodeData.setLon(lon != null ? lon.doubleValue() : 0);
 
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));

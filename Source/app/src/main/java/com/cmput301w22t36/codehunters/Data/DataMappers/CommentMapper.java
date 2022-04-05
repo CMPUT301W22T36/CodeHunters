@@ -47,11 +47,13 @@ public class CommentMapper extends DataMapper<Comment> {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<DocumentSnapshot> documents= task.getResult().getDocuments();
-                        ArrayList<Comment> comments = new ArrayList<Comment>();
+                        ArrayList<Comment> comments = new ArrayList<>();
                         for (DocumentSnapshot docSnap : documents) {
-                            Comment c = mapToData(docSnap.getData());
-                            c.setId(docSnap.getId());
-                            comments.add(c);
+                            if (docSnap.getData() != null) {
+                                Comment c = mapToData(docSnap.getData());
+                                c.setId(docSnap.getId());
+                                comments.add(c);
+                            }
                         }
                         ch.handleSuccess(comments);
                     } else {
