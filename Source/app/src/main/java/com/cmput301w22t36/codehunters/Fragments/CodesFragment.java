@@ -1,5 +1,6 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -55,6 +56,8 @@ public class CodesFragment extends Fragment {
     //Set up listview
     private ListView codeList;
     private ArrayAdapter<QRCode> codeArrayAdapter;
+
+    private StatsUpdater statsUpdater;
 
     /**
      * Required constructor
@@ -118,6 +121,7 @@ public class CodesFragment extends Fragment {
         total_score = view.findViewById(R.id.total_score);
         sort_method = view.findViewById(R.id.sort_by);
         codeList = view.findViewById(R.id.code_list);
+        statsUpdater = new StatsUpdater();
 
         //Populate number of codes and total score
         num_codes.setText(String.valueOf(codeArrayList.size()));
@@ -130,6 +134,9 @@ public class CodesFragment extends Fragment {
         //Populate qrcode listview and connect to customlist
         codeArrayAdapter = new QRCodeAdapter(this.getContext(), codeArrayList);
         codeList.setAdapter(codeArrayAdapter);
+        codeArrayAdapter.registerDataSetObserver(statsUpdater);
+
+
 
         codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             /**
@@ -233,5 +240,18 @@ public class CodesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).updateNavBar(0);
+    }
+
+    private class StatsUpdater extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            int totalScore = 0;
+            for (QRCode code : codeArrayList) {
+                totalScore += code.getScore();
+            }
+            total_score.setText(String.valueOf(totalScore));
+            num_codes.setText(String.valueOf(codeArrayList.size()));
+        }
     }
 }
