@@ -16,7 +16,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MenuHeader extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    // TODO: COMMENTS
+    // Initialize the layout
     private DrawerLayout drawer;
 
     // Set up the hamburger button

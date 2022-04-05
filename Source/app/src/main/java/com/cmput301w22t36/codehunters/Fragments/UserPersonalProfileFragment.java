@@ -31,8 +31,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  *
  * Load the set up user's personal profile fragment and display their information. Obtain any
  * username or email edits.
- *
- * Outstanding issues: currently not properly accessed in the tangible prototype.
  */
 public class UserPersonalProfileFragment extends Fragment {
 

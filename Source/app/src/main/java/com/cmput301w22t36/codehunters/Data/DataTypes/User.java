@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class User extends Data {
 
+    // the user's game statistics
     private Integer bestScore = 0;
     private Integer ScanCount = 0;
     private Integer score = 0;
@@ -30,34 +31,62 @@ public class User extends Data {
     // the user's unique username
     private String username;
 
+    /**
+     * Get the user's best scoring QR code's score
+     */
     public Integer getBestScore() {
         return bestScore;
     }
 
+    /**
+     * Set the user's best scoring QR code's score
+     * @param bestScore: the corresponding score
+     */
     public void setBestScore(Integer bestScore) {
         this.bestScore = bestScore;
     }
 
+    /**
+     * Get the number of codes user has scanned
+     */
     public Integer getScanCount() {
         return ScanCount;
     }
 
+    /**
+     * Set the number of codes user has scanned
+     * @param scanCount: the number of codes scanned
+     */
     public void setScanCount(Integer scanCount) {
         ScanCount = scanCount;
     }
 
+    /**
+     * Get the user's total score
+     */
     public Integer getScore() {
         return score;
     }
 
+    /**
+     * Set the user's total score
+     * @param score: the total score
+     */
     public void setScore(Integer score) {
         this.score = score;
     }
 
+    /**
+     * Get the flag indicating if the user is an Owner
+     */
     public Boolean getOwner() {
         return isOwner;
     }
 
+    /**
+     * Set the flag indicating if the user is an Owner
+     * @param owner: the flag indicating user is an owner or player
+     */
     public void setOwner(Boolean owner) {
         isOwner = owner;
     }
@@ -69,22 +98,35 @@ public class User extends Data {
         return udid;
     }
 
+    /**
+     * Get the single uuid associated with this unique username
+     * @param i: the identifier for the udid being accessed
+     */
     public String getUdid(int i) {
         return this.udid.get(i);
     }
 
     /**
-     * Set the list of UUIDs associated with this unique username
+     * Set the list of UUIDs associated with this user profile
      * @param udid: list of UUIDS
      */
     public void setUdid(ArrayList<String> udid) {
         this.udid = udid;
     }
 
+    /**
+     * Set the single UUIDs associated with this user profile
+     * @param i: the identifier for the udid being added
+     * @param udid: the new udid
+     */
     public void setUdid(int i, String udid) {
         this.udid.set(i, udid);
     }
 
+    /**
+     * Append the uuid to this user profile
+     * @param udid: the new udid
+     */
     public void appendUdid(String udid) {
         this.udid.add(udid);
     }
