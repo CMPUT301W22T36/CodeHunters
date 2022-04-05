@@ -2,7 +2,8 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
         <LinearLayout
             android:textAlignment="center"
             android:orientation="vertical"
@@ -16,17 +17,17 @@
             android:text="QR Code Coordinates"
             android:textColor="@color/black"
             android:textAlignment="center"
-            android:textSize="35dp"
+            android:textSize="30dp"
             android:background="#e6ccff"/>
         <TextView
             android:id="@+id/geolocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:background="#333333"
+            android:background="#FFFFFF"
             android:gravity="center"
-            android:textSize="30dp"
-            android:textColor="#FFFFFF"/>
+            android:textSize="20dp"
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +35,7 @@
             android:textAlignment="center"
             android:text="Location Of QR Code"
             android:textColor="@color/black"
-            android:textSize="35dp"
+            android:textSize="30dp"
             android:gravity="center"/>
 
         <ImageView
@@ -42,13 +43,13 @@
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:background="#333333"/>
+            android:background="#FFFFFF"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Comments"
             android:textColor="@color/black"
-            android:textSize="35dp"
+            android:textSize="30dp"
             android:textAlignment="center"
             android:gravity="center"
             android:background="#e6ccff"  />
@@ -62,8 +63,7 @@
             android:textSize="25dp"
             android:textAlignment="center"
             android:id="@+id/commentbox"
-            android:background="#333333"
-            android:textColor="#FFFFFF"
+            android:background="#FFFFFF"
             android:gravity="center"/>
 
 
