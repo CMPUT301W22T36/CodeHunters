@@ -39,7 +39,7 @@ import java.util.Observer;
 
 //Introduction: This fragment is used to contain and display all fragments related to users social communication in the App, also provide a search bottom for user to search other users.
 //              It can replace fragment_container in MainActivity
-//              just for  now: No actual functions but all display and navigation are completed.
+//              It get username from MainActivity
 public class SocialFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
