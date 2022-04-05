@@ -23,6 +23,13 @@ import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
 
+/**
+ * class: SearchUserFragment, a {@link Fragment} subclass.
+ *
+ * Introduction: Display the information of searched user, show all codes that searched user scanned as listview,
+ * show all codes that both searched user and current user had scanned as listview.
+*/
+
 public class SearchUserFragment extends Fragment {
     TextView searchedUserT;
     TextView searchedUser;
@@ -50,11 +57,21 @@ public class SearchUserFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * This initializes the fragment
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This inflates the fragment's layout
+     * @param inflater: the LayoutInflator for the view
+     * @param container: the ViewGroup of the view
+     * @param savedInstanceState: this is the bundle that will be called through the superclass
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,6 +80,12 @@ public class SearchUserFragment extends Fragment {
 
         return inflate;
     }
+
+    /**
+     * Obtain all information and QRCode list views
+     * @param view
+     * @param savedInstanceState
+     */
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
