@@ -14,6 +14,12 @@ import com.cmput301w22t36.codehunters.Fragments.SocialFragment;
 import com.cmput301w22t36.codehunters.Fragments.UserPersonalProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
+/**
+ * Class: MenuHeader
+ *
+ * Setup the hamburger menu header and sidebar placeholder that will be created within
+ * MainActivity and its layout.
+ */
 public class MenuHeader extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     // Initialize the layout
@@ -23,7 +29,7 @@ public class MenuHeader extends AppCompatActivity implements NavigationView.OnNa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_sidebar_layout); ///////TODO??
+        setContentView(R.layout.fragment_sidebar_layout);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,16 +43,12 @@ public class MenuHeader extends AppCompatActivity implements NavigationView.OnNa
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        // The fragment to start with before any items clicked, also loaded when rotate the device
-        /*
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new MapFragment()).commit();
-        }*/
     }
 
-    // When items are clicked in the sidebar, move to the specified fragment.
+    /**
+     * When items are clicked in the sidebar, move to the specified fragment.
+     * @param item: the sidebar
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -55,7 +57,7 @@ public class MenuHeader extends AppCompatActivity implements NavigationView.OnNa
                         new UserPersonalProfileFragment()).commit();
                 break;
             case R.id.list_nearby_codes:
-                // TODO: Placeholder
+                // Placeholder implemented by MainActivity
                 break;
         }
 
@@ -64,7 +66,9 @@ public class MenuHeader extends AppCompatActivity implements NavigationView.OnNa
         return true;
     }
 
-    // To close the sidebar drawer if it is open
+    /**
+     * Set the back button to close the sidebar drawer if it is open
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

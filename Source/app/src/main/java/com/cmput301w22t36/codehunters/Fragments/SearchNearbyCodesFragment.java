@@ -34,6 +34,7 @@ import java.util.ArrayList;
  * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
  *
  * Take in the users prompts to search for QR codes by geolocation.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class SearchNearbyCodesFragment extends Fragment {
 
@@ -100,7 +101,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         lonInput = (EditText)view.findViewById(R.id.lon);
         search = (Button)view.findViewById(R.id.searchCode);
 
-        //GET CURRENT LOCATION AS DEFAULT
+        // Get the current location as default
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -136,6 +137,12 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
     }
 
+    /**
+     * Obtain a list of the closest QR codes given the latitude and longitude and a list of QR codes
+     * @param qrdistance: the list of all QR codes from which to obtain the closest
+     * @param lat: the given latatidue
+     * @param lon: the given longitude
+     */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
             for (int i = 0; i < qrdistance.size(); i++) {
                 QRCode qrcode = qrdistance.get(i);
@@ -144,7 +151,7 @@ public class SearchNearbyCodesFragment extends Fragment {
                     double databaseCodeLongi = qrcode.getLon();
                     double latDistance = Math.abs(lat - databaseCodeLat);
                     double longiDistance = Math.abs(lon - databaseCodeLongi);
-//                  double qrManhattanDistance = latDistance + longiDistance;
+                    //double qrManhattanDistance = latDistance + longiDistance;
                     double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
                     double c = 2 * Math.asin(Math.sqrt(a));
                     double km = 6371 * c;
@@ -156,25 +163,10 @@ public class SearchNearbyCodesFragment extends Fragment {
         return sortedDistanceQRList;
     }
 
-//
-
     // Obtain the nearby QR codes and display them with the ListView
     private void displayList(double latInteger, double lonInteger, ArrayList<QRCode> codeArrayList) {
 
-        // TODO: obtain the QR codes
-        // Obtain the list of codes with respect to the user input
-        //searchCodes(lat, lon, codeArrayList);
-
-        /*// TODO: remove the placeholder examples
-        QRCode code1 = new QRCode("BFG5DGW54");
-        QRCode code2 = new QRCode("W4GAF75A7");
-        QRCode code3 = new QRCode("Z56SJHGF76");
-        codeArrayList.add(code1);
-        codeArrayList.add(code2);
-        codeArrayList.add(code3);*/
-
-
-        //get bestcodes, need get all data from database and do some sorts.
+        // Get bestcodes, need get all data from database and do some sorts.
         QRCodeMapper qrm = new QRCodeMapper();
         qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
@@ -206,11 +198,12 @@ public class SearchNearbyCodesFragment extends Fragment {
 
             }
         });
-
-
     }
 
-    // TODO: comments
+    /**
+     * Add the list A of QR codes to the global list that interacts with the adapter
+     * @param A: the list of all QR codes from which to obtain the closest
+     */
     public void listQRs(ArrayList<QRCodeData> A){
         for (int i = 0; i<A.size();i++){
             QRCode qrcode = new QRCode(A.get(i));
@@ -218,7 +211,9 @@ public class SearchNearbyCodesFragment extends Fragment {
         }
     }
 
-    // TODO: comments
+    /**
+     * Notify the adapter that the data has been updated
+     */
     public void notifyCodesAdapter() {
         codeArrayAdapter.notifyDataSetChanged();
     }
