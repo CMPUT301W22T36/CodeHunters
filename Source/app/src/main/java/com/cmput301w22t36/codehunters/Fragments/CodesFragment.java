@@ -1,7 +1,9 @@
 package com.cmput301w22t36.codehunters.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -52,6 +54,7 @@ public class CodesFragment extends Fragment {
     private TextView num_codes;
     private TextView total_score;
     private TextView sort_method;
+    private TextView sort_method_txt;
     //Set up listview
     private ListView codeList;
     private ArrayAdapter<QRCode> codeArrayAdapter;
@@ -117,6 +120,7 @@ public class CodesFragment extends Fragment {
         num_codes = view.findViewById(R.id.total_codes);
         total_score = view.findViewById(R.id.total_score);
         sort_method = view.findViewById(R.id.sort_by);
+        sort_method_txt= view.findViewById(R.id.sort_method);
         codeList = view.findViewById(R.id.code_list);
 
         //Populate number of codes and total score
@@ -183,6 +187,8 @@ public class CodesFragment extends Fragment {
             Collections.sort(codeArrayList, Collections.reverseOrder());
             codeArrayAdapter.notifyDataSetChanged();
             //Toast pop-up to confirm with user their selection
+            sort_method_txt.setTextColor(Color.parseColor("#333333"));
+            sort_method_txt.setText("Highest Score");
             Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
         else if (item.getTitle() == "Lowest Score") {
@@ -190,6 +196,8 @@ public class CodesFragment extends Fragment {
             Collections.sort(codeArrayList);
             codeArrayAdapter.notifyDataSetChanged();
             //Toast pop-up to confirm with user their selection
+            sort_method_txt.setTextColor(Color.parseColor("#333333"));
+            sort_method_txt.setText("Lowest Score");
             Toast.makeText(this.getContext(), "Sort Method Selected: " +item.getTitle(), Toast.LENGTH_SHORT).show();
         }
         else if (item.getTitle() == "Delete") {

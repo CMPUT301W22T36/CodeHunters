@@ -33,16 +33,26 @@
                     android:id="@+id/sort_by"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sort By ↓"
+                    android:text="Sort By: "
                     android:textColor="#333333"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:padding="11dp"
                     android:background="#b491c8"></TextView>
+                <TextView
+                    android:id="@+id/sort_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hold 'Sort by' to filter codes"
+                    android:textColor="#7f7f7f"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:padding="11dp"
+                    android:background="#e6ccff"></TextView>
 
-                <SearchView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></SearchView>
+<!--                <SearchView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"></SearchView>-->
 
             </LinearLayout>
 

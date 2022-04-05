@@ -11,21 +11,21 @@
             android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-                <View
-                    android:id="@+id/divider1"
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:background="@color/purple_500"
-                    app:layout_constraintBottom_toTopOf="@id/qrCodeCoordinates" />
+<!--                <View-->
+<!--                    android:id="@+id/divider1"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="6dp"-->
+<!--                    android:background="@color/purple_500"-->
+<!--                    app:layout_constraintBottom_toTopOf="@id/qrCodeCoordinates" />-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="QR Code Coordinates"
+            android:text="QR Code Coordinates:"
             android:id="@+id/qrCodeCoordinates"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="#333333"
             android:textAlignment="center"
-            android:textSize="30dp"
+            android:textSize="26dp"
             android:background="#e6ccff"/>
                 <View
                     android:id="@+id/divider2"
@@ -54,10 +54,10 @@
             android:background="#e6ccff"
             android:textAlignment="center"
             android:id="@+id/locationQRCode"
-            android:text="Location Of QR Code"
+            android:text="Photo of QRCode Location:"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="30dp"
+            android:textColor="#333333"
+            android:textSize="26dp"
             android:gravity="center"/>
                 <View
                     android:id="@+id/divider4"
@@ -82,10 +82,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/comments"
-            android:text="Comments"
+            android:text="Comments:"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="30dp"
+            android:textColor="#333333"
+            android:textSize="26dp"
             android:textAlignment="center"
             android:gravity="center"
             android:background="#e6ccff"  />
