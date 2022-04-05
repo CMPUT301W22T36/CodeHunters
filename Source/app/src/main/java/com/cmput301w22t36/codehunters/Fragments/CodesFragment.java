@@ -38,7 +38,7 @@ import java.util.Collections;
  *      The fragment also allows for users to sort their codes by highest or lowest score (done by
  *      long-pressing "sort by" TextView and selecting sorting method from pop-up menu).
  *
- *      **Outstanding issue: Searchbar is present in the layout but does not currently have any functionality**
+ *      **No Outstanding Issues**
  */
 
 /**
@@ -240,6 +240,9 @@ public class CodesFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Refreshes listview to check for any updates to the datalist
+     */
     public void notifyCodesAdapter() {
         // Gets called from a different thread.
         if (codeArrayAdapter != null) {
@@ -247,6 +250,9 @@ public class CodesFragment extends Fragment {
         }
     }
 
+    /**
+     * On opening of this fragment, update the navigation bar on the bottom to indicate we are on the codes fragment
+     */
     @Override
     public void onResume() {
         super.onResume();
