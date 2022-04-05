@@ -277,34 +277,39 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     public void getMatchingCodes(User userToSearch, ArrayList<? extends QRCodeData> matchList,
                                  CompletionHandler<ArrayList<QRCodeData>> ch) {
 
-        // Create list of the strings of the codes
-        ArrayList<String> justTheCodes = new ArrayList<>();
-        for (QRCodeData code : matchList) {
-            justTheCodes.add(code.getHash());
-        }
+        if (matchList.size() < 1) {
+            ch.handleSuccess(new ArrayList<QRCodeData>());
+        } else {
 
-        // make a query where we filter to codes from the given user and then
-        // to the codes in the justTheCodes list.
-        collectionRef.whereEqualTo(Fields.USERREF.toString(), "/users/"+userToSearch.getId())
-                .whereIn(Fields.CODE.toString(), justTheCodes)
-                .get().addOnCompleteListener(task -> {
-                    // check if the query was successful
-                    if (task.isSuccessful()) {
-                        // get the results and then turn them into a list
-                        QuerySnapshot results = task.getResult();
-                        ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
+            // Create list of the strings of the codes
+            ArrayList<String> justTheCodes = new ArrayList<>();
+            for (QRCodeData code : matchList) {
+                justTheCodes.add(code.getHash());
+            }
 
-                        for (DocumentSnapshot docSnap : results) {
-                            if (docSnap.getData() != null) {
-                                matchedCodes.add(mapToData(docSnap.getData(), docSnap));
-                            }
+            // make a query where we filter to codes from the given user and then
+            // to the codes in the justTheCodes list.
+            collectionRef.whereEqualTo(Fields.USERREF.toString(), "/users/" + userToSearch.getId())
+                    .whereIn(Fields.CODE.toString(), justTheCodes)
+                    .get().addOnCompleteListener(task -> {
+                // check if the query was successful
+                if (task.isSuccessful()) {
+                    // get the results and then turn them into a list
+                    QuerySnapshot results = task.getResult();
+                    ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
+
+                    for (DocumentSnapshot docSnap : results) {
+                        if (docSnap.getData() != null) {
+                            matchedCodes.add(mapToData(docSnap.getData(), docSnap));
                         }
-                        ch.handleSuccess(matchedCodes);
-
-                    } else {
-                        ch.handleError(new FSAccessException("Firestore fetch unsuccessful"));
                     }
-                });
+                    ch.handleSuccess(matchedCodes);
+
+                } else {
+                    ch.handleError(new FSAccessException("Firestore fetch unsuccessful"));
+                }
+            });
+        }
     }
 
     /**
