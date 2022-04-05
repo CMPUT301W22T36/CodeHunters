@@ -139,18 +139,19 @@ public class SearchNearbyCodesFragment extends Fragment {
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
             for (int i = 0; i < qrdistance.size(); i++) {
                 QRCode qrcode = qrdistance.get(i);
-                double databaseCodeLat = qrcode.getLat();
-                double databaseCodeLongi = qrcode.getLon();
-                double latDistance = Math.abs(lat - databaseCodeLat);
-                double longiDistance = Math.abs(lon - databaseCodeLongi);
-//                double qrManhattanDistance = latDistance + longiDistance;
-                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
-                double c = 2 * Math.asin(Math.sqrt(a));
-                double km = 6371 * c;
-                if (km < 5) {
-                    sortedDistanceQRList.add(qrcode);
+                if (qrcode.hasLocation()) {
+                    double databaseCodeLat = qrcode.getLat();
+                    double databaseCodeLongi = qrcode.getLon();
+                    double latDistance = Math.abs(lat - databaseCodeLat);
+                    double longiDistance = Math.abs(lon - databaseCodeLongi);
+//                  double qrManhattanDistance = latDistance + longiDistance;
+                    double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
+                    double c = 2 * Math.asin(Math.sqrt(a));
+                    double km = 6371 * c;
+                    if (km < 5) {
+                        sortedDistanceQRList.add(qrcode);
+                    }
                 }
-
             }
         return sortedDistanceQRList;
     }
