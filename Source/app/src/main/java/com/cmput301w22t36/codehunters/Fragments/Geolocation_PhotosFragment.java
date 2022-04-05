@@ -17,13 +17,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
+import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.Data.DataMappers.CommentMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.Comment;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Introductory Comments:
@@ -88,31 +92,36 @@ public class Geolocation_PhotosFragment extends DialogFragment {
                 String aggregateComments = "";
                 for (Comment c : comments) {
 //                      aggregateComments += c.getComment();
-                      commentsList.add(c.getComment());
-                    commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList){
-
+                    String uid = c.getUserRef().substring(7);
+                    UserMapper um = new UserMapper();
+                    um.get(uid, um.new CompletionHandler<User>() {
                         @Override
-                        public View getView(int position, View convertView, ViewGroup parent) {
-                            View view =super.getView(position, convertView, parent);
-
-                            TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-                            /*YOUR CHOICE OF COLOR*/
-                            textView.setTextColor(Color.BLACK);
-
-                            return view;
+                        public void handleSuccess(User data) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+                            Date date = new Date(c.getTimestamp());
+                            commentsList.add("[" + dateFormat.format(date) + "] " + data.getUsername() + ": " + c.getComment());
+                            commentsArrayAdapter.notifyDataSetChanged();
                         }
-                    };
-
-                    commentBox.setAdapter(commentsArrayAdapter);
-
+                    });
 //                    aggregateComments += c.getComment() + "\n";
 //                    commentBox.setText(aggregateComments);
                 }
+                commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList){
 
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view =super.getView(position, convertView, parent);
 
+                        TextView textView=(TextView) view.findViewById(android.R.id.text1);
 
+                        /*YOUR CHOICE OF COLOR*/
+                        textView.setTextColor(Color.BLACK);
 
+                        return view;
+                    }
+                };
+
+                commentBox.setAdapter(commentsArrayAdapter);
             }
         });
 
