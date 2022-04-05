@@ -234,7 +234,10 @@ public class CodesFragment extends Fragment {
     }
 
     public void notifyCodesAdapter() {
-        codeArrayAdapter.notifyDataSetChanged();
+        // Gets called from a different thread.
+        if (codeArrayAdapter != null) {
+            codeArrayAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
