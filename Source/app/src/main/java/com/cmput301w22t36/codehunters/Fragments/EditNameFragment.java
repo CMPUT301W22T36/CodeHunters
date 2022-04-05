@@ -24,6 +24,7 @@ import com.cmput301w22t36.codehunters.R;
  * Class: EditNameFragment, a {@link Fragment} subclass.
  *
  * Display the fragment to change the user's name and manage any edits to the username.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class EditNameFragment extends Fragment {
 

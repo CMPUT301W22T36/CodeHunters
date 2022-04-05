@@ -22,6 +22,7 @@ import com.cmput301w22t36.codehunters.R;
  * Class: EditEmailFragment, a {@link Fragment} subclass.
  *
  * Display the fragment to change the user's email and manage any edits to the email.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class EditEmailFragment extends Fragment {
 

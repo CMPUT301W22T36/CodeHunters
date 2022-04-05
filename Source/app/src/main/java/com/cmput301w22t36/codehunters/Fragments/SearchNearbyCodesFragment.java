@@ -37,6 +37,7 @@ import java.util.ArrayList;
  *
  * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
  * Take in the users prompts to search for QR codes by geolocation.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class SearchNearbyCodesFragment extends Fragment {
 
@@ -102,7 +103,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         lonInput = (EditText)view.findViewById(R.id.lon);
         search = (Button)view.findViewById(R.id.searchCode);
 
-        //GET CURRENT LOCATION AS DEFAULT
+        // Get the current location as default
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -142,9 +143,9 @@ public class SearchNearbyCodesFragment extends Fragment {
      * The qrDistance function finds the Manhattan Distance of your current location and
      * the location of QR Codes and returns a sortedDistanceQRList if the distance converted
      * to KM is less than 5 KM
-     * @param qrdistance
-     * @param lat
-     * @param lon
+     * @param qrdistance: the list of all QR codes from which to obtain the closest
+     * @param lat: the given latatidue
+     * @param lon: the given longitude
      * @return sortedDistanceQRList
      */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
@@ -168,8 +169,6 @@ public class SearchNearbyCodesFragment extends Fragment {
             }
         return sortedDistanceQRList;
     }
-
-//
 
     /**
      * Displays the list of sorted QRCodes by location in the listview
@@ -230,11 +229,12 @@ public class SearchNearbyCodesFragment extends Fragment {
                 }
             }
         });
-
-
     }
 
-    // Gets all QRCodeData objects and adds to codeArrayList
+    /**
+     * Gets all QRCodeData objects and adds to codeArrayList
+     * @param A: the list of all QR codes from which to obtain the closest
+     */
     public void listQRs(ArrayList<QRCodeData> A){
         for (int i = 0; i<A.size();i++){
             QRCode qrcode = new QRCode(A.get(i));
@@ -242,7 +242,9 @@ public class SearchNearbyCodesFragment extends Fragment {
         }
     }
 
-    // Updates the codeArrayAdapter with any changes made
+    /**
+     * Notify the adapter that the data has been updated
+     */
     public void notifyCodesAdapter() {
         codeArrayAdapter.notifyDataSetChanged();
     }
