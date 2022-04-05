@@ -16,7 +16,7 @@ public abstract class DataMapper<D extends Data> {
      * Used to handle the completion of async Firestore operations.
      * @param <T> Return type of completion handler.
      */
-    public static class CompletionHandler<T> {
+    public class CompletionHandler<T> {
         public void handleSuccess(T data) {
         }
 
