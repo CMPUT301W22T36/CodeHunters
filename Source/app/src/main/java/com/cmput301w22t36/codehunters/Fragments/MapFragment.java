@@ -11,6 +11,7 @@ Outstanding issues:
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.QRCode;
 import com.cmput301w22t36.codehunters.R;
@@ -213,7 +215,24 @@ public class MapFragment extends Fragment {
                     public boolean onItemLongPress(final int index, final OverlayItem item) {
                         // when long pressed, show the image of the code
                         QRCode qrCodeClicked = mappedQrPinsList.get(index);
-                        new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                        QRCodeMapper qm = new QRCodeMapper();
+                        String photoUrl = qrCodeClicked.getPhotoUrl();
+                        if (photoUrl != null) {
+                            qm.getImage(qrCodeClicked.getPhotoUrl(), qm.new CompletionHandler<Bitmap>() {
+                                @Override
+                                public void handleSuccess(Bitmap data) {
+                                    qrCodeClicked.setPhoto(data);
+                                    new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                }
+
+                                @Override
+                                public void handleError(Exception e) {
+                                    new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                }
+                            });
+                        } else {
+                            new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                        }
 
                         // This return value was given in the example, I'm just leaving it
                         return false;
