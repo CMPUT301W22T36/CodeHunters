@@ -5,8 +5,6 @@ import androidx.annotation.NonNull;
 import com.cmput301w22t36.codehunters.Data.DataMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -28,47 +26,43 @@ public class UserMapper extends DataMapper<User> {
     public void queryUDID(String udid, CompletionHandler<User> ch) {
         collectionRef.whereArrayContains("udid", udid)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<DocumentSnapshot> userDocs = task.getResult().getDocuments();
-                    if (userDocs.size() > 0 && userDocs.get(0).exists()) {
-                        DocumentSnapshot doc = userDocs.get(0);
-                        Map<String, Object> userMap = doc.getData();
-                        if (userMap == null) { ch.handleError(new FSAccessException("Data null")); }
-                        else {
-                            User user = mapToData(userMap);
-                            user.setId(doc.getId());
-                            ch.handleSuccess(user);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> userDocs = task.getResult().getDocuments();
+                        if (userDocs.size() > 0 && userDocs.get(0).exists()) {
+                            DocumentSnapshot doc = userDocs.get(0);
+                            Map<String, Object> userMap = doc.getData();
+                            if (userMap == null) { ch.handleError(new FSAccessException("Data null")); }
+                            else {
+                                User user = mapToData(userMap);
+                                user.setId(doc.getId());
+                                ch.handleSuccess(user);
+                            }
+                        } else {
+                            ch.handleError(new FSAccessException("Document doesn't exist"));
                         }
                     } else {
-                        ch.handleError(new FSAccessException("Document doesn't exist"));
+                        // ERROR
+                        ch.handleError(new FSAccessException("Data retrieval failed"));
                     }
-                } else {
-                    // ERROR
-                    ch.handleError(new FSAccessException("Data retrieval failed"));
-                }
-            }
-        });
+                });
     }
 
     public void usersOrderedBy(String orderedBy, CompletionHandler<ArrayList<User>> ch) {
         collectionRef.orderBy(orderedBy).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        ArrayList<User> users = new ArrayList<>();
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
+                .addOnCompleteListener(task -> {
+                    ArrayList<User> users = new ArrayList<>();
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            if (document.getData() != null) {
                                 User newUser = mapToData(document.getData());
                                 newUser.setId(document.getId());
                                 users.add(newUser);
                             }
-                            ch.handleSuccess(users);
-                        } else {
-                            ch.handleError(new FSAccessException("Firestore query not successful"));
                         }
+                        ch.handleSuccess(users);
+                    } else {
+                        ch.handleError(new FSAccessException("Firestore query not successful"));
                     }
                 });
     }
@@ -81,25 +75,26 @@ public class UserMapper extends DataMapper<User> {
      */
     public void queryUsername(String username, CompletionHandler<User> ch) {
         collectionRef.whereEqualTo("username", username).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            User foundUser = null;
-                            QuerySnapshot queryResult = task.getResult();
-                            if (queryResult.getDocuments().size() > 1) {
-                                ch.handleError(new FSAccessException("Username is not unique"));
-                            } else if (queryResult.getDocuments().size() == 1) {
-                                foundUser = mapToData(queryResult.getDocuments().get(0).getData());
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        QuerySnapshot queryResult = task.getResult();
+                        if (queryResult.getDocuments().size() > 1) {
+                            ch.handleError(new FSAccessException("Username is not unique"));
+                        } else if (queryResult.getDocuments().size() == 1) {
+                            Map<String,Object> data = queryResult.getDocuments().get(0).getData();
+                            if (data != null) {
+                                User foundUser = mapToData(data);
                                 foundUser.setId(queryResult.getDocuments().get(0).getId());
                                 ch.handleSuccess(foundUser);
-                            }else {
-                                ch.handleError(new FSAccessException("Username is not unique"));
+                            } else {
+                                ch.handleError(new FSAccessException("Null data"));
                             }
-
                         } else {
-                            ch.handleError(new FSAccessException("Firestore query not successful"));
+                            ch.handleError(new FSAccessException("Username is not unique"));
                         }
+
+                    } else {
+                        ch.handleError(new FSAccessException("Firestore query not successful"));
                     }
                 });
     }
@@ -137,16 +132,20 @@ public class UserMapper extends DataMapper<User> {
         user.setUsername((String) dataMap.get("username"));
         user.setEmail((String) dataMap.get("email"));
 
-        Integer bestScore = dataMap.get("bestScore") == null ? 0 : (int)(long)dataMap.get("bestScore");
-        user.setBestScore(bestScore);
+        Integer bestScore = (Integer)dataMap.get("bestScore");
+        user.setBestScore(bestScore != null ? bestScore : 0);
 
-        Integer scanCount = dataMap.get("scanCount") == null ? 0 : (int)(long)dataMap.get("scanCount");
-        user.setScanCount(scanCount);
+        Integer scanCount = (Integer)dataMap.get("scanCount");
+        user.setScanCount(scanCount != null ? (int)(long)scanCount : 0);
 
-        Integer score = dataMap.get("score") == null ? 0 : (int)(long)dataMap.get("score");
-        user.setScore(score);
+        Integer score = (Integer)dataMap.get("score");
+        user.setScore(score != null ? (int)(long)score : 0);
 
-        user.setUdid((ArrayList<String>)dataMap.get("udid"));
+        ArrayList<?> udidList = (ArrayList<?>)dataMap.get("udid");
+        if (udidList != null) {
+            //noinspection unchecked
+            user.setUdid((ArrayList<String>) udidList);
+        }
         user.setOwner(Boolean.valueOf(String.valueOf(dataMap.get("isOwner"))));
         return user;
     }

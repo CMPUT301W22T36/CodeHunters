@@ -7,7 +7,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,7 +16,7 @@ public abstract class DataMapper<D extends Data> {
      * Used to handle the completion of async Firestore operations.
      * @param <T> Return type of completion handler.
      */
-    public class CompletionHandler<T> {
+    public static class CompletionHandler<T> {
         public void handleSuccess(T data) {
         }
 
