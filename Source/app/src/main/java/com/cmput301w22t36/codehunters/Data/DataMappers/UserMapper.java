@@ -61,7 +61,9 @@ public class UserMapper extends DataMapper<User> {
                         ArrayList<User> users = new ArrayList<>();
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
-                                users.add(mapToData(document.getData()));
+                                User newUser = mapToData(document.getData());
+                                newUser.setId(document.getId());
+                                users.add(newUser);
                             }
                             ch.handleSuccess(users);
                         } else {

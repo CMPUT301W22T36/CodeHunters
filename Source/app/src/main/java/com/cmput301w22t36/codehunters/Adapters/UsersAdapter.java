@@ -16,13 +16,9 @@ import com.cmput301w22t36.codehunters.R;
 import java.util.ArrayList;
 
 public class UsersAdapter extends ArrayAdapter<User> {
-    private ArrayList<User> users;
-    private Context context;
 
     public UsersAdapter(Context context, ArrayList<User> usersList) {
         super(context, 0, usersList);
-        this.context = context;
-        this.users = usersList;
     }
 
     @NonNull
@@ -31,10 +27,10 @@ public class UsersAdapter extends ArrayAdapter<User> {
         View view = convertView;
 
         if(view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.arrayadapter_users, parent,false);
+            view = LayoutInflater.from(super.getContext()).inflate(R.layout.arrayadapter_users, parent,false);
         }
 
-        User thisUser = users.get(position);
+        User thisUser = super.getItem(position);
         TextView username = view.findViewById(R.id.usernameTextView);
         TextView totalScore = view.findViewById(R.id.scoreTextView);
         TextView scanCount = view.findViewById(R.id.countTextView);

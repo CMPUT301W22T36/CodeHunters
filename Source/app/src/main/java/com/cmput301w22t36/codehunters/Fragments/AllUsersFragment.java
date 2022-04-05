@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.cmput301w22t36.codehunters.Adapters.UsersAdapter;
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 import com.cmput301w22t36.codehunters.TabSetter;
 
@@ -104,6 +106,19 @@ public class AllUsersFragment extends Fragment {
         userArrayAdapter = new UsersAdapter(this.getContext(), A);
         allUsers.setAdapter(userArrayAdapter);
         userArrayAdapter.notifyDataSetChanged();
+
+        allUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MainActivity.mainActivity.searchUser = userArrayAdapter.getItem(i);
+
+                SearchUserFragment searchUserFragment = SearchUserFragment.newInstance();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragment_container, searchUserFragment, null)
+                        .addToBackStack("tag").commit();
+            }
+        });
     }
 
     @Override
