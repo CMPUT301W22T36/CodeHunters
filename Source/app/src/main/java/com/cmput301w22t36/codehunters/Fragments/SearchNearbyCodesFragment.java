@@ -3,6 +3,7 @@ package com.cmput301w22t36.codehunters.Fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
@@ -191,21 +193,54 @@ public class SearchNearbyCodesFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
-        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            /**
-             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
-             * @param adapterView
-             * @param view
-             * @param i
-             * @param l
-             */
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
-                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+        codeList.setOnItemClickListener((adapterView, view1, i, l) -> {
+            QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
+            Geolocation_PhotosFragment gpf = new Geolocation_PhotosFragment(qrCodeClicked);
 
+            // Retrieve image for clicked qr post:
+            QRCodeMapper qm1 = new QRCodeMapper();
+            if (qrCodeClicked.getPhotourl() != null) {
+                qm1.getImage(qrCodeClicked.getPhotourl(), qm1.new CompletionHandler<Bitmap>() {
+                    @Override
+                    public void handleSuccess(Bitmap bMap) {
+                        qrCodeClicked.setPhoto(bMap);
+                        FragmentActivity fActivity = getActivity();
+                        if (fActivity != null) {
+                            gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                        }
+                    }
+
+                    @Override
+                    public void handleError(Exception e) {
+                        FragmentActivity fActivity = getActivity();
+                        if (fActivity != null) {
+                            gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                        }
+                    }
+                });
+            }
+            else {
+                FragmentActivity fActivity = getActivity();
+                if (fActivity != null) {
+                    gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                }
             }
         });
+//        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            /**
+//             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
+//             * @param adapterView
+//             * @param view
+//             * @param i
+//             * @param l
+//             */
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
+//                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+//
+//            }
+//        });
 
 
     }
