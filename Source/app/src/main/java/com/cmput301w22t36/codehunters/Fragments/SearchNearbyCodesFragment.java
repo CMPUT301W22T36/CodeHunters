@@ -3,6 +3,7 @@ package com.cmput301w22t36.codehunters.Fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.QRCodeMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.QRCodeData;
@@ -31,8 +33,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
- * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
+ * Introductory Comments:
  *
+ * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
  * Take in the users prompts to search for QR codes by geolocation.
  * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
@@ -43,7 +46,6 @@ public class SearchNearbyCodesFragment extends Fragment {
     private EditText latInput;
     private EditText lonInput;
     private Button search;
-    //private ArrayList<QRCode> codeArrayList;
     private ArrayList<QRCode> codeArrayList = new ArrayList<>();
     private ArrayAdapter<QRCode> codeArrayAdapter;
     private ArrayList<QRCode> sortedDistanceQRList = new ArrayList<>();
@@ -138,22 +140,27 @@ public class SearchNearbyCodesFragment extends Fragment {
     }
 
     /**
-     * Obtain a list of the closest QR codes given the latitude and longitude and a list of QR codes
+     * The qrDistance function finds the Manhattan Distance of your current location and
+     * the location of QR Codes and returns a sortedDistanceQRList if the distance converted
+     * to KM is less than 5 KM
      * @param qrdistance: the list of all QR codes from which to obtain the closest
      * @param lat: the given latatidue
      * @param lon: the given longitude
+     * @return sortedDistanceQRList
      */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
             for (int i = 0; i < qrdistance.size(); i++) {
                 QRCode qrcode = qrdistance.get(i);
                 if (qrcode.hasLocation()) {
+                    //Manhattan distance of current location and location of QR Codes from database
+                    // is computed
                     double databaseCodeLat = qrcode.getLat();
                     double databaseCodeLongi = qrcode.getLon();
                     double latDistance = Math.abs(lat - databaseCodeLat);
                     double longiDistance = Math.abs(lon - databaseCodeLongi);
-                    //double qrManhattanDistance = latDistance + longiDistance;
-                    double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
-                    double c = 2 * Math.asin(Math.sqrt(a));
+                    // Manhattan Distance is converted to KM
+                    double a = Math.pow(Math.sin(Math.toRadians(latDistance / 2)), 2) + Math.cos(Math.toRadians(databaseCodeLat)) * Math.cos(Math.toRadians(lat)) * Math.pow(Math.sin(Math.toRadians(longiDistance / 2)), 2);
+                    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                     double km = 6371 * c;
                     if (km < 5) {
                         sortedDistanceQRList.add(qrcode);
@@ -163,16 +170,22 @@ public class SearchNearbyCodesFragment extends Fragment {
         return sortedDistanceQRList;
     }
 
+    /**
+     * Displays the list of sorted QRCodes by location in the listview
+     * @param latInteger
+     * @param lonInteger
+     * @param codeArrayList
+     */
     // Obtain the nearby QR codes and display them with the ListView
     private void displayList(double latInteger, double lonInteger, ArrayList<QRCode> codeArrayList) {
 
-        // Get bestcodes, need get all data from database and do some sorts.
+        //Get all codes from the database and apply the qrDistance function on them, then display them
         QRCodeMapper qrm = new QRCodeMapper();
-        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+        qrm.getAllCodesLocations(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
                 listQRs(QRA);
-                ArrayList<QRCode> sortedQRDistanceList = new ArrayList<QRCode>();
+                ArrayList<QRCode> sortedQRDistanceList;
                 sortedQRDistanceList = qrDistance(codeArrayList, latInteger, lonInteger);
                 codeArrayAdapter = new QRCodeAdapter(getContext(), sortedQRDistanceList);
                 codeList.setAdapter(codeArrayAdapter);
@@ -183,25 +196,43 @@ public class SearchNearbyCodesFragment extends Fragment {
                 // Handle the case where user not found.
             }
         });
-        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            /**
-             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
-             * @param adapterView
-             * @param view
-             * @param i
-             * @param l
-             */
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
-                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+        codeList.setOnItemClickListener((adapterView, view1, i, l) -> {
+            QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
+            Geolocation_PhotosFragment gpf = new Geolocation_PhotosFragment(qrCodeClicked);
 
+            // Retrieve image for clicked qr post:
+            QRCodeMapper qm1 = new QRCodeMapper();
+            if (qrCodeClicked.getPhotourl() != null) {
+                qm1.getImage(qrCodeClicked.getPhotourl(), qm1.new CompletionHandler<Bitmap>() {
+                    @Override
+                    public void handleSuccess(Bitmap bMap) {
+                        qrCodeClicked.setPhoto(bMap);
+                        FragmentActivity fActivity = getActivity();
+                        if (fActivity != null) {
+                            gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                        }
+                    }
+
+                    @Override
+                    public void handleError(Exception e) {
+                        FragmentActivity fActivity = getActivity();
+                        if (fActivity != null) {
+                            gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                        }
+                    }
+                });
+            }
+            else {
+                FragmentActivity fActivity = getActivity();
+                if (fActivity != null) {
+                    gpf.show(fActivity.getSupportFragmentManager(), "ADD_GEO");
+                }
             }
         });
     }
 
     /**
-     * Add the list A of QR codes to the global list that interacts with the adapter
+     * Gets all QRCodeData objects and adds to codeArrayList
      * @param A: the list of all QR codes from which to obtain the closest
      */
     public void listQRs(ArrayList<QRCodeData> A){

@@ -13,6 +13,7 @@ import com.cmput301w22t36.codehunters.Data.DataTypes.User;
 import com.cmput301w22t36.codehunters.Data.FSAccessException;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -259,6 +260,47 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                 }
 
                 ArrayList<QRCodeData> codes = new ArrayList<>(uniqueCodes.values());
+                ch.handleSuccess(codes);
+            } else {
+                ch.handleError(new FSAccessException("Failed to retrieve qrcodes from Firestore"));
+            }
+        });
+    }
+
+    /**
+     * Gets a list of every QRCode with a unique location, prioritizing ones with a photo upon
+     * duplicates.
+     * @param ch
+     */
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getAllCodesLocations(CompletionHandler<ArrayList<QRCodeData>> ch) {
+        // get literally every QRcode :(
+        // For hashMap
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // build up a hashmap of all the unique codes, first come first serve
+                HashMap<GeoPoint, QRCodeData> uniqueLocations = new HashMap<>();
+                for (DocumentSnapshot docSnap : task.getResult()) {
+                    if (docSnap.getData() != null) {
+                        QRCodeData qrCode = mapToData(docSnap.getData());
+                        // nullify specific fields
+                        qrCode.setId(docSnap.getId());
+                        GeoPoint thisLocation = new GeoPoint(qrCode.getLat(), qrCode.getLon());
+                        if (!uniqueLocations.containsKey(thisLocation)) {
+                            uniqueLocations.put(thisLocation, qrCode);
+                        } else {
+                            // Replace original if it doesn't have an image.
+                            QRCodeData uniqueQr = uniqueLocations.get(qrCode.getHash());
+                            if (uniqueQr != null && uniqueQr.getPhotourl() == null) {
+                                GeoPoint uniqueQrLocation = new GeoPoint(uniqueQr.getLat(), uniqueQr.getLon());
+                                uniqueLocations.replace(uniqueQrLocation, qrCode);
+                            }
+                        }
+                    }
+                }
+
+                ArrayList<QRCodeData> codes = new ArrayList<>(uniqueLocations.values());
                 ch.handleSuccess(codes);
             } else {
                 ch.handleError(new FSAccessException("Failed to retrieve qrcodes from Firestore"));

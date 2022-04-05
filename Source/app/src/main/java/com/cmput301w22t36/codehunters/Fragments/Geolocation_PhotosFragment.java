@@ -31,13 +31,12 @@ import java.util.Date;
 
 /**
  * Introductory Comments:
- *      This Java file is a fragment representing the geolocation and photo dialog of our application.
- *      The fragment opens when a QR Code in the Codes fragment is clicked and shows the geolocation
- *      and photo of the QR Code and QR Code Location respectively. If location or photo was not
- *      provided, this fragment will not show anything
+ *      This Java file is a fragment representing the geolocation, photo and comment
+ *      dialog of our application. The fragment opens when a QR Code in the Codes fragment is
+ *      clicked and shows the geolocation ad photo of the QR Code and QR Code Location respectively,
+ *      as well as any comments that have been made by the User or Players. If location, photo or
+ *      comments were not provided, this fragment will not show anything
  *
- *      **TODO: Outstanding issue: The XML for this file is currently plain and needs to be
- *      updated to look better**
  */
 
 public class Geolocation_PhotosFragment extends DialogFragment {
@@ -60,7 +59,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
     /**
      * Opens dialog box and sets TextView and ImageView to geolocation and Bitmap image
      * @return
-     * returns the dialog box showing geolocation and photo
+     * returns the dialog box showing geolocation, photo and comments
      */
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.geolocation_photos, null);
@@ -70,7 +69,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         final EditText editText = new EditText(getContext());
 
 
-
+//Sets geolocation and image to their respective TextView and ImageView
         if (qrCodeClicked.getGeolocation() != null) {
             geolocation.setText(qrCodeClicked.getGeolocation().toString());
         } else {
@@ -89,9 +88,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
         cm.getCommentsForHash(qrCodeClicked.getHash(), cm.new CompletionHandler<ArrayList<Comment>>() {
             @Override
             public void handleSuccess(ArrayList<Comment> comments) {
-                String aggregateComments = "";
                 for (Comment c : comments) {
-//                      aggregateComments += c.getComment();
                     String uid = c.getUserRef().substring(7);
                     UserMapper um = new UserMapper();
                     um.get(uid, um.new CompletionHandler<User>() {
@@ -103,8 +100,7 @@ public class Geolocation_PhotosFragment extends DialogFragment {
                             commentsArrayAdapter.notifyDataSetChanged();
                         }
                     });
-//                    aggregateComments += c.getComment() + "\n";
-//                    commentBox.setText(aggregateComments);
+
                 }
                 commentsArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,commentsList){
 
@@ -113,14 +109,12 @@ public class Geolocation_PhotosFragment extends DialogFragment {
                         View view =super.getView(position, convertView, parent);
 
                         TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-                        /*YOUR CHOICE OF COLOR*/
+                        //Changes color of text in the listView to Black
                         textView.setTextColor(Color.BLACK);
 
                         return view;
                     }
                 };
-
                 commentBox.setAdapter(commentsArrayAdapter);
             }
         });
@@ -133,11 +127,13 @@ public class Geolocation_PhotosFragment extends DialogFragment {
                 .setNegativeButton("Add Comment", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                // Creates a dialog box to Add Comments
                 AlertDialog.Builder addCommentBuilder = new AlertDialog.Builder(getContext());
                 addCommentBuilder.setTitle("Add Your Comments");
                 addCommentBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // Updates database with the comment that the User enters
                         String userComment = editText.getText().toString();
                         Comment comment = new Comment();
                         comment.setUserRef("/users/" + MainActivity.mainActivity.loggedinUser.getId().toString());

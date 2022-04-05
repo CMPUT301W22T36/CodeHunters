@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (result.getResultCode() == 12) {
                         // Load the Map Fragment
                         QRCodeMapper codeMapper = new QRCodeMapper();
-                        codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                        codeMapper.getAllCodesLocations(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
                             @Override
                             public void handleSuccess(ArrayList<QRCodeData> codes) {
                                 ArrayList<QRCode> newCodes= new ArrayList<>();
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 QRCodeMapper codeMapper = new QRCodeMapper();
-                codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                codeMapper.getAllCodesLocations(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
                     @Override
                     public void handleSuccess(ArrayList<QRCodeData> codes) {
                         ArrayList<QRCode> newCodes = new ArrayList<>();
@@ -497,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         //Dismiss dialog
                                         dialogInterface.dismiss();
                                         QRCodeMapper codeMapper = new QRCodeMapper();
-                                        codeMapper.getAllCodes(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
+                                        codeMapper.getAllCodesLocations(codeMapper.new CompletionHandler<ArrayList<QRCodeData>>() {
                                             @Override
                                             public void handleSuccess(ArrayList<QRCodeData> codes) {
                                                 ArrayList<QRCode> newCodes= new ArrayList<>();
