@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.cmput301w22t36.codehunters.Data.DataMappers.UserMapper;
 import com.cmput301w22t36.codehunters.Data.DataTypes.User;
+import com.cmput301w22t36.codehunters.MainActivity;
 import com.cmput301w22t36.codehunters.R;
 
 /**
@@ -130,7 +131,7 @@ public class EditEmailFragment extends Fragment {
                             public void handleSuccess(User data) {
                                 // Do something with returned user data.
                                 // This will (probably) execute after the FixedCase1 function returns.
-
+                                MainActivity.mainActivity.loggedinUser = data;
                                 // Return to the user profile
                                 getParentFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, UserPersonalProfileFragment.class, null)
