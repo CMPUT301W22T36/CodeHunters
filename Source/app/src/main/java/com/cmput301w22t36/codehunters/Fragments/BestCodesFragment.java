@@ -35,7 +35,7 @@ import java.util.Observer;
 //Introduction: This fragment is used to calculate and get codes with best scores.
 //              It will get all codes from online database, sort them and display them from high score to low.
 //              It can replace socialFragmentView in SocialFragment
-//              just for  now: No actual functions but all display and navigation are completed.
+//              QRcodes are clickable and will show the details of the code
 public class BestCodesFragment extends Fragment {
     private TextView title;
     private ListView bestCodes;
@@ -100,6 +100,7 @@ public class BestCodesFragment extends Fragment {
             }
         });
 
+
         bestCodes.setOnItemClickListener((adapterView, view1, i, l) -> {
             QRCode qrCodeClicked = (QRCode) bestCodes.getItemAtPosition(i);
             Geolocation_PhotosFragment gpf = new Geolocation_PhotosFragment(qrCodeClicked);
@@ -134,6 +135,10 @@ public class BestCodesFragment extends Fragment {
             }
         });
     }
+    /**
+     * sort all qrcode get from database and set to arrayAdapter
+     * @param retrievedQrCodes
+     */
 
     public void rankAndSet(ArrayList<QRCodeData> retrievedQrCodes){
         ArrayList<QRCode> codeArrayList = new ArrayList<>();

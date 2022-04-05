@@ -31,6 +31,7 @@ import java.util.Observer;
  */
 //Introduction: This fragment is used to list all users name in game.
 //              It will help user check other users' name and search .
+//              Users are clickable to show the SearchUser fragment for details
 public class AllUsersFragment extends Fragment {
     private ListView allUsers;
     private ArrayAdapter<User> userArrayAdapter;
@@ -81,6 +82,10 @@ public class AllUsersFragment extends Fragment {
         });
 
     }
+    /**
+     * display all users get from database
+     * @param A
+     */
     public void display(ArrayList<User> A){
         // Gets called from different thread, needs to do null checks.
         Context context = this.getContext();

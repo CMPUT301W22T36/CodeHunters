@@ -31,7 +31,7 @@ import java.util.Observer;
 //Introduction: This fragment is used to calculate and get bests in different ranking, including by highest score, by number,by total score.
 //              It will get all data from online database, do the ranks and display the ranks.
 //              It can replace socialFragmentView in SocialFragment
-//              just for  now: No actual functions but all display and navigation are completed.
+//              It get username from social fragment so that users can know where they are.
 public class ScoreBoardFragment extends Fragment {
     private TextView title;
     private TextView byHighestScoreT;
@@ -137,6 +137,11 @@ public class ScoreBoardFragment extends Fragment {
 
 
     }
+    /**
+     * handle data get from database, which is get user's rank and one above, one below to display
+     * @param A
+     * @param T
+     */
     public void handleData(ArrayList<User> A,TextView T) {
         Integer found = 0;
 
