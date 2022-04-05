@@ -344,19 +344,10 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = fileRef.putBytes(data);
-        uploadTask.addOnSuccessListener(task -> {
-                    //if (task.isSuccessful()) {
-                    ch.handleSuccess(fileName);
-                    //else {
-                     //   ch.handleError(new FSAccessException("Could not store image"));
-                    //
-                });
-        uploadTask.addOnFailureListener(exception -> {
-            // Handle unsuccessful uploads
-        });
+        uploadTask.addOnSuccessListener(task -> ch.handleSuccess(fileName));
 
-
-        }
+        uploadTask.addOnFailureListener(ch::handleError);
+    }
 
 
     @Override
