@@ -158,8 +158,8 @@ public class SearchNearbyCodesFragment extends Fragment {
                     double latDistance = Math.abs(lat - databaseCodeLat);
                     double longiDistance = Math.abs(lon - databaseCodeLongi);
                     // Manhattan Distance is converted to KM
-                    double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
-                    double c = 2 * Math.asin(Math.sqrt(a));
+                    double a = Math.pow(Math.sin(Math.toRadians(latDistance / 2)), 2) + Math.cos(Math.toRadians(databaseCodeLat)) * Math.cos(Math.toRadians(lat)) * Math.pow(Math.sin(Math.toRadians(longiDistance / 2)), 2);
+                    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                     double km = 6371 * c;
                     if (km < 5) {
                         sortedDistanceQRList.add(qrcode);
@@ -182,11 +182,11 @@ public class SearchNearbyCodesFragment extends Fragment {
 
         //Get all codes from the database and apply the qrDistance function on them, then display them
         QRCodeMapper qrm = new QRCodeMapper();
-        qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
+        qrm.getAllCodesLocations(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
             public void handleSuccess(ArrayList<QRCodeData> QRA) {
                 listQRs(QRA);
-                ArrayList<QRCode> sortedQRDistanceList = new ArrayList<QRCode>();
+                ArrayList<QRCode> sortedQRDistanceList;
                 sortedQRDistanceList = qrDistance(codeArrayList, latInteger, lonInteger);
                 codeArrayAdapter = new QRCodeAdapter(getContext(), sortedQRDistanceList);
                 codeList.setAdapter(codeArrayAdapter);
