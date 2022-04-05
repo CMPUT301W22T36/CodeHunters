@@ -149,24 +149,25 @@ public class SearchNearbyCodesFragment extends Fragment {
      * @return sortedDistanceQRList
      */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
-            for (int i = 0; i < qrdistance.size(); i++) {
-                QRCode qrcode = qrdistance.get(i);
-                if (qrcode.hasLocation()) {
-                    //Manhattan distance of current location and location of QR Codes from database
-                    // is computed
-                    double databaseCodeLat = qrcode.getLat();
-                    double databaseCodeLongi = qrcode.getLon();
-                    double latDistance = Math.abs(lat - databaseCodeLat);
-                    double longiDistance = Math.abs(lon - databaseCodeLongi);
-                    // Manhattan Distance is converted to KM
-                    double a = Math.pow(Math.sin(Math.toRadians(latDistance / 2)), 2) + Math.cos(Math.toRadians(databaseCodeLat)) * Math.cos(Math.toRadians(lat)) * Math.pow(Math.sin(Math.toRadians(longiDistance / 2)), 2);
-                    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    double km = 6371 * c;
-                    if (km < 5) {
-                        sortedDistanceQRList.add(qrcode);
-                    }
+        sortedDistanceQRList.clear();
+        for (int i = 0; i < qrdistance.size(); i++) {
+            QRCode qrcode = qrdistance.get(i);
+            if (qrcode.hasLocation()) {
+                //Manhattan distance of current location and location of QR Codes from database
+                // is computed
+                double databaseCodeLat = qrcode.getLat();
+                double databaseCodeLongi = qrcode.getLon();
+                double latDistance = Math.abs(lat - databaseCodeLat);
+                double longiDistance = Math.abs(lon - databaseCodeLongi);
+                // Manhattan Distance is converted to KM
+                double a = Math.pow(Math.sin(Math.toRadians(latDistance / 2)), 2) + Math.cos(Math.toRadians(databaseCodeLat)) * Math.cos(Math.toRadians(lat)) * Math.pow(Math.sin(Math.toRadians(longiDistance / 2)), 2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                double km = 6371 * c;
+                if (km < 5) {
+                    sortedDistanceQRList.add(qrcode);
                 }
             }
+        }
         return sortedDistanceQRList;
     }
 
