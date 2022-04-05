@@ -42,6 +42,7 @@ import java.util.ArrayList;
  *
  * Load the set up new account activity. Test if the device has an associated account, connect
  * the username to this device and game session, and proceed to the main game screen.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class FirstWelcomeActivity extends AppCompatActivity {
     // Initialize views to manage them within the activity
@@ -52,15 +53,16 @@ public class FirstWelcomeActivity extends AppCompatActivity {
     private TextView welcomeHeader;
     private TextView loadingHeader;
 
-    // The user should not be able to exit this activity without having ensured the device has
-    // connected to an account
+    /**
+     * The user should not be able to exit this activity without having ensured the device has
+     * connected to an account
+     */
     @Override
     public void onBackPressed() {
         // The back button should do nothing
     }
 
-    /**                setResult(22, intent); // Use 22 to indicate that the ScanToLogin activity should be loaded
-
+    /**
      * Test if this device already has an associated account, then either load that account or
      * prompt to setup a new account.
      * @param savedInstanceState: This is the bundle that will be called through the superclass
@@ -96,8 +98,8 @@ public class FirstWelcomeActivity extends AppCompatActivity {
         });
     }
 
+    // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
     private void userFound(User user) {
-        // If it is in the database, i.e. the user already has an account on this device, set the user and skip the login page
         MainActivity.mainActivity.loggedinUser = user;
         MainActivity.mainActivity.updateCodeLists();
 
@@ -108,9 +110,8 @@ public class FirstWelcomeActivity extends AppCompatActivity {
         finish();
     }
 
+    // If the user does not yet have an account on this device, prompt them to set up their account
     private void userNotFound(String UDID) {
-        // If the user does not yet have an account on this device, prompt them to set up their account
-
         // Obtain the views within the activity
         editNameField = (EditText) findViewById(R.id.usernameView);
         editEmailField = (EditText) findViewById(R.id.userEmailView);
@@ -158,6 +159,11 @@ public class FirstWelcomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Given user input, create and store the new user account
+     * @param username: the new user's unique username
+     * @param email: the new user's contact information
+     */
     void storeAccount(String username, String email) {
         // Store the new account, and move to the main game activity
         UserMapper um = new UserMapper();

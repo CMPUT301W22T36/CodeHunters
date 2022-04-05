@@ -31,6 +31,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
  *
  * Load the set up user's personal profile fragment and display their information. Obtain any
  * username or email edits.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class UserPersonalProfileFragment extends Fragment {
 
@@ -163,7 +164,6 @@ public class UserPersonalProfileFragment extends Fragment {
              */
             @Override
             public void onClick(View view) {
-                // TODO: Placeholder
                 MultiFormatWriter writer = new MultiFormatWriter();
                 try {
                     User loggedInUser = ((MainActivity) getActivity()).loggedinUser;
@@ -196,7 +196,6 @@ public class UserPersonalProfileFragment extends Fragment {
              */
             @Override
             public void onClick(View view) {
-                // TODO: Placeholder
                 MultiFormatWriter writer = new MultiFormatWriter();
                 try {
                     //Initialize bit matrix

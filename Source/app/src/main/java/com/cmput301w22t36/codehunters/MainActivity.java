@@ -57,6 +57,7 @@ import java.util.ArrayList;
  * Class: MainActivity
  *
  * Load the main foundational fragment with a bottom navigation bar and call the start of the app.
+ * Note: All handleSuccess() and handleError() methods are processed calls to the Firestore database.
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -70,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityResultLauncher<Intent> activityResultLauncher;
     public CodesFragment codesFragment;
     public User searchUser;
-    //TODO TEST - MEHUL (populate list of qrcodes to test listview)
     public ArrayList<QRCode> codeArrayList = new ArrayList<QRCode>();
     QRCode current_code;
 
@@ -104,16 +104,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 openMap(newCodes);
                             }
                         });
-                        /*getSupportFragmentManager().beginTransaction()
-                                .setReorderingAllowed(true)
-                                .add(R.id.fragment_container, MapFragment.class, null)
-                                .commit();*/
                     } else if (result.getResultCode() == 22) {
                         // Load the ScanToLogin activity
-                        // TODO: change to ScanToLogin fragment name, and once return goto MapFrag.
-                        /*Intent myIntent = new Intent(MainActivity.this, ScanToLogin.class);
-                        startActivity(myIntent);*/
-
                         IntentIntegrator intentIntegrator = new IntentIntegrator(
                                 com.cmput301w22t36.codehunters.MainActivity.this//getActivity()
                         );
@@ -136,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mainActivity = this;
         // Go to the First Welcome Fragment to identify this device and CodeHunters account
@@ -163,9 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 = new ColorDrawable(Color.parseColor("#e6ccff"));
         actionBar.setBackgroundDrawable(colorDrawable);
 
-
-
-
         // The remaining setup for the main screens
         codesNav = findViewById(R.id.navToCodes);
         mapNav = findViewById(R.id.navToMap);
@@ -182,10 +170,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 codesFragment = CodesFragment.newInstance(codeArrayList);
                 ft.replace(R.id.fragment_container, codesFragment);
                 ft.commit();
-//                getSupportFragmentManager().beginTransaction()
-//                        .setReorderingAllowed(true)
-//                        .replace(R.id.fragment_container, CodesFragment.class, null)
-//                        .commit();
             }
         });
 
@@ -197,11 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SocialFragment fragmentDemoS = SocialFragment.newInstance(loggedinUser.getUsername());
                 fts.replace(R.id.fragment_container,fragmentDemoS);
                 fts.commit();
-                /*
-                getSupportFragmentManager().beginTransaction()
-                        .setReorderingAllowed(true)
-                        .replace(R.id.fragment_container, SocialFragment.class, null)
-                        .commit();*/
             }
         });
 
@@ -280,9 +259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        IntentResult intentResult = IntentIntegrator.parseActivityResult(
-//                requestCode,resultCode,data
-//        );
+
         IntentResult intentResult = IntentIntegrator.parseActivityResult(
                 resultCode, data
         );
@@ -613,7 +590,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
+    /**
+     * Update the list of QR codes to include the most recent changes
+     */
     public void updateCodeLists() {
         QRCodeMapper qrmapper = new QRCodeMapper();
         String UDID = Settings.Secure.getString(this.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -633,6 +612,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /**
+     * When the user selects the Map tab, open the MapFragment
+     * @param codes: the QR codes to display
+     */
     public void openMap(ArrayList<QRCode> codes) {
         MapFragment mapFragment = MapFragment.newInstance(codes);
         getSupportFragmentManager().beginTransaction()
@@ -641,6 +624,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .commit();
     }
 
+    /**
+     * Given a list of QR codes, compute their distances
+     * @param qrdistance: the list of QR codes to evaluate
+     */
     public void qrDistance(ArrayList<QRCode> qrdistance) {
 
         if (ActivityCompat.checkSelfPermission(MainActivity.this,
@@ -662,7 +649,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // When items are clicked in the sidebar, move to the specified fragment.
+    /**
+     * When items are clicked in the sidebar, move to the specified fragment.
+     * @param item: the sidebar
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -683,7 +673,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // To close the sidebar drawer if it is open
+    /**
+     * Set the back button to close the sidebar drawer if it is open
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -693,6 +685,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Refresh the user's game statistics
+     */
     public void updateUsersScore() {
         int totalScore = 0;
         int bestCode = 0;
@@ -714,6 +709,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /**
+     * When items are clicked in the navigation bar, update the color indicating the current one
+     * that is selected
+     * @param index: the button selected
+     */
     public void updateNavBar(int index) {
         if (index == 0) {
             codesNav.setBackgroundColor(Color.parseColor("#9C27B0"));
