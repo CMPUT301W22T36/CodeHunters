@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/** Utility for operating on Comments in Firestore
+ */
 public class CommentMapper extends DataMapper<Comment> {
-    // Constants for document fields.
+    /** Constants for fields in Firestore
+     */
     enum Fields {
         USERREF("userRef"),
         HASHREF("hashRef"),
@@ -37,10 +40,12 @@ public class CommentMapper extends DataMapper<Comment> {
     public CommentMapper() {
         super();
         collectionRef = db.collection("comments");
-
     }
 
-    // hash is the hash of a QRCode
+    /** Gets all comments associated with a particular hash.
+     * @param hash Hash of QR code.
+     * @param ch Handles completion of operation.
+     */
     public void getCommentsForHash(String hash, CompletionHandler<ArrayList<Comment>> ch) {
         collectionRef.whereEqualTo(Fields.HASHREF.toString(), hash)
                 .get()
@@ -63,6 +68,10 @@ public class CommentMapper extends DataMapper<Comment> {
     }
 
 
+    /** Converts a comment to a map.
+     * @param data Comment to be converted to map.
+     * @return Mapped comment.
+     */
     @Override
     protected Map<String, Object> dataToMap(Comment data) {
         Map<String, Object> map = new HashMap<>();
@@ -73,6 +82,10 @@ public class CommentMapper extends DataMapper<Comment> {
         return map;
     }
 
+    /** Converts map to comment.
+     * @param dataMap Map to be converted.
+     * @return Comment generated from map.
+     */
     @Override
     protected Comment mapToData(@NonNull Map<String, Object> dataMap) {
         // NOTE: Does not set the documentId!

@@ -202,8 +202,8 @@ public class SearchNearbyCodesFragment extends Fragment {
 
             // Retrieve image for clicked qr post:
             QRCodeMapper qm1 = new QRCodeMapper();
-            if (qrCodeClicked.getPhotourl() != null) {
-                qm1.getImage(qrCodeClicked.getPhotourl(), qm1.new CompletionHandler<Bitmap>() {
+            if (qrCodeClicked.getPhotoUrl() != null) {
+                qm1.getImage(qrCodeClicked.getPhotoUrl(), qm1.new CompletionHandler<Bitmap>() {
                     @Override
                     public void handleSuccess(Bitmap bMap) {
                         qrCodeClicked.setPhoto(bMap);

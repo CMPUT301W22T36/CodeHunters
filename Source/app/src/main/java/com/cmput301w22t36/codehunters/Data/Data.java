@@ -9,8 +9,7 @@ package com.cmput301w22t36.codehunters.Data;
  *      **No Outstanding Issues**
  */
 
-/**
- * Abstract data class
+/** Base class for data objects that are meant to be stored on a database.
  */
 public abstract class Data {
     private String id;

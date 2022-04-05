@@ -10,11 +10,14 @@ import com.cmput301w22t36.codehunters.Data.Data;
  *      **No Outstanding Issues**
  */
 
-/**
- * Represents a comment made on a QRCode "post"
+/** Represents a comment on a QRCode. POJO.
  */
 public class Comment extends Data {
+    /** Reference to a user. Should have "/users/" in front of user id.
+     */
     private String userRef;
+    /** QR code hash. No prefix required, just raw hash.
+     */
     private String hashRef;
     private String comment;
     private long timestamp = System.currentTimeMillis();

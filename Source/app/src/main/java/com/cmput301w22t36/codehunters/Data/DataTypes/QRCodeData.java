@@ -14,16 +14,17 @@ import java.io.Serializable;
  *      **No Outstanding Issues**
  */
 
-/**
- * This is a class that holds the neccessary data for a QRCode to be stored and retrieved from the database
+/** Represents a QR code. POJO.
  */
 public class QRCodeData extends Data implements Serializable {
+    /** Reference to user. Should have prefix of "/users/" in front.
+     */
     private String userRef;
     private int score;
     private String hash;
     private double lat;
     private double lon;
-    private String photourl;
+    private String photoUrl;
     private transient Bitmap photo;
 
     // Access methods need to be defined. Might need a way to record who made what comment as well.
@@ -120,17 +121,17 @@ public class QRCodeData extends Data implements Serializable {
      * @return
      *      photourl of the QRCodeData object
      */
-    public String getPhotourl() {
-        return photourl;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
     /**
      * Set the photourl of the object to the one passed into the function (used in database storing of photos)
-     * @param photourl
-     *      Passed in photourl
+     * @param photoUrl
+     *      Passed in photoUrl
      */
-    public void setPhotourl(String photourl) {
-        this.photourl = photourl;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     /**

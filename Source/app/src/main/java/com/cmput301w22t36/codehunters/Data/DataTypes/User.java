@@ -25,7 +25,7 @@ public class User extends Data {
     // the list of QR codes that this user has scanned
     private ArrayList<QRCode> UserQRList;
     // the unique device IDs of the user's devices associated with their account
-    private ArrayList<String> udid = new ArrayList<String>();
+    private ArrayList<String> udid = new ArrayList<>();
     // Whether user is owner
     private Boolean isOwner = false;
     // the user's unique username
