@@ -33,8 +33,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
- * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
+ * Introductory Comments:
  *
+ * Class: SearchNearbyCodesFragment, a {@link Fragment} subclass.
  * Take in the users prompts to search for QR codes by geolocation.
  */
 public class SearchNearbyCodesFragment extends Fragment {
@@ -44,7 +45,6 @@ public class SearchNearbyCodesFragment extends Fragment {
     private EditText latInput;
     private EditText lonInput;
     private Button search;
-    //private ArrayList<QRCode> codeArrayList;
     private ArrayList<QRCode> codeArrayList = new ArrayList<>();
     private ArrayAdapter<QRCode> codeArrayAdapter;
     private ArrayList<QRCode> sortedDistanceQRList = new ArrayList<>();
@@ -138,15 +138,26 @@ public class SearchNearbyCodesFragment extends Fragment {
         });
     }
 
+    /**
+     * The qrDistance function finds the Manhattan Distance of your current location and
+     * the location of QR Codes and returns a sortedDistanceQRList if the distance converted
+     * to KM is less than 5 KM
+     * @param qrdistance
+     * @param lat
+     * @param lon
+     * @return sortedDistanceQRList
+     */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
             for (int i = 0; i < qrdistance.size(); i++) {
                 QRCode qrcode = qrdistance.get(i);
                 if (qrcode.hasLocation()) {
+                    //Manhattan distance of current location and location of QR Codes from database
+                    // is computed
                     double databaseCodeLat = qrcode.getLat();
                     double databaseCodeLongi = qrcode.getLon();
                     double latDistance = Math.abs(lat - databaseCodeLat);
                     double longiDistance = Math.abs(lon - databaseCodeLongi);
-//                  double qrManhattanDistance = latDistance + longiDistance;
+                    // Manhattan Distance is converted to KM
                     double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
                     double c = 2 * Math.asin(Math.sqrt(a));
                     double km = 6371 * c;
@@ -160,23 +171,16 @@ public class SearchNearbyCodesFragment extends Fragment {
 
 //
 
+    /**
+     * Displays the list of sorted QRCodes by location in the listview
+     * @param latInteger
+     * @param lonInteger
+     * @param codeArrayList
+     */
     // Obtain the nearby QR codes and display them with the ListView
     private void displayList(double latInteger, double lonInteger, ArrayList<QRCode> codeArrayList) {
 
-        // TODO: obtain the QR codes
-        // Obtain the list of codes with respect to the user input
-        //searchCodes(lat, lon, codeArrayList);
-
-        /*// TODO: remove the placeholder examples
-        QRCode code1 = new QRCode("BFG5DGW54");
-        QRCode code2 = new QRCode("W4GAF75A7");
-        QRCode code3 = new QRCode("Z56SJHGF76");
-        codeArrayList.add(code1);
-        codeArrayList.add(code2);
-        codeArrayList.add(code3);*/
-
-
-        //get bestcodes, need get all data from database and do some sorts.
+        //Get all codes from the database and apply the qrDistance function on them, then display them
         QRCodeMapper qrm = new QRCodeMapper();
         qrm.getAllCodes(qrm.new CompletionHandler<ArrayList<QRCodeData>>() {
             @Override
@@ -226,26 +230,11 @@ public class SearchNearbyCodesFragment extends Fragment {
                 }
             }
         });
-//        codeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            /**
-//             * When a QRCode in the ListView is clicked, a dialog fragment will appear with the code's photo and location
-//             * @param adapterView
-//             * @param view
-//             * @param i
-//             * @param l
-//             */
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                QRCode qrCodeClicked = (QRCode) codeList.getItemAtPosition(i);
-//                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
-//
-//            }
-//        });
 
 
     }
 
-    // TODO: comments
+    // Gets all QRCodeData objects and adds to codeArrayList
     public void listQRs(ArrayList<QRCodeData> A){
         for (int i = 0; i<A.size();i++){
             QRCode qrcode = new QRCode(A.get(i));
@@ -253,7 +242,7 @@ public class SearchNearbyCodesFragment extends Fragment {
         }
     }
 
-    // TODO: comments
+    // Updates the codeArrayAdapter with any changes made
     public void notifyCodesAdapter() {
         codeArrayAdapter.notifyDataSetChanged();
     }
