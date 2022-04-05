@@ -380,10 +380,10 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
         qrCodeData.setHash(Objects.requireNonNull((String) dataMap.get(Fields.CODE.toString())));
 
         Double lat = (Double)dataMap.get(Fields.LAT.toString());
-        qrCodeData.setLat(lat != null ? lat.doubleValue() : 0);
+        qrCodeData.setLat(lat != null ? lat : 0);
 
         Double lon = (Double)dataMap.get(Fields.LON.toString());
-        qrCodeData.setLon(lon != null ? lon.doubleValue() : 0);
+        qrCodeData.setLon(lon != null ? lon : 0);
 
         qrCodeData.setPhotourl((String) dataMap.get(Fields.PHOTOURL.toString()));
         return qrCodeData;
