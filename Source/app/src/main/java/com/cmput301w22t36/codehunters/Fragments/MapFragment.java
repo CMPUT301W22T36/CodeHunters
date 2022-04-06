@@ -257,7 +257,7 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         map.onResume();
-        ((MainActivity) getActivity()).updateNavBar(1);
+        ((MainActivity) getActivity()).updateNavBar(2);
     }
 
     /**
@@ -267,7 +267,10 @@ public class MapFragment extends Fragment {
     public void onPause() {
         super.onPause();
         map.onPause();
+        ((MainActivity) getActivity()).updateNavBar(0);
     }
+
+
 
     /**
      * checks for permissions that the app has from those it needs, then creates a list of the

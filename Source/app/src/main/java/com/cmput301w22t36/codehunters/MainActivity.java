@@ -692,14 +692,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public void updateNavBar(int index) {
         if (index == 0) {
-            codesNav.setBackgroundColor(Color.parseColor("#9C27B0"));
+            codesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             mapNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             socialNav.setBackgroundColor(Color.parseColor("#e6ccff"));
         } else if (index == 1) {
+            codesNav.setBackgroundColor(Color.parseColor("#9C27B0"));
+            mapNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+            socialNav.setBackgroundColor(Color.parseColor("#e6ccff"));
+        } else if (index == 2) {
             codesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             mapNav.setBackgroundColor(Color.parseColor("#9C27B0"));
             socialNav.setBackgroundColor(Color.parseColor("#e6ccff"));
-        } else if (index == 2) {
+        } else if (index == 3) {
             codesNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             mapNav.setBackgroundColor(Color.parseColor("#e6ccff"));
             socialNav.setBackgroundColor(Color.parseColor("#9C27B0"));
