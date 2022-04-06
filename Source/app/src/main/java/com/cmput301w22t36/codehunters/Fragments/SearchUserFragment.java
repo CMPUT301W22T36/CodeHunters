@@ -51,7 +51,6 @@ public class SearchUserFragment extends Fragment {
      *
      * @return A new instance of fragment SocialFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static SearchUserFragment newInstance() {
         SearchUserFragment fragment = new SearchUserFragment();
         Bundle args = new Bundle();

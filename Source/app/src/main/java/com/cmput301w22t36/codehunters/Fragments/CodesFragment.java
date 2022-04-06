@@ -46,11 +46,9 @@ import java.util.Collections;
  */
 public class CodesFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    // TODO: Rename and change types of parameters
     private ArrayList<QRCode> codeArrayList;
     private TextView num_codes;
     private TextView total_score;
@@ -74,7 +72,6 @@ public class CodesFragment extends Fragment {
      * @param codes
      * @return
      */
-    // TODO: Rename and change types and number of parameters
     public static CodesFragment newInstance(ArrayList<QRCode> codes) {
         CodesFragment fragment = new CodesFragment();
         Bundle args = new Bundle();

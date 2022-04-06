@@ -41,12 +41,10 @@ public class ScoreBoardFragment extends Fragment {
     private TextView byTotalScoreT;
     private TextView byTotalScore;
     private Observable tabChanger = new TabSetter();
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
 
-    // TODO: Rename and change types of parameters
     private String username;
 
 
@@ -64,7 +62,6 @@ public class ScoreBoardFragment extends Fragment {
      * @param name
      * @return A new instance of fragment SocialFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ScoreBoardFragment newInstance(String name, Observer thingWithTabs) {
         ScoreBoardFragment fragment = new ScoreBoardFragment();
         fragment.tabChanger.addObserver(thingWithTabs);

@@ -17,7 +17,6 @@ public class UserMapperUnitTest {
     User user = new User();
     User user2;
 
-    // TODO: FIND OUT HOW TO RUN THIS TEST WITHOUT ERRORS!
     //@Test
     public void get() throws InterruptedException {
 
