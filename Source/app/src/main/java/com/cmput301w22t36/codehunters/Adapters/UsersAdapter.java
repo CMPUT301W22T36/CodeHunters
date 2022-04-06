@@ -15,6 +15,10 @@ import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
 
+/**
+ * This class is an array adapter for showing lists of users. Currently it is used in the All U
+ */
+
 public class UsersAdapter extends ArrayAdapter<User> {
 
     public UsersAdapter(Context context, ArrayList<User> usersList) {

@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, mapFragment)
                 .commit();
     }
-    
+
 
     /**
      * When items are clicked in the sidebar, move to the specified fragment.
