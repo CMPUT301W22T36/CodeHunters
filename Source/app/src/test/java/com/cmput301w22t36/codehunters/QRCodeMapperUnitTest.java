@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class CodeMapperUnitTest {
+public class QRCodeMapperUnitTest {
     //@Test
     public void testMatchingCodes() throws InterruptedException {
 
