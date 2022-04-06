@@ -290,7 +290,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
     /**
      * Gets a list of every QRCode with a unique location, prioritizing ones with a photo upon
      * duplicates.
-     * @param ch
+     * @param ch Handles completion of the request
      */
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -311,7 +311,7 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
                             uniqueLocations.put(thisLocation, qrCode);
                         } else {
                             // Replace original if it doesn't have an image.
-                            QRCodeData uniqueQr = uniqueLocations.get(qrCode.getHash());
+                            QRCodeData uniqueQr = uniqueLocations.get(thisLocation);
                             if (uniqueQr != null && uniqueQr.getPhotoUrl() == null) {
                                 GeoPoint uniqueQrLocation = new GeoPoint(uniqueQr.getLat(), uniqueQr.getLon());
                                 uniqueLocations.replace(uniqueQrLocation, qrCode);

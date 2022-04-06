@@ -15,12 +15,29 @@ import com.cmput301w22t36.codehunters.R;
 
 import java.util.ArrayList;
 
+/**
+ * This class is an array adapter for showing lists of users. Currently it is used in the All Users
+ * tab of the social tab
+ */
+
 public class UsersAdapter extends ArrayAdapter<User> {
 
+    /**
+     * Constructor for adapter, just calls super
+     * @param context context of the array adapter
+     * @param usersList list of users to be displayed
+     */
     public UsersAdapter(Context context, ArrayList<User> usersList) {
         super(context, 0, usersList);
     }
 
+    /**
+     * Contructs the view for an idividual item in the list
+     * @param position position in the list (both on the backend and displayed)
+     * @param convertView this value can be null
+     * @param parent this value cannot be null
+     * @return the view that has been constructed for this element
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

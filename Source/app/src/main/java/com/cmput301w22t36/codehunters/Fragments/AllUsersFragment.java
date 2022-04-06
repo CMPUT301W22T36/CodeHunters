@@ -84,7 +84,7 @@ public class AllUsersFragment extends Fragment {
     }
     /**
      * display all users get from database
-     * @param A
+     * @param A the list of all users
      */
     public void display(ArrayList<User> A){
         // Gets called from different thread, needs to do null checks.

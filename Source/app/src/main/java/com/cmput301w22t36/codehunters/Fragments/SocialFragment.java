@@ -219,7 +219,16 @@ public class SocialFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).updateNavBar(2);
+        ((MainActivity) getActivity()).updateNavBar(3);
+    }
+
+    /**
+     * On pausing of this fragment, update the navigation bar on the bottom to indicate we are not on any fragment
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity) getActivity()).updateNavBar(0);
     }
 
     private class TabObserver implements Observer {
