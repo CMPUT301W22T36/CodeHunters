@@ -623,31 +623,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, mapFragment)
                 .commit();
     }
-
-    /**
-     * Given a list of QR codes, compute their distances
-     * @param qrdistance: the list of QR codes to evaluate
-     */
-    public void qrDistance(ArrayList<QRCode> qrdistance) {
-
-        if (ActivityCompat.checkSelfPermission(MainActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location loc = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            double longi = loc.getLongitude();
-            double lat = loc.getLatitude();
-            for (int i = 0; i < qrdistance.size(); i++) {
-                QRCode qrcode = new QRCode(qrdistance.get(i));
-                double databaseCodeLat = qrcode.getLat();
-                double databaseCodeLongi = qrcode.getLon();
-                double latDistance = Math.abs(lat - databaseCodeLat);
-                double longiDistance = Math.abs(longi - databaseCodeLongi);
-                double a = Math.sin(latDistance / 2) * 2 + Math.cos(databaseCodeLat) * Math.cos(lat) * Math.sin(longiDistance / 2) * 2;
-                double c = 2 * Math.asin(Math.sqrt(a));
-                double km = 6371 * c;
-            }
-        }
-    }
+    
 
     /**
      * When items are clicked in the sidebar, move to the specified fragment.
