@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import com.cmput301w22t36.codehunters.R;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Introductory Comments:
@@ -150,6 +152,7 @@ public class SearchNearbyCodesFragment extends Fragment {
      */
     public ArrayList<QRCode> qrDistance(ArrayList<QRCode> qrdistance, double lat, double lon) {
         sortedDistanceQRList.clear();
+        HashMap<String, Pair<Double, QRCode>> addedCodes = new HashMap<>();
         for (int i = 0; i < qrdistance.size(); i++) {
             QRCode qrcode = qrdistance.get(i);
             if (qrcode.hasLocation()) {
@@ -164,9 +167,18 @@ public class SearchNearbyCodesFragment extends Fragment {
                 double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                 double km = 6371 * c;
                 if (km < 5) {
-                    sortedDistanceQRList.add(qrcode);
+                    if (!addedCodes.containsKey(qrcode.getHash())) {
+                        Pair<Double, QRCode> newCodePair = new Pair<>(km, qrcode);
+                        addedCodes.put(qrcode.getHash(), newCodePair);
+                    } else if (km > addedCodes.get(qrcode.getHash()).first) {
+                        Pair<Double, QRCode> newCodePair = new Pair<>(km, qrcode);
+                        addedCodes.put(qrcode.getHash(), newCodePair);
+                    }
                 }
             }
+        }
+        for (Pair<Double, QRCode> thisPair : addedCodes.values()) {
+            sortedDistanceQRList.add(thisPair.second);
         }
         return sortedDistanceQRList;
     }
