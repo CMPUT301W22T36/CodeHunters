@@ -341,24 +341,26 @@ public class QRCodeMapper extends DataMapper<QRCodeData> {
             ch.handleSuccess(new ArrayList<>());
         } else {
 
-            // Get the hash from every given QR code.
-            ArrayList<String> codeHashes = new ArrayList<>();
+            // Make a map of the codes for quick lookup
+            HashMap<String, QRCodeData> codeHashes = new HashMap<>();
             for (QRCodeData code : matchList) {
-                codeHashes.add(code.getHash());
+                codeHashes.put(code.getHash(), code);
             }
 
             // make a query where we filter to codes from the given user and then
             // to the codes in the justTheCodes list.
             collectionRef.whereEqualTo(Fields.USERREF.toString(), "/users/"+userToSearch.getId())
-                    .whereIn(Fields.CODE.toString(), codeHashes)
                     .get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     QuerySnapshot results = task.getResult();
-                    ArrayList<QRCodeData> matchedCodes = new ArrayList<>();
+                    ArrayList<QRCodeData> matchedCodes= new ArrayList<>();
 
                     for (DocumentSnapshot docSnap : results) {
                         if (docSnap.getData() != null) {
-                            matchedCodes.add(mapToData(docSnap.getData(), docSnap));
+                            QRCodeData newCode = mapToData(docSnap.getData(), docSnap);
+                            if (codeHashes.containsKey(newCode.getHash())) {
+                                matchedCodes.add(newCode);
+                            }
                         }
                     }
                     ch.handleSuccess(matchedCodes);
