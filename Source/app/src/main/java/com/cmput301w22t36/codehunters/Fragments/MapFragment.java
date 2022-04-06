@@ -222,16 +222,22 @@ public class MapFragment extends Fragment {
                                 @Override
                                 public void handleSuccess(Bitmap data) {
                                     qrCodeClicked.setPhoto(data);
-                                    new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                    if (getActivity() != null) {
+                                        new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                    }
                                 }
 
                                 @Override
                                 public void handleError(Exception e) {
-                                    new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                    if (getActivity() != null) {
+                                        new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                                    }
                                 }
                             });
                         } else {
-                            new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                            if (getActivity() != null) {
+                                new Geolocation_PhotosFragment(qrCodeClicked).show(getActivity().getSupportFragmentManager(), "ADD_GEO");
+                            }
                         }
 
                         // This return value was given in the example, I'm just leaving it

@@ -1,4 +1,5 @@
 package com.cmput301w22t36.codehunters.Data;
+
 /**
  * Introductory Comments:
  *      This Java file is a custom class representing the most abstract form of data.
@@ -16,7 +17,7 @@ public abstract class Data {
 
     /**
      * Retrieves document ID of the data
-     * @return
+     * @return id
      */
     public String getId() {
         return id;
